@@ -1,4 +1,4 @@
-package pl.edu.uj.tcs.kalambury;
+package pl.uj.edu.tcs.kalambury_maven;
 
 public class AppController implements Controller {
 	private EventReactor reactor = new EventReactor();

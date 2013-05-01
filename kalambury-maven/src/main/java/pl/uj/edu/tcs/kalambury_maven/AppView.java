@@ -1,12 +1,9 @@
-package pl.edu.uj.tcs.kalambury;
+package pl.uj.edu.tcs.kalambury_maven;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-public class SimpleModel implements Model{
+public class AppView implements View {
 	private EventReactor reactor = new EventReactor();
 	private Controller controller;
-	private Collection<View> views = new ArrayList<View> ();
+	private Model model;
 	@Override
 	public void reactTo(Event e) throws EventNotHandledException {
 		reactor.handle(e);
@@ -18,8 +15,9 @@ public class SimpleModel implements Model{
 	}
 
 	@Override
-	public void registerView(View v) {
-		views.add(v);
+	public void setModel(Model m) {
+		this.model = m;
+		m.registerView(this);
 	}
 
 }

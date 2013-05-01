@@ -1,4 +1,4 @@
-package pl.edu.uj.tcs.kalambury;
+package pl.uj.edu.tcs.kalambury_maven;
 
 import java.util.HashMap;
 import java.util.Map;
