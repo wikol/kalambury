@@ -1,4 +1,4 @@
-package pl.uj.edu.tcs.kalambury_maven;
+package pl.uj.edu.tcs.kalambury_maven.event;
 
 public class EventNotHandledException extends Exception {
 

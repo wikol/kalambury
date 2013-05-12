@@ -1,4 +1,4 @@
-package pl.uj.edu.tcs.kalambury_maven;
+package pl.uj.edu.tcs.kalambury_maven.event;
 
 /**
  * Ponieważ przykład wart jest więcej niż 1000 słów

@@ -1,4 +1,6 @@
-package pl.uj.edu.tcs.kalambury_maven;
+package pl.uj.edu.tcs.kalambury_maven.network;
+
+import pl.uj.edu.tcs.kalambury_maven.event.Event;
 
 /**
  * Interfejs odpowiedzialny za wysyłanie danych na serwer

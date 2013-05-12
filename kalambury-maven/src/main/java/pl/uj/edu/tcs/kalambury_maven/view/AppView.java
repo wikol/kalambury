@@ -1,4 +1,10 @@
-package pl.uj.edu.tcs.kalambury_maven;
+package pl.uj.edu.tcs.kalambury_maven.view;
+
+import pl.uj.edu.tcs.kalambury_maven.controller.Controller;
+import pl.uj.edu.tcs.kalambury_maven.event.Event;
+import pl.uj.edu.tcs.kalambury_maven.event.EventNotHandledException;
+import pl.uj.edu.tcs.kalambury_maven.event.EventReactor;
+import pl.uj.edu.tcs.kalambury_maven.model.Model;
 
 public class AppView implements View {
 	private EventReactor reactor = new EventReactor();

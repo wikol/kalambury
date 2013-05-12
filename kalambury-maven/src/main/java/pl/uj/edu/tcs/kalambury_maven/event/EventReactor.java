@@ -1,4 +1,4 @@
-package pl.uj.edu.tcs.kalambury_maven;
+package pl.uj.edu.tcs.kalambury_maven.event;
 
 import java.util.HashMap;
 import java.util.Map;
