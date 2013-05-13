@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -43,8 +45,8 @@ public class ChatBox extends JPanel {
 
 		// textInput
 		userInputField = new JTextField();
-		userInputField.setMaximumSize(new Dimension(Integer.MAX_VALUE, userInputField
-				.getPreferredSize().height));
+		userInputField.setMaximumSize(new Dimension(Integer.MAX_VALUE,
+				userInputField.getPreferredSize().height));
 		userInputField.setAlignmentX(Component.LEFT_ALIGNMENT);
 		// textInput
 		sendButton = new JButton("Send");
@@ -57,7 +59,7 @@ public class ChatBox extends JPanel {
 		add(sendingArea);
 
 	}
-	
+
 	private void addNewMessage(ChatMessage chMes) {
 		messagesPanel.add(chMes);
 		validate();
@@ -85,7 +87,7 @@ public class ChatBox extends JPanel {
 		 * what[0]. For SM_ONLINE, SM_OFFLINE, SM_DRAW, SM_GUESSED you should
 		 * leave what empty.
 		 * 
-		 * @param who
+		 * @param whoTyped
 		 *            - for which user action was performed
 		 * @param type
 		 *            - type of action
@@ -94,62 +96,97 @@ public class ChatBox extends JPanel {
 		 *            action says that someone wrote new message here will be
 		 *            content of that message
 		 */
-		public ChatMessage(String who, TYPE type, String... what) {
+		public ChatMessage(String whoTyped, TYPE type, String... what) {
 			super();
-			this.who = who;
+			this.who = whoTyped;
 			this.type = type;
-			
+
 			setFont(getFont().deriveFont(getFont().getStyle() & ~Font.BOLD));
+
+			// setLineWrap(true);
+			// setWrapStyleWord(true);
+			// setEditable(false);
+			// setContentType("text/html");
 
 			setForeground(colors[type.ordinal()]);
 			switch (type) {
 			case SM_WROTE:
-				message = "says: " + what[0];
+				message = ": " + what[0];
 				break;
 			case SM_ONLINE:
-				message = "is online!";
+				message = " is online!";
 				break;
 			case SM_OFFLINE:
-				message = "is offline!";
+				message = " is offline!";
 				break;
 			case SM_DRAW:
-				message = "is drawing!";
+				message = " is drawing!";
 				break;
 			case SM_GUESSED:
-				message = "guessed correctly!";
+				message = " guessed correctly!";
 				break;
 			}
-			String text = String.format("<html><p><b>%s</b> %s</p></html>", who, message);
+			String text = String.format(
+					"<html><div WIDTH=%d><b>%s</b>%s</div></html>",
+					getSize().width-20, whoTyped, message);
 			super.setText(text);
+
+			addComponentListener(new ComponentListener() {
+				@Override
+				public void componentShown(ComponentEvent arg0) {
+				}
+				
+				@Override
+				public void componentResized(ComponentEvent arg0) {
+					String text = String.format(
+							"<html><div WIDTH=%d><b>%s</b> %s</div></html>",
+							getSize().width-20, who, message);
+					ChatMessage.this.setText(text);
+				}
+
+				@Override
+				public void componentMoved(ComponentEvent arg0) {
+				}
+				@Override
+				public void componentHidden(ComponentEvent arg0) {
+				}
+			});
 		}
 
 	}
 
-	//Only for testing purposes
+	// Only for testing purposes
 	public static void main(String[] args) {
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(250, 200);
+		frame.setSize(200, 200);
 		ChatBox cb = new ChatBox();
 		frame.add(cb);
 		frame.setVisible(true);
-		
+
 		cb.addNewMessage(new ChatMessage("inny", ChatMessage.TYPE.SM_ONLINE));
-		cb.addNewMessage(new ChatMessage("inny", ChatMessage.TYPE.SM_WROTE, "lubię placki"));
+		cb.addNewMessage(new ChatMessage("inny", ChatMessage.TYPE.SM_WROTE,
+				"lubię placki"));
 		cb.addNewMessage(new ChatMessage("zosiek", ChatMessage.TYPE.SM_ONLINE));
 		cb.addNewMessage(new ChatMessage("titanic", ChatMessage.TYPE.SM_ONLINE));
 		cb.addNewMessage(new ChatMessage("drzewo", ChatMessage.TYPE.SM_ONLINE));
 		cb.addNewMessage(new ChatMessage("krzak", ChatMessage.TYPE.SM_ONLINE));
 		cb.addNewMessage(new ChatMessage("dzik", ChatMessage.TYPE.SM_ONLINE));
-		cb.addNewMessage(new ChatMessage("biedronka", ChatMessage.TYPE.SM_ONLINE));
+		cb.addNewMessage(new ChatMessage("biedronka",
+				ChatMessage.TYPE.SM_ONLINE));
 		cb.addNewMessage(new ChatMessage("titanic", ChatMessage.TYPE.SM_OFFLINE));
 		cb.addNewMessage(new ChatMessage("budzik", ChatMessage.TYPE.SM_ONLINE));
-		cb.addNewMessage(new ChatMessage("pietruszka", ChatMessage.TYPE.SM_ONLINE));
-		cb.addNewMessage(new ChatMessage("zielony groszek", ChatMessage.TYPE.SM_ONLINE));
+		cb.addNewMessage(new ChatMessage("pietruszka",
+				ChatMessage.TYPE.SM_ONLINE));
+		cb.addNewMessage(new ChatMessage("zielony groszek",
+				ChatMessage.TYPE.SM_ONLINE));
 		cb.addNewMessage(new ChatMessage("budzik", ChatMessage.TYPE.SM_OFFLINE));
-		cb.addNewMessage(new ChatMessage("czarna mamba", ChatMessage.TYPE.SM_ONLINE));
-		cb.addNewMessage(new ChatMessage("czarna mamba", ChatMessage.TYPE.SM_WROTE, "burak"));
-		cb.addNewMessage(new ChatMessage("czarna mamba", ChatMessage.TYPE.SM_GUESSED));
+		cb.addNewMessage(new ChatMessage("czarna mamba",
+				ChatMessage.TYPE.SM_ONLINE));
+		cb.addNewMessage(new ChatMessage("czarna mamba",
+				ChatMessage.TYPE.SM_WROTE, "burak"));
+		cb.addNewMessage(new ChatMessage("czarna mamba",
+				ChatMessage.TYPE.SM_GUESSED));
 		cb.addNewMessage(new ChatMessage("szpinak", ChatMessage.TYPE.SM_ONLINE));
 	}
 }
