@@ -26,7 +26,7 @@ public class BrushPanel extends JPanel {
 	private Brush brush;
 	
 	/**
-	 * Create the panel.
+	 * Konstuktor
 	 */
 	public BrushPanel() {
 		setLayout(new GridLayout(5, 2, 0, 0));
