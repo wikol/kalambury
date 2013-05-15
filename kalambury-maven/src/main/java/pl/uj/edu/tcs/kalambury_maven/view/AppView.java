@@ -26,4 +26,14 @@ public class AppView implements View {
 		m.registerView(this);
 	}
 
+	@Override
+	public Controller getController() {
+		return controller;
+	}
+
+	@Override
+	public Model getModel() {
+		return model;
+	}
+
 }

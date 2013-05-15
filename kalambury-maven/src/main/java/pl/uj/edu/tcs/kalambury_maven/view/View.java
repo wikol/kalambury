@@ -30,6 +30,7 @@ public interface View {
 	 * @param c rzeczony kontroler
 	 */
 	public void setController(Controller c);
+	public Controller getController();
 	/**
 	 * Informuje View o tym, że powinien nasłuchiwać zmian w modelu m i zmieniać wyświetlane
 	 * przez siebie informacje wraz ze zmianami w modelu - setModel powinno zarejestrować
@@ -37,4 +38,5 @@ public interface View {
 	 * @param m rzeczony model
 	 */
 	public void setModel(Model m);
+	public Model getModel();
 }
