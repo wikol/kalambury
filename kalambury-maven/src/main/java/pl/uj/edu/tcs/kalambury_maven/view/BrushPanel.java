@@ -9,7 +9,12 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 
+import pl.uj.edu.tcs.kalambury_maven.controller.DrawingController;
+import pl.uj.edu.tcs.kalambury_maven.event.BrushChangedEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.BrushChangedEventHandler;
+import pl.uj.edu.tcs.kalambury_maven.event.EventNotHandledException;
 import pl.uj.edu.tcs.kalambury_maven.model.Brush;
+import pl.uj.edu.tcs.kalambury_maven.model.DrawingModel;
 
 import javax.swing.ImageIcon;
 
@@ -23,12 +28,24 @@ import javax.swing.ImageIcon;
 
 public class BrushPanel extends JPanel {
 
-	private Brush brush;
+	private DrawingController controller;
+	private DrawingPanel view;
+	private DrawingModel model;
+	private int radius;
+	private Color color;
 	
 	/**
 	 * Konstuktor
 	 */
-	public BrushPanel() {
+	public BrushPanel(DrawingController controller, DrawingModel model, DrawingPanel view) {
+		this.controller = controller;
+		this.model = model;
+		this.view = view;
+		
+		this.controller.addHandler(BrushChangedEvent.class, new BrushChangedEventHandler(model,view));
+		this.model.addHandler(BrushChangedEvent.class, new BrushChangedEventHandler(model,view));
+		this.view.addHandler(BrushChangedEvent.class, new BrushChangedEventHandler(model,view));
+		
 		setLayout(new GridLayout(5, 2, 0, 0));
 
 		JButton btnBlack = new JButton("");
@@ -37,7 +54,8 @@ public class BrushPanel extends JPanel {
 		btnBlack.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				brush.color = Color.BLACK;
+				color = Color.BLACK;
+				brushChanged();
 			}
 		});
 
@@ -46,7 +64,8 @@ public class BrushPanel extends JPanel {
 		btnTiny.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				brush.radius = Brush.TINY;
+				radius = Brush.TINY;
+				brushChanged();
 			}
 		});
 
@@ -56,7 +75,8 @@ public class BrushPanel extends JPanel {
 		btnBlue.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				brush.color = Color.BLUE;
+				color = Color.BLUE;
+				brushChanged();
 			}
 		});
 
@@ -65,7 +85,8 @@ public class BrushPanel extends JPanel {
 		btnSmall.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				brush.radius = Brush.SMALL;
+				radius = Brush.SMALL;
+				brushChanged();
 			}
 		});
 
@@ -75,7 +96,8 @@ public class BrushPanel extends JPanel {
 		btnRed.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				brush.color = Color.RED;
+				color = Color.RED;
+				brushChanged();
 			}
 		});
 		
@@ -85,7 +107,8 @@ public class BrushPanel extends JPanel {
 		btnMedium.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				brush.radius = Brush.MEDIUM;
+				radius = Brush.MEDIUM;
+				brushChanged();
 			}
 		});
 		
@@ -95,7 +118,8 @@ public class BrushPanel extends JPanel {
 		btnYellow.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				brush.color = Color.YELLOW;
+				color = Color.YELLOW;
+				brushChanged();
 			}
 		});
 
@@ -104,18 +128,19 @@ public class BrushPanel extends JPanel {
 		btnLarge.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				brush.radius = Brush.LARGE;
+				radius = Brush.LARGE;
+				brushChanged();
 			}
 		});
 
 		JButton btnEraser = new JButton();
-		btnEraser.setIcon(new ImageIcon(BrushPanel.class.getResource("/eraser.jpeg")));
 		btnEraser.setBackground(Color.WHITE);
 		add(btnEraser);
 		btnEraser.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				brush.color = Color.WHITE;
+				color = Color.WHITE;
+				brushChanged();
 			}
 		});
 		
@@ -124,9 +149,18 @@ public class BrushPanel extends JPanel {
 		btnXL.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				brush.radius = Brush.EXTRA_LARGE;
+				radius = Brush.EXTRA_LARGE;
+				brushChanged();
 			}
 		});
 
+	}
+
+	protected void brushChanged() {
+		try {
+			controller.reactTo(new BrushChangedEvent((color==Color.WHITE) ? (int)(radius*1.5) : radius,color));
+		} catch (EventNotHandledException e) {
+			e.printStackTrace();
+		}
 	}
 }

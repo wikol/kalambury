@@ -23,4 +23,7 @@ public class Point {
 		this.color = color;
 	}
 	
+	public String toString(){
+		return centreX + " " + centreY;
+	}
 }

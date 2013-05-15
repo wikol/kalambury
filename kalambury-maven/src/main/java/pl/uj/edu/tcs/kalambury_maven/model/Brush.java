@@ -11,6 +11,10 @@ import java.awt.Color;
 
 public class Brush {
 	
+	public Brush(int radius2, Color color2) {
+		this.radius = radius2;
+		this.color = color2;
+	}
 	public static final int TINY = 5;
 	public static final int SMALL = 10;
 	public static final int MEDIUM = 15;

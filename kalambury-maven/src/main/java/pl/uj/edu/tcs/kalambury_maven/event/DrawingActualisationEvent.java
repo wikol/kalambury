@@ -32,6 +32,6 @@ public class DrawingActualisationEvent implements Event {
 	 */
 	public DrawingActualisationEvent(List <Point> newPoints) {
 		this.newPoints.addAll(newPoints);
-		destination = "MODEL";
+		destination = "CONTROLLER";
 	}
 }
