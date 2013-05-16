@@ -4,69 +4,77 @@ import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
 
-import pl.uj.edu.tcs.kalambury_maven.controller.Controller;
-import pl.uj.edu.tcs.kalambury_maven.event.Event;
-import pl.uj.edu.tcs.kalambury_maven.event.EventHandler;
-import pl.uj.edu.tcs.kalambury_maven.event.EventNotHandledException;
-import pl.uj.edu.tcs.kalambury_maven.event.EventReactor;
-import pl.uj.edu.tcs.kalambury_maven.view.View;
+import pl.uj.edu.tcs.kalambury_maven.view.DrawingPanel;
 
 /**
  * Prosty model rysunku
+ * 
  * @author Katarzyna Janocha, Michał Piekarz
- *
+ * 
  */
 
-public class DrawingModel implements Model {
+public class DrawingModel {
 
-	private Controller controller;
-	private EventReactor reactor = new EventReactor();
 	private List<Point> drawing = new LinkedList<>();
-	private final Brush brush = new Brush(Brush.MEDIUM,Color.BLACK);
-	private List<View> views = new LinkedList<>();
-	
-	@Override
-	public void reactTo(Event e) throws EventNotHandledException {
-		reactor.handle(e);
+	private final Brush brush = new Brush(Brush.MEDIUM, Color.BLACK);
+	private DrawingPanel drawingPanel;
+
+	/**
+	 * Ustawia DrawingPanel z którym komunikuje się ten model
+	 * 
+	 * @param drawingPanel
+	 */
+	public void setDrawingPanel(DrawingPanel drawingPanel) {
+		this.drawingPanel = drawingPanel;
 	}
 
-	@Override
-	public void setController(Controller c) {
-		this.controller = c;
-
-	}
-
-	@Override
-	public void registerView(View v) {
-		this.views.add(v);
-	}
-
+	/**
+	 * Aktualizuje rysunek o podaną listę punktów
+	 * 
+	 * @param newPoints
+	 *            - lista punktów do dodania do rysunku
+	 */
 	public void actualiseDrawing(List<Point> newPoints) {
-		synchronized(drawing){
+		synchronized (drawing) {
 			drawing.addAll(newPoints);
 		}
 	}
-	
-	public List<Point> getDrawing(){
-		synchronized(drawing){
+
+	/**
+	 * Metoda do uzyskiwania aktualnego rysunku
+	 * 
+	 * @return - rysunek przechowywany przez model
+	 */
+	public List<Point> getDrawing() {
+		synchronized (drawing) {
 			return new LinkedList<>(drawing);
 		}
 	}
-	
-	public void addHandler(Class<? extends Event> e, EventHandler h){
-		reactor.setHandler(e, h);
-	}
-	
-	public Brush getBrush(){
-		synchronized(brush){
+
+	/**
+	 * Getter do Brusha
+	 * 
+	 * @return - pędzel przechowywany przez model
+	 */
+	public Brush getBrush() {
+		synchronized (brush) {
 			return brush;
 		}
 	}
-	
-	public void setBrush(int radius, Color color){
-		synchronized(brush){
+
+	/**
+	 * Setter do pędzla przechowywanego przez model
+	 * 
+	 * @param radius
+	 *            - promień pędzla
+	 * @param color
+	 *            - kolor pędzla
+	 */
+	public void setBrush(int radius, Color color) {
+		synchronized (brush) {
 			brush.radius = radius;
 			brush.color = color;
+			drawingPanel.brushChanged();
 		}
 	}
 

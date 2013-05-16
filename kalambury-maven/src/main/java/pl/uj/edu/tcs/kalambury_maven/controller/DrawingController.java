@@ -1,43 +1,72 @@
 package pl.uj.edu.tcs.kalambury_maven.controller;
 
-import pl.uj.edu.tcs.kalambury_maven.event.DrawingActualisationEvent;
-import pl.uj.edu.tcs.kalambury_maven.event.DrawingActualisationEventHandler;
+import pl.uj.edu.tcs.kalambury_maven.event.BrushChangedEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.Event;
-import pl.uj.edu.tcs.kalambury_maven.event.EventHandler;
-import pl.uj.edu.tcs.kalambury_maven.event.EventNotHandledException;
 import pl.uj.edu.tcs.kalambury_maven.event.EventReactor;
+import pl.uj.edu.tcs.kalambury_maven.event.NewPointsDrawnEvent;
 import pl.uj.edu.tcs.kalambury_maven.model.DrawingModel;
-import pl.uj.edu.tcs.kalambury_maven.model.Model;
-import pl.uj.edu.tcs.kalambury_maven.view.DrawingPanel;
-import pl.uj.edu.tcs.kalambury_maven.view.View;
+import pl.uj.edu.tcs.kalambury_maven.network.Network;
 
-public class DrawingController implements Controller {
+/**
+ * Controller do DrawingPanel
+ * 
+ * @author Katarzyna Janocha, Michał Piekarz
+ * 
+ */
+public class DrawingController {
 
 	private final EventReactor reactor = new EventReactor();
-	private DrawingPanel view;
 	private DrawingModel model;
-	
-	public void addHandler(Class<? extends Event> e, EventHandler h){
-		reactor.setHandler(e, h);
-	}
-	
-	@Override
-	public void reactTo(Event e) throws EventNotHandledException {
-		reactor.handle(e);
+	private Network network;
+
+	/**
+	 * Aktualizuje rysunek przechowywany w modelu
+	 * 
+	 * @param newPoints
+	 *            - nowo narysowane punkty
+	 */
+	public void actualiseDrawing(Event e) {
+		NewPointsDrawnEvent realEvent = (NewPointsDrawnEvent) e;
+		model.actualiseDrawing(realEvent.getPoints());
 	}
 
-	@Override
-	public void setView(View v) {
-		v.setController(this);
-		if (v instanceof DrawingPanel)
-			this.view = (DrawingPanel)v;
+	/**
+	 * Wysyła zdarzenie na serwer
+	 * 
+	 * @param e
+	 */
+	public void sendEventToServer(Event e) {
+		network.sendToServer(e);
 	}
 
-	@Override
-	public void setModel(Model m) {
-		if (m instanceof DrawingModel)
-			this.model = (DrawingModel)m;
-		m.setController(this);
+	/**
+	 * Aktualizuje pędzel przechowywany w modelu
+	 * 
+	 * @param radius
+	 *            - promień nowego pędzla
+	 * @param color
+	 *            - kolor nowego pędzla
+	 */
+	public void actualiseBrush(Event e) {
+		BrushChangedEvent realEvent = (BrushChangedEvent) e;
+		model.setBrush(realEvent.getBrush().radius, realEvent.getBrush().color);
 	}
 
+	/**
+	 * Ustawia model na którym ma operaować controller
+	 * 
+	 * @param model
+	 */
+	public void setModel(DrawingModel model) {
+		this.model = model;
+	}
+
+	/**
+	 * Ustawia klasę do łączenia się z serwerem
+	 * 
+	 * @param network
+	 */
+	public void setNetwork(Network network) {
+		this.network = network;
+	}
 }

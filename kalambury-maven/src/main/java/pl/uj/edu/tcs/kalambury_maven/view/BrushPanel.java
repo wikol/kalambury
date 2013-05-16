@@ -11,12 +11,7 @@ import javax.swing.JButton;
 
 import pl.uj.edu.tcs.kalambury_maven.controller.DrawingController;
 import pl.uj.edu.tcs.kalambury_maven.event.BrushChangedEvent;
-import pl.uj.edu.tcs.kalambury_maven.event.BrushChangedEventHandler;
-import pl.uj.edu.tcs.kalambury_maven.event.EventNotHandledException;
 import pl.uj.edu.tcs.kalambury_maven.model.Brush;
-import pl.uj.edu.tcs.kalambury_maven.model.DrawingModel;
-
-import javax.swing.ImageIcon;
 
 /**
  * 
@@ -29,23 +24,14 @@ import javax.swing.ImageIcon;
 public class BrushPanel extends JPanel {
 
 	private DrawingController controller;
-	private DrawingPanel view;
-	private DrawingModel model;
 	private int radius;
 	private Color color;
-	
+
 	/**
 	 * Konstuktor
 	 */
-	public BrushPanel(DrawingController controller, DrawingModel model, DrawingPanel view) {
-		this.controller = controller;
-		this.model = model;
-		this.view = view;
-		
-		this.controller.addHandler(BrushChangedEvent.class, new BrushChangedEventHandler(model,view));
-		this.model.addHandler(BrushChangedEvent.class, new BrushChangedEventHandler(model,view));
-		this.view.addHandler(BrushChangedEvent.class, new BrushChangedEventHandler(model,view));
-		
+	public BrushPanel() {
+
 		setLayout(new GridLayout(5, 2, 0, 0));
 
 		JButton btnBlack = new JButton("");
@@ -100,8 +86,7 @@ public class BrushPanel extends JPanel {
 				brushChanged();
 			}
 		});
-		
-		
+
 		JButton btnMedium = new JButton("M");
 		add(btnMedium);
 		btnMedium.addActionListener(new ActionListener() {
@@ -111,7 +96,7 @@ public class BrushPanel extends JPanel {
 				brushChanged();
 			}
 		});
-		
+
 		JButton btnYellow = new JButton();
 		btnYellow.setBackground(Color.YELLOW);
 		add(btnYellow);
@@ -143,7 +128,7 @@ public class BrushPanel extends JPanel {
 				brushChanged();
 			}
 		});
-		
+
 		JButton btnXL = new JButton("XL");
 		add(btnXL);
 		btnXL.addActionListener(new ActionListener() {
@@ -156,11 +141,20 @@ public class BrushPanel extends JPanel {
 
 	}
 
-	protected void brushChanged() {
-		try {
-			controller.reactTo(new BrushChangedEvent((color==Color.WHITE) ? (int)(radius*1.5) : radius,color));
-		} catch (EventNotHandledException e) {
-			e.printStackTrace();
-		}
+	/**
+	 * Metoda wywoływana gdy zmienia się pędzel
+	 */
+	private void brushChanged() {
+		BrushChangedEvent event = new BrushChangedEvent((color == Color.WHITE) ? (int) (radius * 1.5)
+				: radius, color);
+		controller.sendEventToServer(event);
+	}
+
+	/**
+	 * Ustawia controller z którego będzie korzystał BrushPanel
+	 * @param controller
+	 */
+	public void setController(DrawingController controller) {
+		this.controller = controller;
 	}
 }

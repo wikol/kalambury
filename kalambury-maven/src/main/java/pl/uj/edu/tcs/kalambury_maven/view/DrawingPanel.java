@@ -4,27 +4,16 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import pl.uj.edu.tcs.kalambury_maven.controller.AppController;
-import pl.uj.edu.tcs.kalambury_maven.controller.Controller;
 import pl.uj.edu.tcs.kalambury_maven.controller.DrawingController;
-import pl.uj.edu.tcs.kalambury_maven.event.DrawingActualisationEvent;
-import pl.uj.edu.tcs.kalambury_maven.event.DrawingActualisationEventHandler;
-import pl.uj.edu.tcs.kalambury_maven.event.Event;
-import pl.uj.edu.tcs.kalambury_maven.event.EventHandler;
-import pl.uj.edu.tcs.kalambury_maven.event.EventNotHandledException;
-import pl.uj.edu.tcs.kalambury_maven.event.EventReactor;
+import pl.uj.edu.tcs.kalambury_maven.event.NewPointsDrawnEvent;
 import pl.uj.edu.tcs.kalambury_maven.model.Brush;
 import pl.uj.edu.tcs.kalambury_maven.model.DrawingModel;
-import pl.uj.edu.tcs.kalambury_maven.model.Model;
 import pl.uj.edu.tcs.kalambury_maven.model.Point;
-import pl.uj.edu.tcs.kalambury_maven.model.SimpleModel;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.GridLayout;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
@@ -38,23 +27,18 @@ import java.util.TimerTask;
  * 
  */
 
-public class DrawingPanel extends JPanel implements View{
+public class DrawingPanel extends JPanel {
 
-	private final int playerID;
-	private final List<Point> points = new LinkedList<>();
 	private final List<Point> pointsToCommit = new LinkedList<>();
-	private final EventReactor reactor = new EventReactor();
-
-	private int drawingPlayerID;
-	private Brush brush;
-	private DrawingController controller;
-	private DrawingModel model;
-	
 	/**
 	 * Timer wysyłający Eventy
 	 */
-	
-	private Timer drawingTimer;
+
+	private final Timer drawingTimer;
+
+	private DrawingController controller;
+	private DrawingModel model;
+	private Brush brush;
 
 	/**
 	 * Adapter ruchów myszki potrzebny do komunikacji z rysującym użytkownikiem.
@@ -65,8 +49,10 @@ public class DrawingPanel extends JPanel implements View{
 		@Override
 		public void mouseDragged(MouseEvent e) {
 			synchronized (pointsToCommit) {
-				float x = (float) e.getX() / (float) DrawingPanel.this.getWidth();
-				float y = (float) e.getY() / (float) DrawingPanel.this.getHeight();
+				float x = (float) e.getX()
+						/ (float) DrawingPanel.this.getWidth();
+				float y = (float) e.getY()
+						/ (float) DrawingPanel.this.getHeight();
 				pointsToCommit.add(new Point(x, y, brush.radius, brush.color));
 			}
 		}
@@ -78,8 +64,10 @@ public class DrawingPanel extends JPanel implements View{
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			synchronized (pointsToCommit) {
-				float x = (float) e.getX() / (float) DrawingPanel.this.getWidth();
-				float y = (float) e.getY() / (float) DrawingPanel.this.getHeight();
+				float x = (float) e.getX()
+						/ (float) DrawingPanel.this.getWidth();
+				float y = (float) e.getY()
+						/ (float) DrawingPanel.this.getHeight();
 				pointsToCommit.add(new Point(x, y, brush.radius, brush.color));
 			}
 		}
@@ -104,129 +92,105 @@ public class DrawingPanel extends JPanel implements View{
 
 	/**
 	 * Konstruktor panela
-	 * @param model 
-	 * @param controller
-	 * @param playerID 
+	 * 
 	 */
-	
-	public DrawingPanel(DrawingModel model, DrawingController controller, int playerID) {
+
+	public DrawingPanel() {
 		setBackground(Color.WHITE);
 
 		addMouseMotionListener(new MyMouseAdapter());
 		addMouseListener(new MyMouseAdapter());
 
-		brush = new Brush(Brush.MEDIUM,Color.BLACK);
+		brush = new Brush(Brush.MEDIUM, Color.BLACK);
 		drawingTimer = new Timer();
-
-		this.model = model;
-		this.controller = controller;
-		this.playerID = playerID;
 
 		drawingTimer.schedule(new TimerTask() {
 
 			@Override
 			public void run() {
-				if (DrawingPanel.this.playerID == drawingPlayerID) {
-					synchronized (pointsToCommit) {
-						if (pointsToCommit.isEmpty()) return;
-						try {
-							DrawingPanel.this.controller
-									.reactTo(new DrawingActualisationEvent(
-											pointsToCommit));
-						} catch (EventNotHandledException e) {
-							e.printStackTrace();
-						}
-						pointsToCommit.clear();
-					}
+				synchronized (pointsToCommit) {
+					if (pointsToCommit.isEmpty() || controller == null)
+						return;
+					DrawingPanel.this.controller
+							.sendEventToServer(new NewPointsDrawnEvent(
+									pointsToCommit));
+					pointsToCommit.clear();
 				}
 			}
 
 		}, 0, 100);
 	}
 
-	public static void main(String... args) {
-		JFrame frame = new JFrame();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(250, 200);
-		DrawingPanel cb = new DrawingPanel(new DrawingModel(),
-				new DrawingController(), 0);
-		cb.setDrawingPlayerID(0);
-		frame.getContentPane().setLayout(new GridLayout(1, 2, 0, 0));
-		frame.getContentPane().add(cb);
-		frame.getContentPane().add(new BrushPanel(cb.controller, cb.model, cb));
-		frame.setVisible(true);
-		cb.controller.setModel(cb.model);
-		cb.controller.setView(cb);
-		cb.model.registerView(cb);
-		cb.controller.addHandler(DrawingActualisationEvent.class, new DrawingActualisationEventHandler(cb.model, cb));
-		cb.reactor.setHandler(DrawingActualisationEvent.class, new DrawingActualisationEventHandler(cb.model, cb));
-		cb.model.addHandler(DrawingActualisationEvent.class, new DrawingActualisationEventHandler(cb.model, cb));
-	}
-	
+	// public static void main(String... args) {
+	// JFrame frame = new JFrame();
+	// frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	// frame.setSize(250, 200);
+	// DrawingPanel cb = new DrawingPanel(new DrawingModel(),
+	// new DrawingController(), 0);
+	// cb.setDrawingPlayerID(0);
+	// frame.getContentPane().setLayout(new GridLayout(1, 2, 0, 0));
+	// frame.getContentPane().add(cb);
+	// frame.getContentPane().add(new BrushPanel(cb.controller, cb.model, cb));
+	// frame.setVisible(true);
+	// cb.controller.setModel(cb.model);
+	// cb.controller.setView(cb);
+	// cb.model.registerView(cb);
+	// cb.controller.addHandler(DrawingActualisationEvent.class, new
+	// DrawingActualisationEventHandler(cb.model, cb));
+	// cb.reactor.setHandler(DrawingActualisationEvent.class, new
+	// DrawingActualisationEventHandler(cb.model, cb));
+	// cb.model.addHandler(DrawingActualisationEvent.class, new
+	// DrawingActualisationEventHandler(cb.model, cb));
+	// }
+
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		if (model == null)
+			return;
+		List<Point> points = model.getDrawing();
 		for (Point point : points) {
 			g.setColor(point.color);
-			g.fillOval((int) (point.centreX*this.getWidth()), (int) (point.centreY*this.getHeight()),
+			g.fillOval((int) (point.centreX * this.getWidth()),
+					(int) (point.centreY * this.getHeight()),
 					(int) point.paintRadius, (int) point.paintRadius);
 		}
 	}
 
 	/**
-	 * Ustawia ID aktualnego gracza
-	 * @param drawingPlayerID 
-	 */
-	
-	public void setDrawingPlayerID(int drawingPlayerID) {
-		this.drawingPlayerID = drawingPlayerID;
-		if (this.drawingPlayerID == playerID) {
-		}
-	}
-	
-	/**
-	 * Wyświetla podany rysunek
-	 * @param points - zbiór punktów do narysowania
-	 */
-	
-	public void drawPoints(List<Point> points){
-		this.points.clear();
-		this.points.addAll(points);
-		System.out.println(points.toString());
-		repaint();
-	}
-
-	/**
 	 * Aktualizacja pędzla
-	 * @param brush - pedzel
+	 * 
+	 * @param brush
+	 *            - pedzel
 	 */
-	
+
 	public void setBrush(Brush brush) {
 		this.brush = brush;
 	}
 
-	@Override
-	public void reactTo(Event e) throws EventNotHandledException {
-		reactor.handle(e);
+	/**
+	 * Ustawia controller
+	 * 
+	 * @param controller
+	 */
+	public void setController(DrawingController controller) {
+		this.controller = controller;
 	}
 
-	@Override
-	public void setController(Controller c) {
-		if (c instanceof DrawingController)
-			controller = (DrawingController)c;
-	}
-	
-	public void addHandler(Class<? extends Event> e, EventHandler h){
-		reactor.setHandler(e, h);
-	}
-
-	@Override
-	public void setModel(Model m) {
-		if (m instanceof DrawingModel) model = (DrawingModel)m;
+	/**
+	 * Ustawia model
+	 * 
+	 * @param model
+	 */
+	public void setModel(DrawingModel model) {
+		this.model = model;
 	}
 
-	public void setBrush(int radius, Color color) {
-		brush = new Brush(radius,color);
+	/**
+	 * Wywołane przez model gdy zmienia się pędzel
+	 */
+	public void brushChanged() {
+		this.brush = new Brush(model.getBrush());
 	}
 
 }
