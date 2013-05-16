@@ -79,7 +79,6 @@ public class ChatBox extends JPanel {
 
 	}
 
-	@Override
 	public void handle(Event e) {
 		if (e.getClass().equals(MessageSendEvent.class)) {
 			MessageSendEvent ev = (MessageSendEvent) e;
