@@ -1,5 +1,6 @@
 package pl.uj.edu.tcs.kalambury_maven.view;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,10 +10,14 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import pl.uj.edu.tcs.kalambury_maven.event.Event;
+import pl.uj.edu.tcs.kalambury_maven.event.EventHandler;
 import pl.uj.edu.tcs.kalambury_maven.event.EventNotHandledException;
 import pl.uj.edu.tcs.kalambury_maven.event.LoginAttemptEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.LoginUnsuccessfulEvent;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -25,7 +30,7 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Wiktor Kuropatwa
  * 
  */
-public class LoginWindow extends JFrame {
+public class LoginWindow extends JFrame implements EventHandler {
 
 	private static final long serialVersionUID = -3042477817267367998L;
 	private JPanel contentPane;
@@ -37,11 +42,12 @@ public class LoginWindow extends JFrame {
 	private JTextField loginField;
 	private JButton loginButton;
 	private final View view;
+	private JLabel errorLabel;
 
 	/**
 	 * For testing puropses only
 	 */
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -52,6 +58,10 @@ public class LoginWindow extends JFrame {
 				}
 			}
 		});
+	}*/
+
+	private void displayError(String msg) {
+		errorLabel.setText(msg);
 	}
 
 	/**
@@ -100,19 +110,26 @@ public class LoginWindow extends JFrame {
 		loginButton = new JButton("Login");
 		loginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				try {
-					LoginWindow.this.view.getController().reactTo(
-							new LoginAttemptEvent(serverField.getText(),
-									portField.getText(), loginField.getText()));
-				} catch (EventNotHandledException exc) {
-					exc.printStackTrace();
-					System.exit(1);
-				}
+				if(LoginWindow.this.view.getController() == null)
+					System.out.println("WTF?!");
+				LoginWindow.this.view.getController().reactTo(
+						new LoginAttemptEvent(serverField.getText(), portField
+								.getText(), loginField.getText()));
 			}
 		});
 		contentPane.add(loginButton, "6, 4, 3, 1, fill, fill");
 
+		errorLabel = new JLabel(" ");
+		errorLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		errorLabel.setForeground(Color.RED);
+		contentPane.add(errorLabel, "2, 6, 7, 1");
+
 		pack();
 		setResizable(false);
+	}
+
+	@Override
+	public void handle(Event e) {
+		displayError(((LoginUnsuccessfulEvent) e).getMessage());
 	}
 }
