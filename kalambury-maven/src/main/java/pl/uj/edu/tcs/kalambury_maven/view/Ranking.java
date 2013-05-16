@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
-import javax.swing.CellEditor;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -74,14 +73,14 @@ public class Ranking extends JPanel {
 		JLabel whoIsDrawing = new JLabel("Now drawing: ");
 
 		GridBagConstraints constraints = new GridBagConstraints(0, 0, 1, 1,
-				GridBagConstraints.HORIZONTAL, CENTER_ALIGNMENT,
+				GridBagConstraints.HORIZONTAL, 1,
 				GridBagConstraints.CENTER, UNDEFINED_CONDITION, getInsets(), 0,
 				0);
 
 		add(whoIsDrawing, constraints);
 
 		constraints = new GridBagConstraints(1, 0, 1, 1, GridBagConstraints.HORIZONTAL, 
-		CENTER_ALIGNMENT, GridBagConstraints.CENTER, UNDEFINED_CONDITION,
+		1, GridBagConstraints.CENTER, UNDEFINED_CONDITION,
 				getInsets(), 0, 0);
 		JLabel whoIsDrawingInfo = new JLabel(formattedName);
 
@@ -149,7 +148,7 @@ public class Ranking extends JPanel {
 		table.setVisible(true);
 		table.setBorder(BorderFactory.createLineBorder(Color.darkGray));
 		constraints = new GridBagConstraints(0, 1, 2, 3, CENTER_ALIGNMENT,
-				CENTER_ALIGNMENT, GridBagConstraints.CENTER,
+				4, GridBagConstraints.CENTER,
 				UNDEFINED_CONDITION, getInsets(), 0, 0);
 		add(table, constraints);
 	}
@@ -162,7 +161,7 @@ public class Ranking extends JPanel {
 	 */
 	public Ranking(Map<String, Integer> users) {
 		super();
-		displayRanking(users, "DUPA");
+		displayRanking(users, "?");
 	}
 
 	public static void main(String... args) {
