@@ -2,6 +2,8 @@ package pl.uj.edu.tcs.kalambury_maven.controller;
 
 import pl.uj.edu.tcs.kalambury_maven.event.BrushChangedEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.Event;
+import pl.uj.edu.tcs.kalambury_maven.event.EventHandler;
+import pl.uj.edu.tcs.kalambury_maven.event.EventNotHandledException;
 import pl.uj.edu.tcs.kalambury_maven.event.EventReactor;
 import pl.uj.edu.tcs.kalambury_maven.event.NewPointsDrawnEvent;
 import pl.uj.edu.tcs.kalambury_maven.model.DrawingModel;
@@ -19,15 +21,27 @@ public class DrawingController {
 	private DrawingModel model;
 	private Network network;
 
-	/**
-	 * Aktualizuje rysunek przechowywany w modelu
-	 * 
-	 * @param newPoints
-	 *            - nowo narysowane punkty
-	 */
-	public void actualiseDrawing(Event e) {
-		NewPointsDrawnEvent realEvent = (NewPointsDrawnEvent) e;
-		model.actualiseDrawing(realEvent.getPoints());
+	public DrawingController() {
+		reactor.setHandler(NewPointsDrawnEvent.class, new EventHandler() {
+
+			@Override
+			public void handle(Event e) {
+				NewPointsDrawnEvent realEvent = (NewPointsDrawnEvent) e;
+				model.actualiseDrawing(realEvent.getPoints());
+			}
+
+		});
+
+		reactor.setHandler(BrushChangedEvent.class, new EventHandler() {
+
+			@Override
+			public void handle(Event e) {
+				BrushChangedEvent realEvent = (BrushChangedEvent) e;
+				model.setBrush(realEvent.getBrush().radius,
+						realEvent.getBrush().color);
+			}
+
+		});
 	}
 
 	/**
@@ -37,19 +51,6 @@ public class DrawingController {
 	 */
 	public void sendEventToServer(Event e) {
 		network.sendToServer(e);
-	}
-
-	/**
-	 * Aktualizuje pędzel przechowywany w modelu
-	 * 
-	 * @param radius
-	 *            - promień nowego pędzla
-	 * @param color
-	 *            - kolor nowego pędzla
-	 */
-	public void actualiseBrush(Event e) {
-		BrushChangedEvent realEvent = (BrushChangedEvent) e;
-		model.setBrush(realEvent.getBrush().radius, realEvent.getBrush().color);
 	}
 
 	/**
@@ -68,5 +69,16 @@ public class DrawingController {
 	 */
 	public void setNetwork(Network network) {
 		this.network = network;
+	}
+
+	/**
+	 * Reakcja na wydarzenie z serwera
+	 */
+	public void reactTo(Event e) {
+		try {
+			reactor.handle(e);
+		} catch (EventNotHandledException e1) {
+			e1.printStackTrace();
+		}
 	}
 }

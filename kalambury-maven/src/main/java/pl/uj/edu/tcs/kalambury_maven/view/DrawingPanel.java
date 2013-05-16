@@ -185,11 +185,11 @@ public class DrawingPanel extends JPanel {
 	public void setModel(DrawingModel model) {
 		this.model = model;
 	}
-
+	
 	/**
-	 * Wywołane przez model gdy zmienia się pędzel
+	 * Wywołane przez model gdy następują zmiany
 	 */
-	public void brushChanged() {
+	public void modelChanged() {
 		this.brush = new Brush(model.getBrush());
 	}
 

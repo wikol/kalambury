@@ -74,7 +74,7 @@ public class DrawingModel {
 		synchronized (brush) {
 			brush.radius = radius;
 			brush.color = color;
-			drawingPanel.brushChanged();
+			drawingPanel.modelChanged();
 		}
 	}
 
