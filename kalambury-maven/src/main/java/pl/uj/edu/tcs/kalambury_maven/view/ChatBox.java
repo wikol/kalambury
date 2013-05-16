@@ -33,7 +33,7 @@ import pl.uj.edu.tcs.kalambury_maven.event.WordGuessedEvent;
  * @author Anna Szybalska
  * 
  */
-public class ChatBox extends JPanel implements EventHandler{
+public class ChatBox extends JPanel {
 	private static final long serialVersionUID = -1916333443076354308L;
 
 	private JScrollPane scrollPane;
@@ -78,33 +78,31 @@ public class ChatBox extends JPanel implements EventHandler{
 		add(sendingArea);
 
 	}
-	
+
 	@Override
 	public void handle(Event e) {
 		if (e.getClass().equals(MessageSendEvent.class)) {
 			MessageSendEvent ev = (MessageSendEvent) e;
 			addNewMessage(new ChatMessage(ev.getUser(),
 					ChatMessage.TYPE.SM_WROTE, ev.getMessage()));
-			
+
 		} else if (e.getClass().equals(UsersOnlineEvent.class)) {
 			UsersOnlineEvent ev = (UsersOnlineEvent) e;
 			for (String user : ev.getUsersOnline()) {
-				addNewMessage(new ChatMessage(user,
-						ChatMessage.TYPE.SM_ONLINE));
+				addNewMessage(new ChatMessage(user, ChatMessage.TYPE.SM_ONLINE));
 			}
-			
+
 		} else if (e.getClass().equals(UsersOfflineEvent.class)) {
 			UsersOfflineEvent ev = (UsersOfflineEvent) e;
 			for (String user : ev.getUsersOffline()) {
-				addNewMessage(new ChatMessage(user,
-						ChatMessage.TYPE.SM_OFFLINE));
+				addNewMessage(new ChatMessage(user, ChatMessage.TYPE.SM_OFFLINE));
 			}
-			
+
 		} else if (e.getClass().equals(WordGuessedEvent.class)) {
 			WordGuessedEvent ev = (WordGuessedEvent) e;
 			addNewMessage(new ChatMessage(ev.getUser(),
-						ChatMessage.TYPE.SM_GUESSED));
-			
+					ChatMessage.TYPE.SM_GUESSED));
+
 		} else {
 			// throw new
 			// EventNotHandledException(e.getClass().toString()+" not supported by "+this.getClass().toString());
@@ -241,9 +239,11 @@ public class ChatBox extends JPanel implements EventHandler{
 
 		cb.handle(new UsersOnlineEvent("inny"));
 		cb.handle(new MessageSendEvent("inny", "lubię placki"));
-		cb.handle(new UsersOnlineEvent("zosiek", "titanic", "drzewo", "krzak", "dzik", "biedronka"));
+		cb.handle(new UsersOnlineEvent("zosiek", "titanic", "drzewo", "krzak",
+				"dzik", "biedronka"));
 		cb.handle(new UsersOfflineEvent("titanic"));
-		cb.handle(new UsersOnlineEvent("budzik", "pietruszka", "zielony_groszek"));
+		cb.handle(new UsersOnlineEvent("budzik", "pietruszka",
+				"zielony_groszek"));
 		cb.handle(new UsersOfflineEvent("budzik"));
 		cb.handle(new UsersOnlineEvent("czarna_mamba"));
 		cb.handle(new MessageSendEvent("czarna_mamba", "burak"));
