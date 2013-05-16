@@ -4,6 +4,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import pl.uj.edu.tcs.kalambury_maven.controller.DrawingController;
@@ -14,10 +15,12 @@ import pl.uj.edu.tcs.kalambury_maven.model.Point;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.awt.Dimension;
 
 /**
  * Panel wyświetlający rysunek i pozwalający graczowi przedtawiającemu hasło na
@@ -96,6 +99,8 @@ public class DrawingPanel extends JPanel {
 	 */
 
 	public DrawingPanel() {
+		setMinimumSize(new Dimension(500, 400));
+		setPreferredSize(new Dimension(400, 300));
 		setBackground(Color.WHITE);
 
 		addMouseMotionListener(new MyMouseAdapter());
@@ -120,32 +125,29 @@ public class DrawingPanel extends JPanel {
 
 		}, 0, 100);
 	}
-
-	// public static void main(String... args) {
-	// JFrame frame = new JFrame();
-	// frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	// frame.setSize(250, 200);
-	// DrawingPanel cb = new DrawingPanel(new DrawingModel(),
-	// new DrawingController(), 0);
-	// cb.setDrawingPlayerID(0);
-	// frame.getContentPane().setLayout(new GridLayout(1, 2, 0, 0));
-	// frame.getContentPane().add(cb);
-	// frame.getContentPane().add(new BrushPanel(cb.controller, cb.model, cb));
-	// frame.setVisible(true);
-	// cb.controller.setModel(cb.model);
-	// cb.controller.setView(cb);
-	// cb.model.registerView(cb);
-	// cb.controller.addHandler(DrawingActualisationEvent.class, new
-	// DrawingActualisationEventHandler(cb.model, cb));
-	// cb.reactor.setHandler(DrawingActualisationEvent.class, new
-	// DrawingActualisationEventHandler(cb.model, cb));
-	// cb.model.addHandler(DrawingActualisationEvent.class, new
-	// DrawingActualisationEventHandler(cb.model, cb));
-	// }
-
+	
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		/*
+		 * rysunek przykładowy - zgodnie z żądaniem
+		 */
+		g.setColor(Color.YELLOW);
+		g.fillOval(10, 10, 200, 200);
+		g.setColor(Color.BLACK);
+		g.fillOval(50, 50, 40, 40);
+		g.fillOval(120, 50, 40, 40);
+		g.fillOval(40, 120, 30, 30);
+		g.fillOval(50, 130, 30, 30);
+		g.fillOval(60, 138, 30, 30);
+		g.fillOval(70, 145, 30, 30);
+		g.fillOval(80, 150, 30, 30);
+		g.fillOval(90, 151, 30, 30);
+		g.fillOval(100, 150, 30, 30);
+		g.fillOval(110, 145, 30, 30);
+		g.fillOval(120, 138, 30, 30);
+		g.fillOval(130, 130, 30, 30);
+		g.fillOval(140, 120, 30, 30);
 		if (model == null)
 			return;
 		List<Point> points = model.getDrawing();
@@ -185,12 +187,13 @@ public class DrawingPanel extends JPanel {
 	public void setModel(DrawingModel model) {
 		this.model = model;
 	}
-	
+
 	/**
 	 * Wywołane przez model gdy następują zmiany
 	 */
 	public void modelChanged() {
 		this.brush = new Brush(model.getBrush());
+		this.repaint();
 	}
 
 }
