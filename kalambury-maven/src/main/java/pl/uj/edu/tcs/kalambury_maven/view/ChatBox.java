@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 
@@ -16,7 +18,22 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-public class ChatBox extends JPanel {
+import pl.uj.edu.tcs.kalambury_maven.event.Event;
+import pl.uj.edu.tcs.kalambury_maven.event.EventHandler;
+import pl.uj.edu.tcs.kalambury_maven.event.MessageSendEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.NewMessageWrittenEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.UsersOfflineEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.UsersOnlineEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.WordGuessedEvent;
+
+/**
+ * Box to display chat. It distributes NewMessageWrittenEvent, when someone send
+ * new message.
+ * 
+ * @author Anna Szybalska
+ * 
+ */
+public class ChatBox extends JPanel implements EventHandler{
 	private static final long serialVersionUID = -1916333443076354308L;
 
 	private JScrollPane scrollPane;
@@ -45,11 +62,13 @@ public class ChatBox extends JPanel {
 
 		// textInput
 		userInputField = new JTextField();
+		userInputField.addActionListener(new SendAction());
 		userInputField.setMaximumSize(new Dimension(Integer.MAX_VALUE,
 				userInputField.getPreferredSize().height));
 		userInputField.setAlignmentX(Component.LEFT_ALIGNMENT);
 		// textInput
 		sendButton = new JButton("Send");
+		sendButton.addActionListener(new SendAction());
 		sendButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
 
 		sendingArea.add(userInputField);
@@ -58,6 +77,61 @@ public class ChatBox extends JPanel {
 
 		add(sendingArea);
 
+	}
+	
+	@Override
+	public void handle(Event e) {
+		if (e.getClass().equals(MessageSendEvent.class)) {
+			MessageSendEvent ev = (MessageSendEvent) e;
+			addNewMessage(new ChatMessage(ev.getUser(),
+					ChatMessage.TYPE.SM_WROTE, ev.getMessage()));
+			
+		} else if (e.getClass().equals(UsersOnlineEvent.class)) {
+			UsersOnlineEvent ev = (UsersOnlineEvent) e;
+			for (String user : ev.getUsersOnline()) {
+				addNewMessage(new ChatMessage(user,
+						ChatMessage.TYPE.SM_ONLINE));
+			}
+			
+		} else if (e.getClass().equals(UsersOfflineEvent.class)) {
+			UsersOfflineEvent ev = (UsersOfflineEvent) e;
+			for (String user : ev.getUsersOffline()) {
+				addNewMessage(new ChatMessage(user,
+						ChatMessage.TYPE.SM_OFFLINE));
+			}
+			
+		} else if (e.getClass().equals(WordGuessedEvent.class)) {
+			WordGuessedEvent ev = (WordGuessedEvent) e;
+			addNewMessage(new ChatMessage(ev.getUser(),
+						ChatMessage.TYPE.SM_GUESSED));
+			
+		} else {
+			// throw new
+			// EventNotHandledException(e.getClass().toString()+" not supported by "+this.getClass().toString());
+		}
+	}
+
+	private class SendAction implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			ChatBox.this.sendCurrentMessage();
+		}
+
+	}
+
+	private void sendCurrentMessage() {
+		String message = userInputField.getText().trim();
+		if (!message.equals("")) {
+			// TODO get current user name itd.
+			String currUser = "currUser";
+			NewMessageWrittenEvent event = new NewMessageWrittenEvent(currUser,
+					userInputField.getText());
+			// TODO send event and remove this:
+			this.handle(new MessageSendEvent(currUser, message));
+
+			userInputField.setText("");
+		}
 	}
 
 	private void addNewMessage(ChatMessage chMes) {
@@ -103,15 +177,10 @@ public class ChatBox extends JPanel {
 
 			setFont(getFont().deriveFont(getFont().getStyle() & ~Font.BOLD));
 
-			// setLineWrap(true);
-			// setWrapStyleWord(true);
-			// setEditable(false);
-			// setContentType("text/html");
-
 			setForeground(colors[type.ordinal()]);
 			switch (type) {
 			case SM_WROTE:
-				message = ": " + what[0];
+				message = what[0];
 				break;
 			case SM_ONLINE:
 				message = " is online!";
@@ -126,31 +195,37 @@ public class ChatBox extends JPanel {
 				message = " guessed correctly!";
 				break;
 			}
-			String text = String.format(
-					"<html><div WIDTH=%d><b>%s</b>%s</div></html>",
-					getSize().width-20, whoTyped, message);
-			super.setText(text);
+			updateText();
 
 			addComponentListener(new ComponentListener() {
 				@Override
 				public void componentShown(ComponentEvent arg0) {
 				}
-				
+
 				@Override
 				public void componentResized(ComponentEvent arg0) {
-					String text = String.format(
-							"<html><div WIDTH=%d><b>%s</b> %s</div></html>",
-							getSize().width-20, who, message);
-					ChatMessage.this.setText(text);
+					ChatMessage.this.updateText();
 				}
 
 				@Override
 				public void componentMoved(ComponentEvent arg0) {
 				}
+
 				@Override
 				public void componentHidden(ComponentEvent arg0) {
 				}
 			});
+		}
+
+		private void updateText() {
+			String nick = who;
+			if (type == TYPE.SM_WROTE) {
+				nick += ":";
+			}
+			String text = String.format(
+					"<html><div WIDTH=%d><b>%s</b> %s</div></html>",
+					getSize().width - 20, nick, message);
+			setText(text);
 		}
 
 	}
@@ -164,29 +239,16 @@ public class ChatBox extends JPanel {
 		frame.add(cb);
 		frame.setVisible(true);
 
-		cb.addNewMessage(new ChatMessage("inny", ChatMessage.TYPE.SM_ONLINE));
-		cb.addNewMessage(new ChatMessage("inny", ChatMessage.TYPE.SM_WROTE,
-				"lubię placki"));
-		cb.addNewMessage(new ChatMessage("zosiek", ChatMessage.TYPE.SM_ONLINE));
-		cb.addNewMessage(new ChatMessage("titanic", ChatMessage.TYPE.SM_ONLINE));
-		cb.addNewMessage(new ChatMessage("drzewo", ChatMessage.TYPE.SM_ONLINE));
-		cb.addNewMessage(new ChatMessage("krzak", ChatMessage.TYPE.SM_ONLINE));
-		cb.addNewMessage(new ChatMessage("dzik", ChatMessage.TYPE.SM_ONLINE));
-		cb.addNewMessage(new ChatMessage("biedronka",
-				ChatMessage.TYPE.SM_ONLINE));
-		cb.addNewMessage(new ChatMessage("titanic", ChatMessage.TYPE.SM_OFFLINE));
-		cb.addNewMessage(new ChatMessage("budzik", ChatMessage.TYPE.SM_ONLINE));
-		cb.addNewMessage(new ChatMessage("pietruszka",
-				ChatMessage.TYPE.SM_ONLINE));
-		cb.addNewMessage(new ChatMessage("zielony groszek",
-				ChatMessage.TYPE.SM_ONLINE));
-		cb.addNewMessage(new ChatMessage("budzik", ChatMessage.TYPE.SM_OFFLINE));
-		cb.addNewMessage(new ChatMessage("czarna mamba",
-				ChatMessage.TYPE.SM_ONLINE));
-		cb.addNewMessage(new ChatMessage("czarna mamba",
-				ChatMessage.TYPE.SM_WROTE, "burak"));
-		cb.addNewMessage(new ChatMessage("czarna mamba",
-				ChatMessage.TYPE.SM_GUESSED));
-		cb.addNewMessage(new ChatMessage("szpinak", ChatMessage.TYPE.SM_ONLINE));
+		cb.handle(new UsersOnlineEvent("inny"));
+		cb.handle(new MessageSendEvent("inny", "lubię placki"));
+		cb.handle(new UsersOnlineEvent("zosiek", "titanic", "drzewo", "krzak", "dzik", "biedronka"));
+		cb.handle(new UsersOfflineEvent("titanic"));
+		cb.handle(new UsersOnlineEvent("budzik", "pietruszka", "zielony_groszek"));
+		cb.handle(new UsersOfflineEvent("budzik"));
+		cb.handle(new UsersOnlineEvent("czarna_mamba"));
+		cb.handle(new MessageSendEvent("czarna_mamba", "burak"));
+		cb.handle(new WordGuessedEvent("burak", "czarna_mamba"));
+		cb.handle(new UsersOnlineEvent("szpinak"));
 	}
+
 }
