@@ -18,13 +18,12 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-import pl.uj.edu.tcs.kalambury_maven.event.Event;
-import pl.uj.edu.tcs.kalambury_maven.event.EventHandler;
-import pl.uj.edu.tcs.kalambury_maven.event.MessageSendEvent;
+import pl.uj.edu.tcs.kalambury_maven.controller.AppController;
+import pl.uj.edu.tcs.kalambury_maven.event.EventNotHandledException;
 import pl.uj.edu.tcs.kalambury_maven.event.NewMessageWrittenEvent;
-import pl.uj.edu.tcs.kalambury_maven.event.UsersOfflineEvent;
-import pl.uj.edu.tcs.kalambury_maven.event.UsersOnlineEvent;
-import pl.uj.edu.tcs.kalambury_maven.event.WordGuessedEvent;
+import pl.uj.edu.tcs.kalambury_maven.model.ChatMessage;
+import pl.uj.edu.tcs.kalambury_maven.model.ChatMessage.TYPE;
+import pl.uj.edu.tcs.kalambury_maven.model.ChatMessagesList;
 
 /**
  * Box to display chat. It distributes NewMessageWrittenEvent, when someone send
@@ -41,7 +40,10 @@ public class ChatBox extends JPanel {
 	private JTextField userInputField;
 	private JButton sendButton;
 	private JPanel sendingArea;
+	private ChatMessagesList model;
+	private AppController controller;
 
+	//public methods
 	public ChatBox() {
 		super();
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
@@ -78,36 +80,23 @@ public class ChatBox extends JPanel {
 		add(sendingArea);
 
 	}
-
-	public void handle(Event e) {
-		if (e.getClass().equals(MessageSendEvent.class)) {
-			MessageSendEvent ev = (MessageSendEvent) e;
-			addNewMessage(new ChatMessage(ev.getUser(),
-					ChatMessage.TYPE.SM_WROTE, ev.getMessage()));
-
-		} else if (e.getClass().equals(UsersOnlineEvent.class)) {
-			UsersOnlineEvent ev = (UsersOnlineEvent) e;
-			for (String user : ev.getUsersOnline()) {
-				addNewMessage(new ChatMessage(user, ChatMessage.TYPE.SM_ONLINE));
-			}
-
-		} else if (e.getClass().equals(UsersOfflineEvent.class)) {
-			UsersOfflineEvent ev = (UsersOfflineEvent) e;
-			for (String user : ev.getUsersOffline()) {
-				addNewMessage(new ChatMessage(user, ChatMessage.TYPE.SM_OFFLINE));
-			}
-
-		} else if (e.getClass().equals(WordGuessedEvent.class)) {
-			WordGuessedEvent ev = (WordGuessedEvent) e;
-			addNewMessage(new ChatMessage(ev.getUser(),
-					ChatMessage.TYPE.SM_GUESSED));
-
-		} else {
-			// throw new
-			// EventNotHandledException(e.getClass().toString()+" not supported by "+this.getClass().toString());
+	
+	public void updateChatBox() {
+		for (ChatMessage message : model.getMessagesList()) {
+			addNewMessage(new ChatMessageView(message));
 		}
 	}
+	
+	public void setModel(ChatMessagesList cml) {
+		this.model = cml;
+	}
+	
+	public void setController(AppController contr) {
+		this.controller = contr;
+	}
+			
 
+	//private methods
 	private class SendAction implements ActionListener {
 
 		@Override
@@ -120,18 +109,20 @@ public class ChatBox extends JPanel {
 	private void sendCurrentMessage() {
 		String message = userInputField.getText().trim();
 		if (!message.equals("")) {
-			// TODO get current user name itd.
 			String currUser = "currUser";
 			NewMessageWrittenEvent event = new NewMessageWrittenEvent(currUser,
 					userInputField.getText());
-			// TODO send event and remove this:
-			this.handle(new MessageSendEvent(currUser, message));
+			try {
+				controller.reactTo(event);
+			} catch (EventNotHandledException e) {
+				e.printStackTrace();
+			}
 
 			userInputField.setText("");
 		}
 	}
 
-	private void addNewMessage(ChatMessage chMes) {
+	private void addNewMessage(ChatMessageView chMes) {
 		messagesPanel.add(chMes);
 		validate();
 		repaint();
@@ -139,19 +130,16 @@ public class ChatBox extends JPanel {
 		verticalBar.setValue(verticalBar.getMaximum());
 	}
 
-	private static class ChatMessage extends JLabel {
+	private static class ChatMessageView extends JLabel {
 		private static final long serialVersionUID = -2110608566518190188L;
 
-		public enum TYPE {
-			SM_WROTE, SM_ONLINE, SM_OFFLINE, SM_DRAW, SM_GUESSED
-		}
 
 		static Color colors[] = { Color.BLACK, Color.DARK_GRAY, Color.GRAY,
 				Color.BLUE, Color.RED };
 
-		private String who;
+		private String user;
 		private String message;
-		private TYPE type;
+		private ChatMessage.TYPE type;
 
 		/**
 		 * For SM_WROTE you need to pass content of message as String int
@@ -167,29 +155,29 @@ public class ChatBox extends JPanel {
 		 *            action says that someone wrote new message here will be
 		 *            content of that message
 		 */
-		public ChatMessage(String whoTyped, TYPE type, String... what) {
+		public ChatMessageView(ChatMessage mesg) {
 			super();
-			this.who = whoTyped;
-			this.type = type;
+			this.user = mesg.getUser();
+			this.type = mesg.getType();
 
 			setFont(getFont().deriveFont(getFont().getStyle() & ~Font.BOLD));
 
 			setForeground(colors[type.ordinal()]);
 			switch (type) {
 			case SM_WROTE:
-				message = what[0];
+				message = mesg.getMessage();
 				break;
 			case SM_ONLINE:
-				message = " is online!";
+				message = "is online!";
 				break;
 			case SM_OFFLINE:
-				message = " is offline!";
+				message = "is offline!";
 				break;
 			case SM_DRAW:
-				message = " is drawing!";
+				message = "is drawing!";
 				break;
 			case SM_GUESSED:
-				message = " guessed correctly!";
+				message = "guessed correctly!";
 				break;
 			}
 			updateText();
@@ -201,7 +189,7 @@ public class ChatBox extends JPanel {
 
 				@Override
 				public void componentResized(ComponentEvent arg0) {
-					ChatMessage.this.updateText();
+					ChatMessageView.this.updateText();
 				}
 
 				@Override
@@ -215,7 +203,7 @@ public class ChatBox extends JPanel {
 		}
 
 		private void updateText() {
-			String nick = who;
+			String nick = user;
 			if (type == TYPE.SM_WROTE) {
 				nick += ":";
 			}
@@ -235,19 +223,6 @@ public class ChatBox extends JPanel {
 		ChatBox cb = new ChatBox();
 		frame.add(cb);
 		frame.setVisible(true);
-
-		cb.handle(new UsersOnlineEvent("inny"));
-		cb.handle(new MessageSendEvent("inny", "lubię placki"));
-		cb.handle(new UsersOnlineEvent("zosiek", "titanic", "drzewo", "krzak",
-				"dzik", "biedronka"));
-		cb.handle(new UsersOfflineEvent("titanic"));
-		cb.handle(new UsersOnlineEvent("budzik", "pietruszka",
-				"zielony_groszek"));
-		cb.handle(new UsersOfflineEvent("budzik"));
-		cb.handle(new UsersOnlineEvent("czarna_mamba"));
-		cb.handle(new MessageSendEvent("czarna_mamba", "burak"));
-		cb.handle(new WordGuessedEvent("burak", "czarna_mamba"));
-		cb.handle(new UsersOnlineEvent("szpinak"));
 	}
 
 }
