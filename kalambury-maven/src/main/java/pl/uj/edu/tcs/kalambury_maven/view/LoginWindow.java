@@ -41,24 +41,18 @@ public class LoginWindow extends JFrame implements EventHandler {
 	private JTextField portField;
 	private JTextField loginField;
 	private JButton loginButton;
-	private final View view;
+	private final AppView view;
 	private JLabel errorLabel;
 
 	/**
 	 * For testing puropses only
 	 */
-	/*public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					LoginWindow frame = new LoginWindow(null);
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}*/
+	/*
+	 * public static void main(String[] args) { EventQueue.invokeLater(new
+	 * Runnable() { public void run() { try { LoginWindow frame = new
+	 * LoginWindow(null); frame.setVisible(true); } catch (Exception e) {
+	 * e.printStackTrace(); } } }); }
+	 */
 
 	private void displayError(String msg) {
 		errorLabel.setText(msg);
@@ -67,7 +61,7 @@ public class LoginWindow extends JFrame implements EventHandler {
 	/**
 	 * Create the frame.
 	 */
-	public LoginWindow(View view) {
+	public LoginWindow(AppView view) {
 		super("Kalambury - login");
 		this.view = view;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -110,11 +104,17 @@ public class LoginWindow extends JFrame implements EventHandler {
 		loginButton = new JButton("Login");
 		loginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(LoginWindow.this.view.getController() == null)
+				if (LoginWindow.this.view.getController() == null)
 					System.out.println("WTF?!");
-				LoginWindow.this.view.getController().reactTo(
-						new LoginAttemptEvent(serverField.getText(), portField
-								.getText(), loginField.getText()));
+				new Thread() {
+					@Override
+					public void run() {
+						LoginWindow.this.view.getController().reactTo(
+								new LoginAttemptEvent(serverField.getText(),
+										portField.getText(), loginField
+												.getText()));
+					}
+				}.start();
 			}
 		});
 		contentPane.add(loginButton, "6, 4, 3, 1, fill, fill");

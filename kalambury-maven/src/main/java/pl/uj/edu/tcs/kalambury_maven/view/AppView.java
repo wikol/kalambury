@@ -3,6 +3,7 @@ package pl.uj.edu.tcs.kalambury_maven.view;
 import java.awt.EventQueue;
 import java.lang.reflect.InvocationTargetException;
 
+import pl.uj.edu.tcs.kalambury_maven.controller.AppController;
 import pl.uj.edu.tcs.kalambury_maven.controller.Controller;
 import pl.uj.edu.tcs.kalambury_maven.event.DisplayLoginEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.DisplayMainWindowEvent;
@@ -12,31 +13,35 @@ import pl.uj.edu.tcs.kalambury_maven.event.EventNotHandledException;
 import pl.uj.edu.tcs.kalambury_maven.event.EventReactor;
 import pl.uj.edu.tcs.kalambury_maven.event.LoginUnsuccessfulEvent;
 import pl.uj.edu.tcs.kalambury_maven.model.Model;
+import pl.uj.edu.tcs.kalambury_maven.model.SimpleModel;
 
-public class AppView implements View {
+public class AppView {
 	private EventReactor reactor = new EventReactor();
-	private Controller controller;
-	private Model model;
+	private AppController controller;
+	private SimpleModel model;
 	private LoginWindow loginWindow;
+	private MainWindow mainWindow;
+
 	public AppView() {
 		reactor.setHandler(DisplayLoginEvent.class, new EventHandler() {
 
 			@Override
 			public void handle(Event e) {
 				AppView.this.displayLogin();
-				
+
 			}
-			
+
 		});
 		reactor.setHandler(DisplayMainWindowEvent.class, new EventHandler() {
-			
+
 			@Override
 			public void handle(Event e) {
 				AppView.this.displayMain();
 			}
 		});
 	}
-	private void displayLogin() {
+
+	public void displayLogin() {
 		try {
 			EventQueue.invokeAndWait(new Runnable() {
 				public void run() {
@@ -50,32 +55,53 @@ public class AppView implements View {
 		}
 		reactor.setHandler(LoginUnsuccessfulEvent.class, loginWindow);
 	}
-	private void displayMain() {
-		loginWindow.dispose();
+
+	public void displayMain() {
+		try {
+			EventQueue.invokeAndWait(new Runnable() {
+				public void run() {
+					loginWindow.dispose();
+					mainWindow = new MainWindow();
+					mainWindow.setupChatBox(model.getChatMessagesList(),
+							controller);
+					mainWindow.setupDrawingPanel(
+							controller.getDrawingController(),
+							model.getDrawingModel());
+					model.registerChatBox(AppView.this);
+					model.registerRanking(AppView.this);
+					model.registerDrawingPanel(AppView.this);
+					mainWindow.setVisible(true);
+				}
+			});
+		} catch (InvocationTargetException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.getCause().printStackTrace();
+		}
+		// for testing purposes only
+		controller.testMainWindow();
 	}
-	@Override
+
+	public MainWindow getMainWindow() {
+		return mainWindow;
+	}
+
 	public void reactTo(Event e) throws EventNotHandledException {
 		reactor.handle(e);
 	}
 
-	@Override
-	public void setController(Controller c) {
+	public void setController(AppController c) {
 		this.controller = c;
 	}
 
-	@Override
-	public void setModel(Model m) {
+	public void setModel(SimpleModel m) {
 		this.model = m;
-		m.registerView(this);
 	}
 
-	@Override
-	public Controller getController() {
+	public AppController getController() {
 		return controller;
 	}
 
-	@Override
-	public Model getModel() {
+	public SimpleModel getModel() {
 		return model;
 	}
 

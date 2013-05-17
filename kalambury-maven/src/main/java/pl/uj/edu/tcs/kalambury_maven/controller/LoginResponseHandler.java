@@ -8,9 +8,9 @@ import pl.uj.edu.tcs.kalambury_maven.event.LoginUnsuccessfulEvent;
 
 public class LoginResponseHandler implements EventHandler {
 
-	Controller controller;
+	AppController controller;
 
-	public LoginResponseHandler(Controller controller) {
+	public LoginResponseHandler(AppController controller) {
 		this.controller = controller;
 	}
 
@@ -21,7 +21,8 @@ public class LoginResponseHandler implements EventHandler {
 			controller.getView().reactTo(
 					new LoginUnsuccessfulEvent(
 							"Nickname already taken. Try a different one."));
-		controller.getView().reactTo(new DisplayMainWindowEvent());
+		else
+			controller.getView().displayMain();
 	}
 
 }

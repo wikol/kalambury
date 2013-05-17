@@ -3,6 +3,8 @@ package pl.uj.edu.tcs.kalambury_maven.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import pl.uj.edu.tcs.kalambury_maven.view.Ranking;
+
 /**
  * Klasa odpowiadająca za przechowywanie informacji o użytkownikach online
  * - ich nazwach i liczbie uzyskanych punktów
@@ -11,6 +13,8 @@ import java.util.Map;
  */
 
 public class UserRanking {
+	Ranking myView;
+	String nowDrawing = "currUser";
 	private static Map<String, Integer> users = new HashMap<String, Integer>();
 
 	/**
@@ -24,13 +28,16 @@ public class UserRanking {
 	 * @return false
 	 * 
 	 */
+	public void setView(Ranking myView) {
+		this.myView = myView;
+	}
 	public boolean addNewUser(String name) {
 		if((name.trim().length() > 0 && name.length() <= 20) && !users.containsKey(name)) {
 			users.put(name, 0);
+			myView.displayRanking(users,nowDrawing);
 			return true;
 		}
 		return false;
-		
 	}
 	
 	/**
@@ -43,6 +50,8 @@ public class UserRanking {
 	public void addPointsToUser(String name, int points) {
 		points += users.get(name);
 		users.put(name, points);
+		myView.displayRanking(users,nowDrawing);
+
 	}
 
 	/**
@@ -52,5 +61,6 @@ public class UserRanking {
 	 */
 	public void deleteUser(String name) {
 		users.remove(name);
+		myView.displayRanking(users,nowDrawing);
 	}
 }

@@ -37,6 +37,7 @@ public class DrawingModel {
 	public void actualiseDrawing(List<Point> newPoints) {
 		synchronized (drawing) {
 			drawing.addAll(newPoints);
+			drawingPanel.modelChanged();
 		}
 	}
 

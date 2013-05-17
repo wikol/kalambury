@@ -1,24 +1,44 @@
 package pl.uj.edu.tcs.kalambury_maven.controller;
 
-import pl.uj.edu.tcs.kalambury_maven.event.DisplayLoginEvent;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.swing.RepaintManager;
+
+import org.jdesktop.swinghelper.debug.CheckThreadViolationRepaintManager;
+
 import pl.uj.edu.tcs.kalambury_maven.event.Event;
+import pl.uj.edu.tcs.kalambury_maven.event.EventHandler;
 import pl.uj.edu.tcs.kalambury_maven.event.EventNotHandledException;
 import pl.uj.edu.tcs.kalambury_maven.event.EventReactor;
 import pl.uj.edu.tcs.kalambury_maven.event.LoginAttemptEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.LoginResponseEvent;
-import pl.uj.edu.tcs.kalambury_maven.model.Model;
+import pl.uj.edu.tcs.kalambury_maven.event.MessageSendEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.NewMessageWrittenEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.UsersOfflineEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.UsersOnlineEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.WordGuessedEvent;
 import pl.uj.edu.tcs.kalambury_maven.model.SimpleModel;
 import pl.uj.edu.tcs.kalambury_maven.network.Network;
 import pl.uj.edu.tcs.kalambury_maven.view.AppView;
-import pl.uj.edu.tcs.kalambury_maven.view.View;
 
-public class AppController implements Controller {
+public class AppController {
 	private EventReactor reactor = new EventReactor();
 	private Network network;
-	private View view;
-	private Model model;
+	private AppView view;
+	private SimpleModel model;
+	private DrawingController drawingController;
 
 	public AppController() {
+		reactor.setHandler(NewMessageWrittenEvent.class, new EventHandler() {
+
+			@Override
+			public void handle(Event e) {
+				NewMessageWrittenEvent ev = (NewMessageWrittenEvent) e;
+				model.sendFakeChatMessage(new MessageSendEvent(ev.getUser(), ev
+						.getMessage()));
+			}
+		});
 		setView(new AppView());
 		setModel(new SimpleModel());
 		view.setModel(model);
@@ -26,50 +46,71 @@ public class AppController implements Controller {
 				this));
 		reactor.setHandler(LoginResponseEvent.class, new LoginResponseHandler(
 				this));
-		view.reactTo(new DisplayLoginEvent());
+		reactor.setHandler(UsersOnlineEvent.class, new UsersOnlineHandler(this));
+		reactor.setHandler(UsersOfflineEvent.class, new UsersOfflineHandler(
+				this));
+		reactor.setHandler(WordGuessedEvent.class, new WordGuessedHandler(this));
+		view.displayLogin();
+		drawingController = new DrawingController();
+		drawingController.setModel(model.getDrawingModel());
 	}
 
-	@Override
+	public DrawingController getDrawingController() {
+		return drawingController;
+	}
+
 	public void reactTo(Event e) throws EventNotHandledException {
 		reactor.handle(e);
 	}
 
-	@Override
-	public void setView(View v) {
+	public void setView(AppView v) {
 		v.setController(this);
 		this.view = v;
 	}
 
-	@Override
-	public void setModel(Model m) {
+	public void setModel(SimpleModel m) {
 		this.model = m;
 		m.setController(this);
 	}
 
-	@Override
 	public void setNetwork(Network network) {
 		this.network = network;
 	}
 
-	@Override
 	public Network getNetwork() {
 		return network;
 	}
 
-	@Override
-	public View getView() {
+	public AppView getView() {
 		return view;
 	}
 
-	@Override
-	public Model getModel() {
+	public SimpleModel getModel() {
 		return model;
+	}
+
+	/**
+	 * For testing purposes only
+	 */
+	public void testMainWindow() {
+		List<String> names = Arrays.asList(new String[] { "Michał Glapa",
+				"Karol Kaszuba", "Kamil Rychlewicz", "Piotr Pakosz" });
+		reactTo(new UsersOnlineEvent(names));
+		List<String> pakosz = Arrays.asList(new String[] { "Piotr Pakosz" });
+		for(int i = 0;i<35;i++)
+			reactTo(new WordGuessedEvent("Laser", "Karol Kaszuba"));
+		for(int i = 0;i<28;i++)
+			reactTo(new WordGuessedEvent("Laser", "Michał Glapa"));
+		for(int i = 0;i<37;i++)
+			reactTo(new WordGuessedEvent("Laser", "Kamil Rychlewicz"));
+		reactTo(new UsersOfflineEvent(pakosz));
 	}
 
 	/**
 	 * For test purposes only
 	 */
 	public static void main(String[] args) {
+		//RepaintManager.setCurrentManager(new CheckThreadViolationRepaintManager());
 		AppController program = new AppController();
 	}
 }

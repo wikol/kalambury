@@ -50,7 +50,7 @@ public class DrawingController {
 	 * @param e
 	 */
 	public void sendEventToServer(Event e) {
-		network.sendToServer(e);
+		this.reactTo(e);
 	}
 
 	/**

@@ -24,8 +24,8 @@ import pl.uj.edu.tcs.kalambury_maven.model.Brush;
 public class BrushPanel extends JPanel {
 
 	private DrawingController controller;
-	private int radius;
-	private Color color;
+	private int radius = Brush.MEDIUM;
+	private Color color = Color.BLACK;
 
 	/**
 	 * Konstuktor
