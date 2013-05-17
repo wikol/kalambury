@@ -34,6 +34,10 @@ public class SimpleModel {
 	public void reactTo(Event e) throws EventNotHandledException {
 		reactor.handle(e);
 	}
+	
+	public void sendFakeChatMessage(MessageSendEvent ev) {
+		chatMessagesList.reactTo(ev);
+	}
 
 	public void sendFakeChatMessage(MessageSendEvent ev) {
 		chatMessagesList.reactTo(ev);

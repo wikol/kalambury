@@ -1,6 +1,5 @@
 package pl.uj.edu.tcs.kalambury_maven.model;
 
-
 /**
  * Class which represents one chat message.
  * 
