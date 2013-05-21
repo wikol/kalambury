@@ -39,10 +39,6 @@ public class SimpleModel {
 		chatMessagesList.reactTo(ev);
 	}
 
-	public void sendFakeChatMessage(MessageSendEvent ev) {
-		chatMessagesList.reactTo(ev);
-	}
-
 	public void setController(AppController c) {
 		this.controller = c;
 	}
