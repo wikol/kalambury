@@ -11,7 +11,6 @@ import java.util.EventObject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.BorderFactory;
@@ -32,8 +31,17 @@ public class Ranking extends JPanel {
 	private static final long serialVersionUID = 2317946112772863729L;
 	private JTable table;
 	private JLabel whoIsDrawing, whoIsDrawingInfo;
-	private GridBagConstraints tableConstraints, whoIsDrawingConstraints,
-			whoIsDrawingInfoConstraints;
+	private GridBagConstraints tableConstraints = new GridBagConstraints(0, 1,
+			2, 3, CENTER_ALIGNMENT, 4, GridBagConstraints.CENTER,
+			UNDEFINED_CONDITION, getInsets(), 0, 0),
+			whoIsDrawingConstraints = new GridBagConstraints(0, 0, 1, 1,
+					GridBagConstraints.HORIZONTAL, 1,
+					GridBagConstraints.CENTER, UNDEFINED_CONDITION,
+					getInsets(), 0, 0),
+			whoIsDrawingInfoConstraints = new GridBagConstraints(1, 0, 1, 1,
+					GridBagConstraints.HORIZONTAL, 1,
+					GridBagConstraints.CENTER, UNDEFINED_CONDITION,
+					getInsets(), 0, 0);
 
 	/**
 	 * Pomocnicza funkcja przerabiająca mapę na posotrowaną listę
@@ -62,8 +70,10 @@ public class Ranking extends JPanel {
 
 	/**
 	 * Tworzenie tabelki
+	 * 
 	 * @param list
-	 * 				- lista, z której tworzę tabelkę posortowaną po liczbie punktów
+	 *            - lista, z której tworzę tabelkę posortowaną po liczbie
+	 *            punktów
 	 * @return tabelka posortowana po liczbie punktów
 	 */
 	private JTable createTable(ArrayList<Entry<String, Integer>> list) {
@@ -126,23 +136,23 @@ public class Ranking extends JPanel {
 		newTable.setBackground(new Color(0xCCCCFF));
 		newTable.setVisible(true);
 		newTable.setBorder(BorderFactory.createLineBorder(Color.darkGray));
-		
+
 		return newTable;
 	}
 
 	/**
 	 * Wyświetlanie, kto aktualnie rysuje
+	 * 
 	 * @param nowDrawingName
-	 * 					- nazwa aktualnie rysującego użytkownika
-	 * @return
-	 * 			- miejsce z informacją kto aktualnie rysuje
+	 *            - nazwa aktualnie rysującego użytkownika
+	 * @return - miejsce z informacją kto aktualnie rysuje
 	 */
 	private JLabel setWhoIsDrawingInfo(String nowDrawingName) {
 		String formattedName = String.format("<html><a><b>%s</b></a></html>",
 				nowDrawingName);
 		return new JLabel(formattedName);
 	}
-	
+
 	/**
 	 * Wyświetla ładnie posortowany ranking
 	 * 
@@ -151,12 +161,11 @@ public class Ranking extends JPanel {
 	 * @param nowDrawingName
 	 *            - użytkownik, który teraz rysuje
 	 */
-	public void displayRanking(Map<String, Integer> users,
-			String nowDrawingName) {
+	public void displayRanking(Map<String, Integer> users, String nowDrawingName) {
 		ArrayList<Entry<String, Integer>> list = sortedList(users);
 
-		if(this.getComponents().length != 0) {
-			for(Component c : this.getComponents())
+		if (this.getComponents().length != 0) {
+			for (Component c : this.getComponents())
 				c.setVisible(false);
 			this.removeAll();
 		}
@@ -165,6 +174,7 @@ public class Ranking extends JPanel {
 		table = createTable(list);
 		whoIsDrawing = new JLabel("Now drawing: ");
 		whoIsDrawingInfo = setWhoIsDrawingInfo(nowDrawingName);
+
 		tableConstraints = new GridBagConstraints(0, 1, 2, 3, CENTER_ALIGNMENT,
 				4, GridBagConstraints.CENTER, UNDEFINED_CONDITION, getInsets(),
 				0, 0);
