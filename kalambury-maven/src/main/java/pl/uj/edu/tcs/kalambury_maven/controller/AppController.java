@@ -3,10 +3,6 @@ package pl.uj.edu.tcs.kalambury_maven.controller;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.RepaintManager;
-
-import org.jdesktop.swinghelper.debug.CheckThreadViolationRepaintManager;
-
 import pl.uj.edu.tcs.kalambury_maven.event.Event;
 import pl.uj.edu.tcs.kalambury_maven.event.EventHandler;
 import pl.uj.edu.tcs.kalambury_maven.event.EventNotHandledException;
