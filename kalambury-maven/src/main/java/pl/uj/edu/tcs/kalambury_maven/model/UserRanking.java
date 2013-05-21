@@ -63,4 +63,12 @@ public class UserRanking {
 		users.remove(name);
 		myView.displayRanking(users,nowDrawing);
 	}
+	/**
+	 * Sprawdzanie, czy dany użytkownik jest zalogowany
+	 * @param name
+	 * @return
+	 */
+	public boolean isUserOnline(String name) {
+		return users.containsKey(name);
+	}
 }
