@@ -93,11 +93,11 @@ public class AppController {
 				"Karol Kaszuba", "Kamil Rychlewicz", "Piotr Pakosz" });
 		reactTo(new UsersOnlineEvent(names));
 		List<String> pakosz = Arrays.asList(new String[] { "Piotr Pakosz" });
-		for(int i = 0;i<35;i++)
+		for(int i = 0;i<350;i++)
 			reactTo(new WordGuessedEvent("Laser", "Karol Kaszuba"));
-		for(int i = 0;i<28;i++)
+		for(int i = 0;i<280;i++)
 			reactTo(new WordGuessedEvent("Laser", "Michał Glapa"));
-		for(int i = 0;i<37;i++)
+		for(int i = 0;i<370;i++)
 			reactTo(new WordGuessedEvent("Laser", "Kamil Rychlewicz"));
 		reactTo(new UsersOfflineEvent(pakosz));
 	}
