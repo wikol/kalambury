@@ -13,6 +13,7 @@ public class SimpleModel {
 	private ChatMessagesList chatMessagesList;
 	private UserRanking userRanking;
 	private DrawingModel drawingModel;
+	private String currentWord;
 
 	public SimpleModel() {
 		chatMessagesList = new ChatMessagesList();
@@ -54,5 +55,12 @@ public class SimpleModel {
 	public void registerDrawingPanel(AppView v) {
 		drawingModel.setDrawingPanel(v.getMainWindow().getDrawingPanel());
 	}
-
+	
+	public void setCurrentWord(String currWord) {
+		this.currentWord = currWord;
+	}
+	
+	public String getCurrentWord() {
+		return currentWord;
+	}
 }

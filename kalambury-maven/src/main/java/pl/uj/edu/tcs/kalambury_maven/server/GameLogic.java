@@ -1,9 +1,12 @@
 package pl.uj.edu.tcs.kalambury_maven.server;
 
 import java.util.Queue;
+import java.util.concurrent.BrokenBarrierException;
 
 import pl.uj.edu.tcs.kalambury_maven.event.Event;
 import pl.uj.edu.tcs.kalambury_maven.event.NewGameEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.MessageSendEvent;
+>>>>>>> Początek obsługi zgadnięcia słowa
 import pl.uj.edu.tcs.kalambury_maven.event.NewMessageWrittenEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.NewPointsDrawnEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOfflineEvent;
@@ -53,6 +56,7 @@ public class GameLogic {
 		 * pojawienia się tych obiektów wywołuje nasz event??? - macie reagować
 		 * wysłaniem mu wszystkich danych potrzebnych do utworzenia modelu
 		 * aktualnej rozgrywki - samym tworzeniem zajmuje się część klienta
+		 * pojawienia się tych obiektów wywołuje nasz event???
 		 * 
 		 * To jest pytanie :P na które jak umiesz, to proszę odpowiedz ;) Tak
 		 * jak i na inne pytania.
@@ -63,6 +67,8 @@ public class GameLogic {
 		}
 		if (event instanceof UsersOnlineEvent) { // to be changed into
 													// UserOnlineEvent !!!
+			drawingQueue.add(username);
+			server.broadcastEvent(event);
 			// TODO
 			// dodanie do kolejki rysujących
 			// update rankingu głównego - dodanie tego użytkownika z 0 pkt
@@ -81,6 +87,8 @@ public class GameLogic {
 		}
 		if (event instanceof UsersOfflineEvent) { // to be changed into
 													// UserOfflineEvent !!!
+			drawingQueue.remove(username);
+			server.broadcastEvent(event);
 			// TODO
 			// usunięcie z kolejki rysujących
 			// update rankingu głównego - usunięcie tego użytkownika z rankingu
@@ -99,6 +107,7 @@ public class GameLogic {
 			// rzucenie wyjątku, jeśli takiego użytkownika nie było? - j.w.
 		}
 		if (event instanceof NewMessageWrittenEvent) {
+<<<<<<< HEAD
 			NewMessageWrittenEvent castedEvent = (NewMessageWrittenEvent) event;
 			/*
 			 * nie przyjmujemy wiadomości od użytkownika, który rysuje - jeśli
