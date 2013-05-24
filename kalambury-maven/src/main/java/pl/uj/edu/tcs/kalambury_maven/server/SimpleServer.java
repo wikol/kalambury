@@ -70,6 +70,7 @@ public class SimpleServer implements Server {
 		}
 	}
 	
+	
 	public void close() {
 		listenerThread.interrupt();
 		threads.shutdownNow();
