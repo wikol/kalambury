@@ -12,6 +12,10 @@ import pl.uj.edu.tcs.kalambury_maven.model.Point;
  */
 public class NewPointsDrawnEvent implements Event {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3908765754348597724L;
 	private List<Point> newPoints;
 
 	public NewPointsDrawnEvent(List<Point> newPoints){

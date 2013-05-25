@@ -79,4 +79,11 @@ public class DrawingModel {
 		}
 	}
 
+	public void clearScreen() {
+		synchronized (drawing) {
+			drawing.clear();
+			drawingPanel.modelChanged();
+		}
+	}
+
 }
