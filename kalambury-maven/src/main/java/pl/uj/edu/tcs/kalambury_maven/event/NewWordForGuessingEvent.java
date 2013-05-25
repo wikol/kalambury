@@ -6,7 +6,7 @@ package pl.uj.edu.tcs.kalambury_maven.event;
  * @author Anna Szybalska
  * 
  */
-public class NewWordSetedEvent implements Event {
+public class NewWordForGuessingEvent implements Event {
 	private static final long serialVersionUID = 817678107192673008L;
 
 	private String word;
@@ -17,7 +17,7 @@ public class NewWordSetedEvent implements Event {
 	 * 
 	 * @param word
 	 */
-	public NewWordSetedEvent(String word) {
+	public NewWordForGuessingEvent(String word) {
 		this.word = word;
 	}
 

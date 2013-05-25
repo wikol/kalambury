@@ -2,6 +2,7 @@ package pl.uj.edu.tcs.kalambury_maven.view;
 
 import java.awt.ComponentOrientation;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -15,11 +16,25 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class WordInputWindow extends JFrame {
+import pl.uj.edu.tcs.kalambury_maven.controller.AppController;
+import pl.uj.edu.tcs.kalambury_maven.event.Event;
+import pl.uj.edu.tcs.kalambury_maven.event.EventHandler;
+import pl.uj.edu.tcs.kalambury_maven.event.NewWordForGuessingEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.StartDrawingEvent;
+
+public class WordInputWindow extends JFrame implements EventHandler{
+	private AppController controller;
 	private JPanel contentPane;
 	private JLabel lblEnterWord;
+	private JLabel lblSending;
+	private JLabel lblSendingFailed;
 	private JTextField txtInputWord;
 	private JButton btnOk;
+	
+	private boolean sendingInProgress;
+	
+	private String strSending = "Sending...";
+	private String strSendingFailed = "Sending failed, please try once again";
 
 	/**
 	 * Launch the application.
@@ -41,9 +56,14 @@ public class WordInputWindow extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			if (sendingInProgress) return;
 			String word = WordInputWindow.this.txtInputWord.getText().trim();
 			if (word.equals("")) return;
-			
+			NewWordForGuessingEvent event = new NewWordForGuessingEvent(word);
+			lblSending.setText(strSending);
+			lblSending.setVisible(true);
+			sendingInProgress = true;
+			controller.reactTo(event);
 		}
 		
 	}
@@ -79,18 +99,51 @@ public class WordInputWindow extends JFrame {
 		gbc_textField.fill = GridBagConstraints.HORIZONTAL;
 		gbc_textField.gridx = 0;
 		gbc_textField.gridy = 2;
-		contentPane.add(txtInputWord, gbc_textField);
 		txtInputWord.setColumns(10);
+		txtInputWord.addActionListener(new WordToSendListener());
+		contentPane.add(txtInputWord, gbc_textField);
 		
 		btnOk = new JButton("OK");
 		GridBagConstraints gbc_btnOk = new GridBagConstraints();
 		gbc_btnOk.anchor = GridBagConstraints.EAST;
-		gbc_btnOk.gridx = 2;
+		gbc_btnOk.gridx = 0;
 		gbc_btnOk.gridy = 3;
+		btnOk.addActionListener(new WordToSendListener());
 		contentPane.add(btnOk, gbc_btnOk);
+		
+		lblSending = new JLabel(strSending);
+		GridBagConstraints gbc_lblSending = new GridBagConstraints();
+		gbc_lblSending.gridx = 2;
+		gbc_lblSending.gridy = 3;
+		Font font = lblSending.getFont();
+		font = font.deriveFont(font.getStyle() & ~Font.BOLD);
+		Float fontSize = font.getSize2D();
+		fontSize -= 2.0f;
+		font = font.deriveFont(fontSize);
+		lblSending.setFont(font);
+		lblSending.setVisible(false);
+		contentPane.add(lblSending, gbc_lblSending);
 		
 		pack();
 		setResizable(false);
+		
+		sendingInProgress = false;
 	}
 
+	public void setController(AppController contr) {
+		this.controller = contr;
+	}
+
+	@Override
+	public void handle(Event e) {
+		sendingInProgress = false;
+		if (e instanceof StartDrawingEvent) {
+			dispose();
+		} 
+		/*
+		 * if (serwer timeout) {
+		 * 	lblSending.setText(strSendingFailed);
+		 * }
+		 */
+	}
 }

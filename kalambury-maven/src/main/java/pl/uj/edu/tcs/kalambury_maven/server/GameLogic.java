@@ -7,7 +7,7 @@ import pl.uj.edu.tcs.kalambury_maven.event.NewGameEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.NewMessageWrittenEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.NewPointsDrawnEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.NewWordIsNeededEvent;
-import pl.uj.edu.tcs.kalambury_maven.event.NewWordSetedEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.NewWordForGuessingEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOfflineEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOnlineEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.WordGuessedEvent;
@@ -69,12 +69,12 @@ public class GameLogic {
 			startNextRound();
 		}
 
-		if (event instanceof NewWordSetedEvent) {
+		if (event instanceof NewWordForGuessingEvent) {
 			// jeśli hasło wysłał nam nie ten kto teraz ma rysować to ignorujemy
 			if (!username.equals(drawingQueue.peek()))
 				return;
 
-			nowBeingDrawnWord = ((NewWordSetedEvent) event).getWord();
+			nowBeingDrawnWord = ((NewWordForGuessingEvent) event).getWord();
 			someoneIsDrawing = true;
 		}
 
