@@ -89,7 +89,7 @@ public class AppController {
 	 * For testing purposes only
 	 */
 	public void testMainWindow() {
-		List<String> names = Arrays.asList(new String[] { "Michał Glapa",
+		/*List<String> names = Arrays.asList(new String[] { "Michał Glapa",
 				"Karol Kaszuba", "Kamil Rychlewicz", "Piotr Pakosz" });
 		reactTo(new UsersOnlineEvent(names));
 		List<String> pakosz = Arrays.asList(new String[] { "Piotr Pakosz" });
@@ -99,7 +99,7 @@ public class AppController {
 			reactTo(new WordGuessedEvent("Laser", "Michał Glapa"));
 		for(int i = 0;i<370;i++)
 			reactTo(new WordGuessedEvent("Laser", "Kamil Rychlewicz"));
-		reactTo(new UsersOfflineEvent(pakosz));
+		reactTo(new UsersOfflineEvent(pakosz));*/
 	}
 
 	/**

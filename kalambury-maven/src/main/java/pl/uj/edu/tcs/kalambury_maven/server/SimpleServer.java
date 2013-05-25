@@ -3,12 +3,17 @@ package pl.uj.edu.tcs.kalambury_maven.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import pl.uj.edu.tcs.kalambury_maven.event.Event;
+import pl.uj.edu.tcs.kalambury_maven.event.UsersOfflineEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.UsersOnlineEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.WordGuessedEvent;
 
 public class SimpleServer implements Server {
 
@@ -40,6 +45,7 @@ public class SimpleServer implements Server {
 		System.out.println("Still at server side...");
 		nicks.put(nickname, who);
 		who.setLoggedIn(true);
+		who.setMyNick(nickname);
 		return true;
 	}
 
@@ -50,6 +56,11 @@ public class SimpleServer implements Server {
 	void nextConnection(Socket clientSocket) {
 		System.out.println("Next connection actually sparked!");
 		threads.submit(new ConnectionHandler(clientSocket, this));
+	}
+	
+	void logout(String nickname) {
+		nicks.remove(nickname);
+		logic.reactTo(nickname, new UsersOfflineEvent(nickname));
 	}
 
 	public void listen() {
@@ -76,18 +87,35 @@ public class SimpleServer implements Server {
 			}
 		}
 	}
-	
-	
+
 	public void close() {
 		listenerThread.interrupt();
 		threads.shutdownNow();
 	}
-	
+
+	/**
+	 * For testing purposes only
+	 */
+	private void testConnection() {
+		List<String> names = Arrays.asList(new String[] { "Michał Glapa",
+				"Karol Kaszuba", "Kamil Rychlewicz", "Piotr Pakosz" });
+		broadcastEvent(new UsersOnlineEvent(names));
+		List<String> pakosz = Arrays.asList(new String[] { "Piotr Pakosz" });
+		for (int i = 0; i < 350; i++)
+			broadcastEvent(new WordGuessedEvent("Laser", "Karol Kaszuba"));
+		for (int i = 0; i < 280; i++)
+			broadcastEvent(new WordGuessedEvent("Laser", "Michał Glapa"));
+		for (int i = 0; i < 370; i++)
+			broadcastEvent(new WordGuessedEvent("Laser", "Kamil Rychlewicz"));
+		broadcastEvent(new UsersOfflineEvent(pakosz));
+
+	}
+
 	public static void main(String[] args) {
 		SimpleServer serv = null;
 		try {
 			serv = new SimpleServer(8888);
-		} catch(IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 			return;
 		}
@@ -98,7 +126,13 @@ public class SimpleServer implements Server {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		serv.testConnection();
+		try {
+			System.in.read();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		serv.close();
 	}
-
 }

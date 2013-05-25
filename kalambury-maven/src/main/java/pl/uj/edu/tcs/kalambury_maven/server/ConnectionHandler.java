@@ -1,5 +1,6 @@
 package pl.uj.edu.tcs.kalambury_maven.server;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -8,6 +9,7 @@ import java.net.Socket;
 import pl.uj.edu.tcs.kalambury_maven.event.Event;
 import pl.uj.edu.tcs.kalambury_maven.event.LoginAttemptEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.LoginResponseEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.UsersOnlineEvent;
 
 public class ConnectionHandler implements Runnable {
 	private boolean loggedIn = false;
@@ -57,6 +59,7 @@ public class ConnectionHandler implements Runnable {
 			else {
 				System.out.println("response: OK!");
 				out.writeObject(new LoginResponseEvent(e,true));
+				server.getGameLogic().reactTo(myNick, new UsersOnlineEvent(myNick));
 			}
 		} catch(IOException ex) {
 			ex.printStackTrace();
@@ -82,7 +85,12 @@ public class ConnectionHandler implements Runnable {
 				System.out.println("It hangs on reading!");
 				event = in.readObject();
 				System.out.println("Or not?");
-			} catch (ClassNotFoundException | IOException e) {
+			} catch(EOFException e) {
+				if(loggedIn)
+					server.logout(myNick);
+				return;
+			}
+			catch (ClassNotFoundException | IOException e) {
 				e.printStackTrace();
 				continue;
 			}
