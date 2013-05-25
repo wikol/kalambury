@@ -47,6 +47,10 @@ public class GameLogic {
 		return 10;
 	}
 
+	/**
+	 * Funkcja pomocnicza, do startowania następnej rundy. Czyści planszę, prosi
+	 * o hasło do rysowania.
+	 */
 	private void startNextRound() {
 		// wyczyszczenie planszy
 		// TODO localModel.getDrawingModel().clearScreen();
@@ -138,10 +142,11 @@ public class GameLogic {
 				 */
 				localModel.getChatMessagesList().reactTo(event);
 				server.broadcastEvent(event);
-				
+
 				/*
 				 * jeśli użytkownik zgadł (nie patrzymy na wielkość liter i
-				 * białe znaki na końcu i początku hasła) i trwa aktualnie sesja rysowania
+				 * białe znaki na końcu i początku hasła) i trwa aktualnie sesja
+				 * rysowania
 				 */
 				String newMessage = castedEvent.getMessage().trim()
 						.toLowerCase();
@@ -159,16 +164,17 @@ public class GameLogic {
 			} // później - sprawdź, czy to nie koniec gry
 			return;
 		}
-		
+
 		if (event instanceof NewPointsDrawnEvent) {
 			/*
 			 * nowe punkty - jeśli przyszły od właściwej osoby, update'uj nasz
 			 * model i wyślij info do wszystkich SEEMS DONE X
 			 */
-			
-			//nie jesteśmy w trakcie sesji rysowania
-			if (!someoneIsDrawing) return;
-			
+
+			// nie jesteśmy w trakcie sesji rysowania
+			if (!someoneIsDrawing)
+				return;
+
 			// bo osoba była zła, a zupa za słona
 			if (!username.equals(drawingQueue.peek()))
 				return;
