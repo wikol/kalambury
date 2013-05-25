@@ -195,10 +195,12 @@ public class Ranking extends JPanel {
 	 * 
 	 * @param users
 	 *            - mapa z nazw graczy w liczbę ich punktów
+	 * @param nowDrawing
+	 * 			  - imię gracza rysującego albo nic
 	 */
-	public Ranking(Map<String, Integer> users) {
+	public Ranking(Map<String, Integer> users, String... nowDrawing) {
 		super();
-		displayRanking(users, "?");
+		displayRanking(users, (nowDrawing.length == 1)?(nowDrawing[0]):("?"));
 	}
 
 	public static void main(String... args) {
