@@ -3,27 +3,49 @@ package pl.uj.edu.tcs.kalambury_maven.server;
 import java.util.Queue;
 
 import pl.uj.edu.tcs.kalambury_maven.event.Event;
+import pl.uj.edu.tcs.kalambury_maven.event.NewGameEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.NewMessageWrittenEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.NewPointsDrawnEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOfflineEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOnlineEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.WordGuessedEvent;
+import pl.uj.edu.tcs.kalambury_maven.model.ChatMessagesList;
+import pl.uj.edu.tcs.kalambury_maven.model.DrawingModel;
+import pl.uj.edu.tcs.kalambury_maven.model.SimpleModel;
+import pl.uj.edu.tcs.kalambury_maven.model.UserRanking;
+import pl.uj.edu.tcs.kalambury_maven.view.Ranking;
 
 public class GameLogic {
 
 	private Server server;
 	private Queue<String> drawingQueue; // kolejka rysujących - aktualnie
 										// rysujący: drawingQueue.peek()
+	private SimpleModel localModel = new SimpleModel();
 
-	// TODO
-	// czy trzymać tu również listę zalogowanych użytkowników tak po prostu?
-	// czy może zamiast tego korzystać z mapy (użytkownik->punkty) w klasie
-	// UserRanking???
-	/*
-	 * Jeżeli takowa lista jest Wam potrzeb na to feel free, ale nie widzę na
-	 * razie jakichś sensownych zastosowań dla takowej.
+	private String nowBeingDrawnWord; // aktualne hasło
+
+	/**
+	 * Funkcja zwracająca liczbę punktów przysługującą graczowi za zgadnięcie
+	 * hasła w danym momencie gry. Aktualnie czeka na rozszerzenie.
+	 * 
+	 * @return
 	 */
+	private int getPointsForGuessing() {
+		return 5;
+	}
 
-	public void reactTo(String username, Event event) {
+	/**
+	 * Funkcja zwracająca liczbę punktów przysługującą graczowi za narysowanie
+	 * (gdy ktoś odgadł, co zostało narysowane). Aktualnie czeka na
+	 * rozszerzenie.
+	 * 
+	 * @return
+	 */
+	private int getPointsForDrawing() {
+		return 10;
+	}
+
+	public synchronized void reactTo(String username, Event event) {
 
 		/*
 		 * w przypadku eventu mówiącego, że ktoś jest online/offline - czy mamy
@@ -35,6 +57,10 @@ public class GameLogic {
 		 * To jest pytanie :P na które jak umiesz, to proszę odpowiedz ;) Tak
 		 * jak i na inne pytania.
 		 */
+		if(event instanceof NewGameEvent) {
+			for(String name : localModel.getUserRanking().getUsersOnline())
+				drawingQueue.add(name);
+		}
 		if (event instanceof UsersOnlineEvent) { // to be changed into
 													// UserOnlineEvent !!!
 			// TODO
@@ -72,32 +98,49 @@ public class GameLogic {
 
 			// rzucenie wyjątku, jeśli takiego użytkownika nie było? - j.w.
 		}
-		if (event instanceof WordGuessedEvent) {
-			// TODO
-			// dodaj graczowi, który zgadł, punkty
-			// dodaj graczowi, który rysował, punkty
-			// później - sprawdź, czy to nie koniec gry
-			// przerzuć gracza z początku kolejki na koniec
-			// update'uj ranking
-			// wyślij ten update do wszystkich
-			// wypisz odpowiednie informacje na czacie u wszystkich
-
+		if (event instanceof NewMessageWrittenEvent) {
+			NewMessageWrittenEvent castedEvent = (NewMessageWrittenEvent) event;
 			/*
-			 * Hm, to powinno być w NewMessageWrittenEvent pod ifem, czy to
-			 * faktycznie jest hasło - WordGuessedEvent to Wy będziecie wysyłać!
+			 * nie przyjmujemy wiadomości od użytkownika, który rysuje - jeśli
+			 * on chciał coś napisać, informacja, że mu nie wolno.
 			 */
+			if (castedEvent.getUser() == drawingQueue.peek()) {
+				server.sendEvent(castedEvent.getUser(),
+						new NewMessageWrittenEvent("!!!_SERVER",
+								"You CAN'T write on chat while drawin'!"));
+			} else {
+				/*
+				 * update lokalnego modelu czatu. update czatu u wszystkich
+				 */
+				localModel.getChatMessagesList().reactTo(event);
+				server.broadcastEvent(event);
+				/*
+				 * jeśli użytkownik zgadł (nie patrzymy na wielkość liter)
+				 */
+				if (castedEvent.getMessage()
+						.equalsIgnoreCase(nowBeingDrawnWord)) {
+					server.broadcastEvent(new WordGuessedEvent(nowBeingDrawnWord, castedEvent.getUser()));
+					localModel.getUserRanking().addPointsToUser(
+							castedEvent.getUser(), getPointsForGuessing());
+					localModel.getUserRanking().addPointsToUser(
+							drawingQueue.peek(), getPointsForDrawing());
+					drawingQueue.add(drawingQueue.poll());
+					localModel.getUserRanking().nextRound(drawingQueue.peek());
+				}
+			} // później - sprawdź, czy to nie koniec gry
+			return;
 		}
 		if (event instanceof NewPointsDrawnEvent) {
-			// jeśli nowe punkty pochodzą od tego, kto aktualnie rysuje
-			if (username == drawingQueue.peek())
-				server.broadcastEvent(event);
-			// wpp. - nic ???
 			/*
-			 * Jeszcze updatujcie swój lokalny model rysunku - gdy nowy
-			 * użytkownik się łączy, trzeba mu coś wysłać! Żeby wiedzieć co,
-			 * skontaktujcie się z Piekasiami. Powinni Wam naklepać odpowiednie
-			 * metody z DrawingModel
+			 * nowe punkty - jeśli przyszły od właściwej osoby, update'uj nasz
+			 * model i wyślij info do wszystkich SEEMS DONE X
 			 */
+			if (username == drawingQueue.peek()) {
+				localModel.getDrawingModel().actualiseDrawing(
+						((NewPointsDrawnEvent) event).getPoints());
+				server.broadcastEvent(event);
+			}
+			return;
 		}
 	}
 
