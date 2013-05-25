@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 
 import pl.uj.edu.tcs.kalambury_maven.event.Event;
 import pl.uj.edu.tcs.kalambury_maven.event.LoginAttemptEvent;
@@ -43,6 +44,7 @@ public class ConnectionHandler implements Runnable {
 			handleLogIn((LoginAttemptEvent) e);
 			return;
 		}
+		server.getGameLogic().reactTo(myNick, e);
 		if (!loggedIn)
 			return;
 	}
@@ -85,7 +87,7 @@ public class ConnectionHandler implements Runnable {
 				System.out.println("It hangs on reading!");
 				event = in.readObject();
 				System.out.println("Or not?");
-			} catch(EOFException e) {
+			} catch(EOFException | SocketException e) {
 				if(loggedIn)
 					server.logout(myNick);
 				return;
