@@ -28,18 +28,11 @@ public class AppController {
 	private DrawingController drawingController;
 
 	public AppController() {
-		reactor.setHandler(NewMessageWrittenEvent.class, new EventHandler() {
 
-			@Override
-			public void handle(Event e) {
-				NewMessageWrittenEvent ev = (NewMessageWrittenEvent) e;
-				model.sendFakeChatMessage(new MessageSendEvent(ev.getUser(), ev
-						.getMessage()));
-			}
-		});
 		setView(new AppView());
 		setModel(new SimpleModel());
 		view.setModel(model);
+		reactor.setHandler(NewMessageWrittenEvent.class, new NewMessageWrittenHandler(this));
 		reactor.setHandler(LoginAttemptEvent.class, new LoginAttemptHandler(
 				this));
 		reactor.setHandler(LoginResponseEvent.class, new LoginResponseHandler(

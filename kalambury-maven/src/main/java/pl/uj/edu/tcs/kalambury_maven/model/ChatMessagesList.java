@@ -12,8 +12,9 @@ import pl.uj.edu.tcs.kalambury_maven.view.ChatBox;
 
 /**
  * Model for ChatBox.
+ * 
  * @author Anna Szybalska
- *
+ * 
  */
 public class ChatMessagesList {
 	private List<ChatMessage> messages;
@@ -47,23 +48,27 @@ public class ChatMessagesList {
 
 		} else if (e.getClass().equals(WordGuessedEvent.class)) {
 			WordGuessedEvent ev = (WordGuessedEvent) e;
-			messages.add(new ChatMessage(ev.getUser(), ChatMessage.TYPE.SM_GUESSED));
+			messages.add(new ChatMessage(ev.getUser(),
+					ChatMessage.TYPE.SM_GUESSED));
 
 		} else {
 			// throw new
 			// EventNotHandledException(e.getClass().toString()+" not supported by "+this.getClass().toString());
 		}
-		chatBox.updateChatBox();
+		if (chatBox != null) {
+			chatBox.updateChatBox();
+		}
 	}
-	
+
 	/**
 	 * Returned list should not be modified!
+	 * 
 	 * @return list of chat messages
 	 */
 	public List<ChatMessage> getMessagesList() {
 		return messages;
 	}
-	
+
 	public void setView(ChatBox cb) {
 		this.chatBox = cb;
 	}

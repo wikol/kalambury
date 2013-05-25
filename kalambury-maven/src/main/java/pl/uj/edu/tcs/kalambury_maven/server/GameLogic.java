@@ -1,6 +1,7 @@
 package pl.uj.edu.tcs.kalambury_maven.server;
 
 import java.util.Queue;
+import java.util.concurrent.LinkedBlockingDeque;
 
 import pl.uj.edu.tcs.kalambury_maven.event.Event;
 import pl.uj.edu.tcs.kalambury_maven.event.NewGameEvent;
@@ -18,8 +19,7 @@ public class GameLogic {
 	private static final String CHAT_SERVER_NAME = "!!!_SERVER";
 
 	private Server server;
-	private Queue<String> drawingQueue; // kolejka rysujących - aktualnie
-										// rysujący: drawingQueue.peek()
+	private Queue<String> drawingQueue = new LinkedBlockingDeque<>(); 
 	private SimpleModel localModel = new SimpleModel();
 
 	private String nowBeingDrawnWord; // aktualne hasło
@@ -61,13 +61,20 @@ public class GameLogic {
 		server.sendEvent(drawingQueue.peek(), new NewWordIsNeededEvent());
 		someoneIsDrawing = false;
 	}
+	
+	// do wypisywania logów
+	private void loguj(String str) {
+		System.out.println("GameLogic: "+str);
+	}
 
 	public synchronized void reactTo(String username, Event event) {
 
+		loguj("Otrzymano "+event.toString());
 		if (event instanceof NewGameEvent) {
 			for (String name : localModel.getUserRanking().getUsersOnline())
 				drawingQueue.add(name);
 			startNextRound();
+			return;
 		}
 
 		if (event instanceof NewWordForGuessingEvent) {
@@ -78,14 +85,19 @@ public class GameLogic {
 			nowBeingDrawnWord = ((NewWordForGuessingEvent) event).getWord();
 			someoneIsDrawing = true;
 			server.broadcastEvent(new StartDrawingEvent(drawingQueue.peek()));
+			return;
 		}
 
 		if (event instanceof UsersOnlineEvent) {
+			loguj("Wchodzimy do usersonline");
 			// dodanie do kolejki rysujących
 			drawingQueue.add(username);
+			loguj("dodanie do kolejki rysujących");
 
 			// dorzucenie użytkownika do rankingu z 0 pkt
-			localModel.getUserRanking().addNewUser(username);
+			loguj("userRanking: "+localModel.getUserRanking());
+			loguj("newUser: "+localModel.getUserRanking().addNewUser(username));
+			loguj("dorzucenie użytkownika do rankingu z 0 pkt");
 
 			// wysyłanie użytkownikowi całego rysunku
 			Event wholeDrawingEvent = new NewPointsDrawnEvent(localModel
@@ -94,12 +106,15 @@ public class GameLogic {
 
 			server.broadcastEvent(event);
 
+			loguj("Wychodzimy z usersonline");
+			return;
 			// rzucenie wyjątku, jeśli użytkownik już jest zalogowany? - być
 			// może, jeśli chcecie, to nawet może być assert
 		}
 
 		if (event instanceof UsersOfflineEvent) {
 			// jeśli zniknął użytkownik właśnie rysujacy
+			loguj("Wchodzimy do usersoffline");
 			if (username.equals(drawingQueue.peek())) {
 				drawingQueue.poll();
 				server.broadcastEvent(new NewMessageWrittenEvent(
@@ -125,6 +140,8 @@ public class GameLogic {
 			// informacja na czacie dla wszystkich
 
 			// rzucenie wyjątku, jeśli takiego użytkownika nie było? - j.w.
+			loguj("Wychodzimy z usersoffline");
+			return;
 		}
 
 		if (event instanceof NewMessageWrittenEvent) {

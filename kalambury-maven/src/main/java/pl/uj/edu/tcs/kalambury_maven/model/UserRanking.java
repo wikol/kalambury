@@ -23,17 +23,25 @@ public class UserRanking {
 	private String nowDrawing = "?";
 	private static Map<String, Integer> users = new HashMap<String, Integer>();
 
+	private void updateView() {
+		if (myView == null)
+			return;
+		myView.displayRanking(users, nowDrawing);
+	}
+
 	public void setView(Ranking myView) {
 		this.myView = myView;
 	}
 
 	/**
 	 * Ustawienie nowego rysującego
-	 * @param name - imię rysującego
+	 * 
+	 * @param name
+	 *            - imię rysującego
 	 */
 	public void nextRound(String name) {
 		nowDrawing = name;
-		myView.displayRanking(users, nowDrawing);
+		updateView();
 	}
 
 	/**
@@ -50,7 +58,7 @@ public class UserRanking {
 		if ((name.trim().length() > 0 && name.length() <= 20)
 				&& !users.containsKey(name)) {
 			users.put(name, 0);
-			myView.displayRanking(users, nowDrawing);
+			updateView();
 			return true;
 		}
 		return false;
@@ -67,8 +75,7 @@ public class UserRanking {
 	public void addPointsToUser(String name, int points) {
 		points += users.get(name);
 		users.put(name, points);
-		myView.displayRanking(users, nowDrawing);
-
+		updateView();
 	}
 
 	/**
@@ -79,7 +86,7 @@ public class UserRanking {
 	 */
 	public void deleteUser(String name) {
 		users.remove(name);
-		myView.displayRanking(users, nowDrawing);
+		updateView();
 	}
 
 	/**

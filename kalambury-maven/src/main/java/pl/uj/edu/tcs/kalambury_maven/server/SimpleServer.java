@@ -22,14 +22,16 @@ public class SimpleServer implements Server {
 	private Thread listenerThread;
 	private ExecutorService threads;
 	private Map<String, ConnectionHandler> nicks;
-	private DummyGameLogic logic;
+	private GameLogic logic;
 
 	public SimpleServer(int port) throws IOException {
 		socket = new ServerSocket(port);
 		listener = new NewConnectionListener(this);
 		threads = Executors.newCachedThreadPool();
-		logic = new DummyGameLogic();
+		logic = new GameLogic();
 		nicks = new ConcurrentHashMap<>();
+		
+		logic.setServer(this);
 	}
 
 	ServerSocket getSocket() {
@@ -49,7 +51,7 @@ public class SimpleServer implements Server {
 		return true;
 	}
 
-	DummyGameLogic getGameLogic() {
+	GameLogic getGameLogic() {
 		return logic;
 	}
 
@@ -69,7 +71,7 @@ public class SimpleServer implements Server {
 	}
 
 	@Override
-	public void sendEvent(String name, Event event) {
+	public synchronized void sendEvent(String name, Event event) {
 		try {
 			nicks.get(name).getOutputStream().writeObject(event);
 		} catch (IOException e) {
@@ -78,7 +80,7 @@ public class SimpleServer implements Server {
 	}
 
 	@Override
-	public void broadcastEvent(Event event) {
+	public synchronized void broadcastEvent(Event event) {
 		for (ConnectionHandler conn : nicks.values()) {
 			try {
 				conn.getOutputStream().writeObject(event);
