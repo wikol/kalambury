@@ -31,24 +31,9 @@ public class AppController {
 	private DrawingController drawingController;
 
 	public AppController() {
-		reactor.setHandler(BrushChangedEvent.class, new EventHandler(){
-			@Override
-			public void handle(Event e) {
-				drawingController.reactTo(e);
-			}
-		});
-		reactor.setHandler(ClearScreenEvent.class, new EventHandler(){
-			@Override
-			public void handle(Event e) {
-				drawingController.reactTo(e);
-			}
-		});
-		reactor.setHandler(NewPointsDrawnEvent.class, new EventHandler(){
-			@Override
-			public void handle(Event e) {
-				drawingController.reactTo(e);
-			}
-		});
+		reactor.setHandler(BrushChangedEvent.class, new DrawingHandler(this));
+		reactor.setHandler(ClearScreenEvent.class, new DrawingHandler(this));
+		reactor.setHandler(NewPointsDrawnEvent.class, new DrawingHandler(this));
 
 		setView(new AppView());
 		setModel(new SimpleModel());
