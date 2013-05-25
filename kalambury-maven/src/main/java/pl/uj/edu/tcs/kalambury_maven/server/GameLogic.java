@@ -6,7 +6,6 @@ import java.util.concurrent.BrokenBarrierException;
 import pl.uj.edu.tcs.kalambury_maven.event.Event;
 import pl.uj.edu.tcs.kalambury_maven.event.NewGameEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.MessageSendEvent;
->>>>>>> Początek obsługi zgadnięcia słowa
 import pl.uj.edu.tcs.kalambury_maven.event.NewMessageWrittenEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.NewPointsDrawnEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOfflineEvent;
@@ -67,10 +66,12 @@ public class GameLogic {
 		}
 		if (event instanceof UsersOnlineEvent) { // to be changed into
 													// UserOnlineEvent !!!
+			// dodanie do kolejki rysujących
 			drawingQueue.add(username);
+			
+		
 			server.broadcastEvent(event);
 			// TODO
-			// dodanie do kolejki rysujących
 			// update rankingu głównego - dodanie tego użytkownika z 0 pkt
 			// wysłanie do wszystkich update'u rankingu
 			// wypisanie informacji na czacie wysyłane do wszystkich
@@ -87,10 +88,11 @@ public class GameLogic {
 		}
 		if (event instanceof UsersOfflineEvent) { // to be changed into
 													// UserOfflineEvent !!!
+			// usunięcie z kolejki rysujących
 			drawingQueue.remove(username);
+			
 			server.broadcastEvent(event);
 			// TODO
-			// usunięcie z kolejki rysujących
 			// update rankingu głównego - usunięcie tego użytkownika z rankingu
 			// jeśli ten użytkownik właśnie rysował - zakończenie gry jak w
 			// przypadku zgadnięcia hasła
@@ -106,8 +108,8 @@ public class GameLogic {
 
 			// rzucenie wyjątku, jeśli takiego użytkownika nie było? - j.w.
 		}
+
 		if (event instanceof NewMessageWrittenEvent) {
-<<<<<<< HEAD
 			NewMessageWrittenEvent castedEvent = (NewMessageWrittenEvent) event;
 			/*
 			 * nie przyjmujemy wiadomości od użytkownika, który rysuje - jeśli
