@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -23,6 +24,7 @@ public class SimpleServer implements Server {
 		listener = new NewConnectionListener(this);
 		threads = Executors.newCachedThreadPool();
 		logic = new DummyGameLogic();
+		nicks = new ConcurrentHashMap<>();
 	}
 
 	ServerSocket getSocket() {
@@ -30,8 +32,12 @@ public class SimpleServer implements Server {
 	}
 
 	boolean login(String nickname, ConnectionHandler who) {
-		if (nicks.containsKey(nickname))
+		System.out.println("Server is considering...");
+		if (nicks.containsKey(nickname)) {
+			System.out.println("False was returned!");
 			return false;
+		}
+		System.out.println("Still at server side...");
 		nicks.put(nickname, who);
 		who.setLoggedIn(true);
 		return true;
@@ -42,7 +48,8 @@ public class SimpleServer implements Server {
 	}
 
 	void nextConnection(Socket clientSocket) {
-		threads.execute(new ConnectionHandler(clientSocket, this));
+		System.out.println("Next connection actually sparked!");
+		threads.submit(new ConnectionHandler(clientSocket, this));
 	}
 
 	public void listen() {
@@ -85,6 +92,12 @@ public class SimpleServer implements Server {
 			return;
 		}
 		serv.listen();
+		try {
+			System.in.read();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		serv.close();
 	}
 
