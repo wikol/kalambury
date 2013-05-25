@@ -12,6 +12,11 @@ public class WordGuessedEvent implements Event {
 	private String word;
 	private String user;
 	
+	/**
+	 * Constructor of WordGuessedEvent, it takes guessed word and nick of user as a argument
+	 * @param word guessed word.
+	 * @param user nick of user who guessed
+	 */
 	public WordGuessedEvent(String word, String user) {
 		this.word = word;
 		this.user = user;

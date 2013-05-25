@@ -1,23 +1,20 @@
 package pl.uj.edu.tcs.kalambury_maven.server;
 
 import java.util.Queue;
-import java.util.concurrent.BrokenBarrierException;
 
 import pl.uj.edu.tcs.kalambury_maven.event.Event;
 import pl.uj.edu.tcs.kalambury_maven.event.NewGameEvent;
-import pl.uj.edu.tcs.kalambury_maven.event.MessageSendEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.NewMessageWrittenEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.NewPointsDrawnEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.NewWordIsNeededEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.NewWordSetedEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOfflineEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOnlineEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.WordGuessedEvent;
-import pl.uj.edu.tcs.kalambury_maven.model.ChatMessagesList;
-import pl.uj.edu.tcs.kalambury_maven.model.DrawingModel;
 import pl.uj.edu.tcs.kalambury_maven.model.SimpleModel;
-import pl.uj.edu.tcs.kalambury_maven.model.UserRanking;
-import pl.uj.edu.tcs.kalambury_maven.view.Ranking;
 
 public class GameLogic {
+	private static final String CHAT_SERVER_NAME = "!!!_SERVER";
 
 	private Server server;
 	private Queue<String> drawingQueue; // kolejka rysujących - aktualnie
@@ -25,6 +22,9 @@ public class GameLogic {
 	private SimpleModel localModel = new SimpleModel();
 
 	private String nowBeingDrawnWord; // aktualne hasło
+
+	// true jeśli aktualnie ktoś rysuje i można zgadywać hasło
+	private boolean someoneIsDrawing = false;
 
 	/**
 	 * Funkcja zwracająca liczbę punktów przysługującą graczowi za zgadnięcie
@@ -47,50 +47,68 @@ public class GameLogic {
 		return 10;
 	}
 
+	private void startNextRound() {
+		// wyczyszczenie planszy
+		// TODO localModel.getDrawingModel().clearScreen();
+		// rozpoczęcie nowej rundy w rankingu
+		localModel.getUserRanking().nextRound(drawingQueue.peek());
+		// wysyła użytkownikowi pytanie o hasło do rysowania
+		server.sendEvent(drawingQueue.peek(), new NewWordIsNeededEvent());
+		someoneIsDrawing = false;
+	}
+
 	public synchronized void reactTo(String username, Event event) {
 
-		/*
-		 * w przypadku eventu mówiącego, że ktoś jest online/offline - czy mamy
-		 * reagować tworzeniem mu modelu, view i controllera, czy to fakt
-		 * pojawienia się tych obiektów wywołuje nasz event??? - macie reagować
-		 * wysłaniem mu wszystkich danych potrzebnych do utworzenia modelu
-		 * aktualnej rozgrywki - samym tworzeniem zajmuje się część klienta
-		 * pojawienia się tych obiektów wywołuje nasz event???
-		 * 
-		 * To jest pytanie :P na które jak umiesz, to proszę odpowiedz ;) Tak
-		 * jak i na inne pytania.
-		 */
-		if(event instanceof NewGameEvent) {
-			for(String name : localModel.getUserRanking().getUsersOnline())
+		if (event instanceof NewGameEvent) {
+			for (String name : localModel.getUserRanking().getUsersOnline())
 				drawingQueue.add(name);
+			startNextRound();
 		}
-		if (event instanceof UsersOnlineEvent) { // to be changed into
-													// UserOnlineEvent !!!
+
+		if (event instanceof NewWordSetedEvent) {
+			// jeśli hasło wysłał nam nie ten kto teraz ma rysować to ignorujemy
+			if (!username.equals(drawingQueue.peek()))
+				return;
+
+			nowBeingDrawnWord = ((NewWordSetedEvent) event).getWord();
+			someoneIsDrawing = true;
+		}
+
+		if (event instanceof UsersOnlineEvent) {
 			// dodanie do kolejki rysujących
 			drawingQueue.add(username);
-			
-		
-			server.broadcastEvent(event);
-			// TODO
-			// update rankingu głównego - dodanie tego użytkownika z 0 pkt
-			// wysłanie do wszystkich update'u rankingu
-			// wypisanie informacji na czacie wysyłane do wszystkich
-			// użytkowników
 
-			/*
-			 * Punkty "wysłanie do czatu" i "update rankingu" to jeden punkt -
-			 * wystarczy poinformować klientów, że nowy gracz się
-			 * pojawił/zniknął - lokalny ranking sam na to zareaguje
-			 */
+			// dorzucenie użytkownika do rankingu z 0 pkt
+			localModel.getUserRanking().addNewUser(username);
+
+			// wysyłanie użytkownikowi całego rysunku
+			Event wholeDrawingEvent = new NewPointsDrawnEvent(localModel
+					.getDrawingModel().getDrawing());
+			server.sendEvent(username, wholeDrawingEvent);
+
+			server.broadcastEvent(event);
 
 			// rzucenie wyjątku, jeśli użytkownik już jest zalogowany? - być
 			// może, jeśli chcecie, to nawet może być assert
 		}
-		if (event instanceof UsersOfflineEvent) { // to be changed into
-													// UserOfflineEvent !!!
-			// usunięcie z kolejki rysujących
-			drawingQueue.remove(username);
-			
+
+		if (event instanceof UsersOfflineEvent) {
+			// jeśli zniknął użytkownik właśnie rysujacy
+			if (username.equals(drawingQueue.peek())) {
+				drawingQueue.poll();
+				server.broadcastEvent(new NewMessageWrittenEvent(
+						CHAT_SERVER_NAME,
+						"Current drawing user left game, skiping to next round."));
+				startNextRound();
+
+			} else {
+				// usunięcie z kolejki rysujących
+				drawingQueue.remove(username);
+			}
+
+			// wywalenie z rankingu
+			localModel.getUserRanking().deleteUser(username);
+
 			server.broadcastEvent(event);
 			// TODO
 			// update rankingu głównego - usunięcie tego użytkownika z rankingu
@@ -99,12 +117,6 @@ public class GameLogic {
 			// ale z komunikatem "użytkownik zniknął" - rozesłane do wszystkich
 			// rozesłanie do wszystkich użytkowników update'u rankingu
 			// informacja na czacie dla wszystkich
-
-			/*
-			 * Punkty "wysłanie do czatu" i "update rankingu" to jeden punkt -
-			 * wystarczy poinformować klientów, że nowy gracz się
-			 * pojawił/zniknął - lokalny ranking sam na to zareaguje
-			 */
 
 			// rzucenie wyjątku, jeśli takiego użytkownika nie było? - j.w.
 		}
@@ -115,42 +127,55 @@ public class GameLogic {
 			 * nie przyjmujemy wiadomości od użytkownika, który rysuje - jeśli
 			 * on chciał coś napisać, informacja, że mu nie wolno.
 			 */
-			if (castedEvent.getUser() == drawingQueue.peek()) {
+			if (castedEvent.getUser().equals(drawingQueue.peek())) {
 				server.sendEvent(castedEvent.getUser(),
-						new NewMessageWrittenEvent("!!!_SERVER",
+						new NewMessageWrittenEvent(CHAT_SERVER_NAME,
 								"You CAN'T write on chat while drawin'!"));
 			} else {
 				/*
-				 * update lokalnego modelu czatu. update czatu u wszystkich
+				 * update lokalnego modelu czatu. update czatu (i nie tylko) u
+				 * wszystkich
 				 */
 				localModel.getChatMessagesList().reactTo(event);
 				server.broadcastEvent(event);
+				
 				/*
-				 * jeśli użytkownik zgadł (nie patrzymy na wielkość liter)
+				 * jeśli użytkownik zgadł (nie patrzymy na wielkość liter i
+				 * białe znaki na końcu i początku hasła) i trwa aktualnie sesja rysowania
 				 */
-				if (castedEvent.getMessage()
-						.equalsIgnoreCase(nowBeingDrawnWord)) {
-					server.broadcastEvent(new WordGuessedEvent(nowBeingDrawnWord, castedEvent.getUser()));
+				String newMessage = castedEvent.getMessage().trim()
+						.toLowerCase();
+				String currentWord = nowBeingDrawnWord.trim().toLowerCase();
+				if (newMessage.equals(currentWord) && someoneIsDrawing) {
 					localModel.getUserRanking().addPointsToUser(
 							castedEvent.getUser(), getPointsForGuessing());
 					localModel.getUserRanking().addPointsToUser(
 							drawingQueue.peek(), getPointsForDrawing());
 					drawingQueue.add(drawingQueue.poll());
-					localModel.getUserRanking().nextRound(drawingQueue.peek());
+					server.broadcastEvent(new WordGuessedEvent(
+							nowBeingDrawnWord, castedEvent.getUser()));
+					startNextRound();
 				}
 			} // później - sprawdź, czy to nie koniec gry
 			return;
 		}
+		
 		if (event instanceof NewPointsDrawnEvent) {
 			/*
 			 * nowe punkty - jeśli przyszły od właściwej osoby, update'uj nasz
 			 * model i wyślij info do wszystkich SEEMS DONE X
 			 */
-			if (username == drawingQueue.peek()) {
-				localModel.getDrawingModel().actualiseDrawing(
-						((NewPointsDrawnEvent) event).getPoints());
-				server.broadcastEvent(event);
-			}
+			
+			//nie jesteśmy w trakcie sesji rysowania
+			if (!someoneIsDrawing) return;
+			
+			// bo osoba była zła, a zupa za słona
+			if (!username.equals(drawingQueue.peek()))
+				return;
+
+			localModel.getDrawingModel().actualiseDrawing(
+					((NewPointsDrawnEvent) event).getPoints());
+			server.broadcastEvent(event);
 			return;
 		}
 	}
