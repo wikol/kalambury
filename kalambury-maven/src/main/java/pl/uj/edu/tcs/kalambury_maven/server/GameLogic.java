@@ -8,6 +8,7 @@ import pl.uj.edu.tcs.kalambury_maven.event.NewMessageWrittenEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.NewPointsDrawnEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.NewWordIsNeededEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.NewWordForGuessingEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.StartDrawingEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOfflineEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOnlineEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.WordGuessedEvent;
@@ -76,6 +77,7 @@ public class GameLogic {
 
 			nowBeingDrawnWord = ((NewWordForGuessingEvent) event).getWord();
 			someoneIsDrawing = true;
+			server.broadcastEvent(new StartDrawingEvent(drawingQueue.peek()));
 		}
 
 		if (event instanceof UsersOnlineEvent) {

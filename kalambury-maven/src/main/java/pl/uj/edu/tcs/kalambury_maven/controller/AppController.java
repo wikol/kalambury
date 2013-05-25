@@ -11,6 +11,8 @@ import pl.uj.edu.tcs.kalambury_maven.event.LoginAttemptEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.LoginResponseEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.MessageSendEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.NewMessageWrittenEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.NewWordIsNeededEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.StartDrawingEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOfflineEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOnlineEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.WordGuessedEvent;
@@ -46,6 +48,8 @@ public class AppController {
 		reactor.setHandler(UsersOfflineEvent.class, new UsersOfflineHandler(
 				this));
 		reactor.setHandler(WordGuessedEvent.class, new WordGuessedHandler(this));
+		reactor.setHandler(NewWordIsNeededEvent.class, new NewWordIsNeededHandler(this));
+		reactor.setHandler(StartDrawingEvent.class, new StartDrawingHandler(this));
 		view.displayLogin();
 		drawingController = new DrawingController();
 		drawingController.setModel(model.getDrawingModel());

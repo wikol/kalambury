@@ -21,6 +21,7 @@ public class AppView {
 	private SimpleModel model;
 	private LoginWindow loginWindow;
 	private MainWindow mainWindow;
+	private WordInputWindow wordInputWindow;
 
 	public AppView() {
 		reactor.setHandler(DisplayLoginEvent.class, new EventHandler() {
@@ -79,6 +80,26 @@ public class AppView {
 		}
 		// for testing purposes only
 		controller.testMainWindow();
+	}
+	
+	public void displayWordInput() {
+		try {
+			EventQueue.invokeAndWait(new Runnable() {
+				@Override
+				public void run() {
+					wordInputWindow = new WordInputWindow();
+					wordInputWindow.setController(controller);
+					wordInputWindow.setVisible(true);
+				}
+			});
+		} catch (InvocationTargetException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.getCause().printStackTrace();
+		}
+	}
+	
+	public void closeWordInput() {
+		wordInputWindow.dispose();
 	}
 
 	public MainWindow getMainWindow() {
