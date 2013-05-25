@@ -25,7 +25,7 @@ public class EventReactor {
 	 */
 	public void handle(Event e) throws EventNotHandledException {
 		if(!handlers.containsKey(e.getClass()))
-			throw new EventNotHandledException();
+			throw new EventNotHandledException(e.toString());
 		handlers.get(e.getClass()).handle(e);
 	}
 }
