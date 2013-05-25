@@ -23,7 +23,7 @@ public class GameLogic {
 	private Queue<String> drawingQueue = new LinkedBlockingDeque<>();
 	private SimpleModel localModel = new SimpleModel();
 
-	private String nowBeingDrawnWord; // aktualne hasło
+	private String nowBeingDrawnWord = ""; // aktualne hasło
 
 	// true jeśli aktualnie ktoś rysuje i można zgadywać hasło
 	private boolean someoneIsDrawing = false;
@@ -155,14 +155,17 @@ public class GameLogic {
 				server.sendEvent(castedEvent.getUser(),
 						new MessageSendEvent(CHAT_SERVER_NAME,
 								"You CAN'T write on chat while drawin'!"));
+				loguj("nieprzyjmujemy od ciebie wiadomości");
 				return;
 			}
+			loguj("to nie była chwila nieprzyjmowania");
 			/*
 			 * update lokalnego modelu czatu. update czatu (i nie tylko) u
 			 * wszystkich
 			 */
 			MessageSendEvent messageEvent = new MessageSendEvent(username, castedEvent.getMessage());
 			localModel.getChatMessagesList().reactTo(messageEvent);
+			loguj("chat updatowany");
 			server.broadcastEvent(messageEvent);
 
 			/*
@@ -171,7 +174,7 @@ public class GameLogic {
 			 */
 			String newMessage = castedEvent.getMessage().trim().toLowerCase();
 			String currentWord = nowBeingDrawnWord.trim().toLowerCase();
-			if (newMessage.equals(currentWord) && someoneIsDrawing) {
+			if (someoneIsDrawing && newMessage.equals(currentWord)) {
 				localModel.getUserRanking().addPointsToUser(
 						castedEvent.getUser(), getPointsForGuessing());
 				localModel.getUserRanking().addPointsToUser(
