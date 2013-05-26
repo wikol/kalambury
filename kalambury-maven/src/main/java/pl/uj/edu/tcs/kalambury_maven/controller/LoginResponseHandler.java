@@ -22,7 +22,7 @@ public class LoginResponseHandler implements EventHandler {
 					new LoginUnsuccessfulEvent(
 							"Nickname already taken. Try a different one."));
 		else
-			controller.getView().displayMain();
+			controller.getView().displayMain(response.getAttempt().getLogin());
 	}
 
 }

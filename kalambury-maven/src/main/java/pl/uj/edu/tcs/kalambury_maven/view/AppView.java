@@ -33,13 +33,6 @@ public class AppView {
 			}
 
 		});
-		reactor.setHandler(DisplayMainWindowEvent.class, new EventHandler() {
-
-			@Override
-			public void handle(Event e) {
-				AppView.this.displayMain();
-			}
-		});
 	}
 
 	public void displayLogin() {
@@ -57,12 +50,13 @@ public class AppView {
 		reactor.setHandler(LoginUnsuccessfulEvent.class, loginWindow);
 	}
 
-	public void displayMain() {
+	public void displayMain(String myNick) {
+		final String nick = myNick;
 		try {
 			EventQueue.invokeAndWait(new Runnable() {
 				public void run() {
 					loginWindow.dispose();
-					mainWindow = new MainWindow();
+					mainWindow = new MainWindow(nick);
 					mainWindow.setupChatBox(model.getChatMessagesList(),
 							controller);
 					mainWindow.setupDrawingPanel(

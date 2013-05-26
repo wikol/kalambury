@@ -26,13 +26,13 @@ public class MainWindow extends JFrame {
 	private BrushPanel brushPanel;
 
 	/**
-	 * Launch the application.
+	 * For test purposes only
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					MainWindow frame = new MainWindow();
+					MainWindow frame = new MainWindow("test");
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -72,8 +72,8 @@ public class MainWindow extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public MainWindow() {
-		super("Kalambury");
+	public MainWindow(String myNick) {
+		super("Kalambury - " + myNick);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 988, 686);
 		contentPane = new JPanel();

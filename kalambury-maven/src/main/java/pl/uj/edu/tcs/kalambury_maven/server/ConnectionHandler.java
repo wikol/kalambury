@@ -44,9 +44,9 @@ public class ConnectionHandler implements Runnable {
 			handleLogIn((LoginAttemptEvent) e);
 			return;
 		}
-		server.getGameLogic().reactTo(myNick, e);
 		if (!loggedIn)
 			return;
+		server.getGameLogic().reactTo(myNick, e);
 	}
 
 	private void handleLogIn(LoginAttemptEvent e) {
