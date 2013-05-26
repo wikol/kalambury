@@ -1,21 +1,20 @@
 package pl.uj.edu.tcs.kalambury_maven.controller;
 
-import java.util.Arrays;
-import java.util.List;
-
 import pl.uj.edu.tcs.kalambury_maven.event.BrushChangedEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.ClearScreenEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.Event;
-import pl.uj.edu.tcs.kalambury_maven.event.EventHandler;
 import pl.uj.edu.tcs.kalambury_maven.event.EventNotHandledException;
 import pl.uj.edu.tcs.kalambury_maven.event.EventReactor;
 import pl.uj.edu.tcs.kalambury_maven.event.LoginAttemptEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.LoginResponseEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.MessageSendEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.NewMessageWrittenEvent;
-import pl.uj.edu.tcs.kalambury_maven.event.NewWordIsNeededEvent;
-import pl.uj.edu.tcs.kalambury_maven.event.StartDrawingEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.NewPointsDrawnEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.NewWordForGuessingEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.NewWordIsNeededEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.NextRoundStartsEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.ResetUserRankingEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.StartDrawingEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOfflineEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOnlineEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.WordGuessedEvent;
@@ -34,11 +33,11 @@ public class AppController {
 		reactor.setHandler(BrushChangedEvent.class, new DrawingHandler(this));
 		reactor.setHandler(ClearScreenEvent.class, new DrawingHandler(this));
 		reactor.setHandler(NewPointsDrawnEvent.class, new DrawingHandler(this));
-
 		setView(new AppView());
 		setModel(new SimpleModel());
 		view.setModel(model);
 		reactor.setHandler(NewMessageWrittenEvent.class, new NewMessageWrittenHandler(this));
+		reactor.setHandler(MessageSendEvent.class, new MessageSendHandler(this));
 		reactor.setHandler(LoginAttemptEvent.class, new LoginAttemptHandler(
 				this));
 		reactor.setHandler(LoginResponseEvent.class, new LoginResponseHandler(
@@ -47,8 +46,11 @@ public class AppController {
 		reactor.setHandler(UsersOfflineEvent.class, new UsersOfflineHandler(
 				this));
 		reactor.setHandler(WordGuessedEvent.class, new WordGuessedHandler(this));
+		reactor.setHandler(NewWordForGuessingEvent.class, new NewWordForGuessingHandler(this));
 		reactor.setHandler(NewWordIsNeededEvent.class, new NewWordIsNeededHandler(this));
 		reactor.setHandler(StartDrawingEvent.class, new StartDrawingHandler(this));
+		reactor.setHandler(NextRoundStartsEvent.class, new NextRoundStartsHandler(this));
+		reactor.setHandler(ResetUserRankingEvent.class, new ResetUserRankingHandler(this));
 		view.displayLogin();
 		drawingController = new DrawingController();
 		drawingController.setModel(model.getDrawingModel());
@@ -58,7 +60,7 @@ public class AppController {
 		return drawingController;
 	}
 
-	public void reactTo(Event e) throws EventNotHandledException {
+	public synchronized void reactTo(Event e) throws EventNotHandledException {
 		reactor.handle(e);
 	}
 
@@ -74,6 +76,7 @@ public class AppController {
 
 	public void setNetwork(Network network) {
 		this.network = network;
+		drawingController.setNetwork(network);
 	}
 
 	public Network getNetwork() {
