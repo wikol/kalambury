@@ -17,7 +17,9 @@ public class WordGuessedHandler implements EventHandler {
 		WordGuessedEvent event = (WordGuessedEvent) e;
 		controller.getModel().getChatMessagesList().reactTo(e);
 		controller.getModel().getUserRanking()
-				.addPointsToUser(event.getUser(), 1);
+				.addPointsToUser(event.getUser(), event.getPointsForWord());
+		controller.getModel().getUserRanking()
+				.addPointsToUser(event.getDrawingUser(), event.getPointsForDrawing());
 	}
 
 }

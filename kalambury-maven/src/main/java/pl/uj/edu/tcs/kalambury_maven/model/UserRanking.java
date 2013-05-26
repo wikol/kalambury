@@ -1,13 +1,9 @@
 package pl.uj.edu.tcs.kalambury_maven.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
 
 import pl.uj.edu.tcs.kalambury_maven.view.Ranking;
 
@@ -105,9 +101,31 @@ public class UserRanking {
 	/**
 	 * Wylistowanie użytkowników
 	 * 
-	 * @return ArrayList użytkowników zalogowanych
+	 * @return List użytkowników zalogowanych
 	 */
-	public ArrayList<String> getUsersOnline() {
+	public List<String> getUsersOnline() {
 		return new ArrayList<>(users.keySet());
+	}
+
+	/**
+	 * Zwraca mapę użytkowników-punktów, przydatne gdy w trakcie gry loguje się
+	 * nowy user.
+	 * 
+	 * @return
+	 */
+	public Map<String, Integer> getFullRanking() {
+		return users;
+	}
+
+	/**
+	 * Resetowanie rankingu so stanu podanego w mapie usersPoints. Potrzebne gdy
+	 * do toczącej się gry dochodzi nagle nowy user.
+	 * 
+	 * @param usersPoints
+	 *            - mapa zawierajaca userów i ich punkty
+	 */
+	public void setUsersPoints(Map<String, Integer> usersPoints) {
+		users = new HashMap<>(usersPoints);
+		updateView();
 	}
 }

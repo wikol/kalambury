@@ -103,12 +103,12 @@ public class SimpleServer implements Server {
 				"Karol Kaszuba", "Kamil Rychlewicz", "Piotr Pakosz" });
 		broadcastEvent(new UsersOnlineEvent(names));
 		List<String> pakosz = Arrays.asList(new String[] { "Piotr Pakosz" });
-		for (int i = 0; i < 350; i++)
-			broadcastEvent(new WordGuessedEvent("Laser", "Karol Kaszuba"));
-		for (int i = 0; i < 280; i++)
-			broadcastEvent(new WordGuessedEvent("Laser", "Michał Glapa"));
-		for (int i = 0; i < 370; i++)
-			broadcastEvent(new WordGuessedEvent("Laser", "Kamil Rychlewicz"));
+//		for (int i = 0; i < 350; i++)
+//			broadcastEvent(new WordGuessedEvent("Laser", "Karol Kaszuba"));
+//		for (int i = 0; i < 280; i++)
+//			broadcastEvent(new WordGuessedEvent("Laser", "Michał Glapa"));
+//		for (int i = 0; i < 370; i++)
+//			broadcastEvent(new WordGuessedEvent("Laser", "Kamil Rychlewicz"));
 		broadcastEvent(new UsersOfflineEvent(pakosz));
 
 	}

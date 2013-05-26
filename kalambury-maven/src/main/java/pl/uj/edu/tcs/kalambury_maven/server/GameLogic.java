@@ -11,6 +11,8 @@ import pl.uj.edu.tcs.kalambury_maven.event.NewMessageWrittenEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.NewPointsDrawnEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.NewWordForGuessingEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.NewWordIsNeededEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.NextRoundStartsEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.ResetUserRankingEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.StartDrawingEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOfflineEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOnlineEvent;
@@ -62,22 +64,25 @@ public class GameLogic {
 			// dodanie do kolejki rysujących
 			drawingQueue.add(username);
 
-			//wysłanie mu całego rankingu
-			loguj("wysyłamy do "+username+" taki ranking: "+localModel.getUserRanking().getUsersOnline());
-			server.sendEvent(username, new UsersOnlineEvent(localModel
-					.getUserRanking().getUsersOnline()));
 			// dorzucenie użytkownika do rankingu z 0 pkt
 			localModel.getUserRanking().addNewUser(username);
+			//wysłanie mu całego rankingu
+			loguj("wysyłamy do "+username+" taki ranking: "+localModel.getUserRanking().getUsersOnline());
+			server.sendEvent(username, new ResetUserRankingEvent(localModel
+					.getUserRanking().getFullRanking()));
 
 			// wysyłanie użytkownikowi całego rysunku
 			Event wholeDrawingEvent = new NewPointsDrawnEvent(localModel
 					.getDrawingModel().getDrawing());
 			server.sendEvent(username, wholeDrawingEvent);
+			
+			//wysyłanie mu informacji o aktualnej rundzie
+			server.sendEvent(username, new NextRoundStartsEvent(drawingQueue.peek()));
 
 			server.broadcastEvent(event);
 
 			// TODO usunąć jak dodamy jakiś start!
-			if (!gameStared && drawingQueue.size() > 2) {
+			if (!gameStared && drawingQueue.size() > 1) {
 				reactTo("", new NewGameEvent());
 			}
 			return;
@@ -90,7 +95,7 @@ public class GameLogic {
 			// jeśli zniknął użytkownik właśnie rysujacy
 			if (username.equals(drawingQueue.peek())) {
 				drawingQueue.poll();
-				server.broadcastEvent(new NewMessageWrittenEvent(
+				server.broadcastEvent(new MessageSendEvent(
 						CHAT_SERVER_NAME,
 						"Current drawing user left game, skiping to next round."));
 
@@ -145,11 +150,12 @@ public class GameLogic {
 			if (someoneIsDrawing && newMessage.equals(currentWord)) {
 				localModel.getUserRanking().addPointsToUser(
 						username, getPointsForGuessing());
+				String drawingUser = drawingQueue.poll();
 				localModel.getUserRanking().addPointsToUser(
-						drawingQueue.peek(), getPointsForDrawing());
-				drawingQueue.add(drawingQueue.poll());
+						drawingUser, getPointsForDrawing());
+				drawingQueue.add(drawingUser);
 				server.broadcastEvent(new WordGuessedEvent(nowBeingDrawnWord,
-						username));
+						username, getPointsForGuessing(), drawingUser, getPointsForDrawing()));
 				startNextRound();
 			}
 			// później - sprawdź, czy to nie koniec gry
@@ -219,6 +225,8 @@ public class GameLogic {
 		
 		// rozpoczęcie nowej rundy w rankingu
 		localModel.getUserRanking().nextRound(drawingQueue.peek());
+		server.broadcastEvent(new NextRoundStartsEvent(drawingQueue.peek()));
+		
 		// wysyła użytkownikowi pytanie o hasło do rysowania
 		server.sendEvent(drawingQueue.peek(), new NewWordIsNeededEvent());
 		someoneIsDrawing = false;
