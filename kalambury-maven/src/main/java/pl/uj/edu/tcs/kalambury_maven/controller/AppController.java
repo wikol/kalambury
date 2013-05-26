@@ -3,6 +3,8 @@ package pl.uj.edu.tcs.kalambury_maven.controller;
 import java.util.Arrays;
 import java.util.List;
 
+import pl.uj.edu.tcs.kalambury_maven.event.BrushChangedEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.ClearScreenEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.Event;
 import pl.uj.edu.tcs.kalambury_maven.event.EventHandler;
 import pl.uj.edu.tcs.kalambury_maven.event.EventNotHandledException;
@@ -11,6 +13,7 @@ import pl.uj.edu.tcs.kalambury_maven.event.LoginAttemptEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.LoginResponseEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.MessageSendEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.NewMessageWrittenEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.NewPointsDrawnEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOfflineEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOnlineEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.WordGuessedEvent;
@@ -26,6 +29,24 @@ public class AppController {
 	private DrawingController drawingController;
 
 	public AppController() {
+		reactor.setHandler(BrushChangedEvent.class, new EventHandler(){
+			@Override
+			public void handle(Event e) {
+				drawingController.reactTo(e);
+			}
+		});
+		reactor.setHandler(ClearScreenEvent.class, new EventHandler(){
+			@Override
+			public void handle(Event e) {
+				drawingController.reactTo(e);
+			}
+		});
+		reactor.setHandler(NewPointsDrawnEvent.class, new EventHandler(){
+			@Override
+			public void handle(Event e) {
+				drawingController.reactTo(e);
+			}
+		});
 		reactor.setHandler(NewMessageWrittenEvent.class, new EventHandler() {
 
 			@Override

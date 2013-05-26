@@ -23,6 +23,10 @@ import pl.uj.edu.tcs.kalambury_maven.model.Brush;
 
 public class BrushPanel extends JPanel {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7847540478021860391L;
 	private DrawingController controller;
 	private int radius = Brush.MEDIUM;
 	private Color color = Color.BLACK;
@@ -32,7 +36,7 @@ public class BrushPanel extends JPanel {
 	 */
 	public BrushPanel() {
 
-		setLayout(new GridLayout(5, 2, 0, 0));
+		setLayout(new GridLayout(6, 2, 0, 0));
 
 		JButton btnBlack = new JButton("");
 		btnBlack.setBackground(Color.BLACK);
@@ -76,16 +80,16 @@ public class BrushPanel extends JPanel {
 			}
 		});
 
-		JButton btnRed = new JButton();
-		btnRed.setBackground(Color.RED);
-		add(btnRed);
-		btnRed.addActionListener(new ActionListener() {
+		JButton btnGreen = new JButton("");
+		btnGreen.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				color = Color.RED;
+			public void actionPerformed(ActionEvent arg0) {
+				color = Color.GREEN;
 				brushChanged();
 			}
 		});
+		btnGreen.setBackground(Color.GREEN);
+		add(btnGreen);
 
 		JButton btnMedium = new JButton("M");
 		add(btnMedium);
@@ -118,13 +122,13 @@ public class BrushPanel extends JPanel {
 			}
 		});
 
-		JButton btnEraser = new JButton();
-		btnEraser.setBackground(Color.WHITE);
-		add(btnEraser);
-		btnEraser.addActionListener(new ActionListener() {
+		JButton btnRed = new JButton();
+		btnRed.setBackground(Color.RED);
+		add(btnRed);
+		btnRed.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				color = Color.WHITE;
+				color = Color.RED;
 				brushChanged();
 			}
 		});
@@ -139,19 +143,31 @@ public class BrushPanel extends JPanel {
 			}
 		});
 
+		JButton btnEraser = new JButton();
+		btnEraser.setBackground(Color.WHITE);
+		add(btnEraser);
+		btnEraser.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				color = Color.WHITE;
+				brushChanged();
+			}
+		});
+
 	}
 
 	/**
 	 * Metoda wywoływana gdy zmienia się pędzel
 	 */
 	private void brushChanged() {
-		BrushChangedEvent event = new BrushChangedEvent((color == Color.WHITE) ? (int) (radius * 1.5)
-				: radius, color);
+		BrushChangedEvent event = new BrushChangedEvent(
+				(color == Color.WHITE) ? (int) (radius * 1.5) : radius, color);
 		controller.sendEventToServer(event);
 	}
 
 	/**
 	 * Ustawia controller z którego będzie korzystał BrushPanel
+	 * 
 	 * @param controller
 	 */
 	public void setController(DrawingController controller) {

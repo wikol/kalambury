@@ -1,6 +1,7 @@
 package pl.uj.edu.tcs.kalambury_maven.controller;
 
 import pl.uj.edu.tcs.kalambury_maven.event.BrushChangedEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.ClearScreenEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.Event;
 import pl.uj.edu.tcs.kalambury_maven.event.EventHandler;
 import pl.uj.edu.tcs.kalambury_maven.event.EventNotHandledException;
@@ -42,6 +43,15 @@ public class DrawingController {
 			}
 
 		});
+		
+		reactor.setHandler(ClearScreenEvent.class, new EventHandler(){
+
+			@Override
+			public void handle(Event e) {
+				model.clearScreen();
+			}
+			
+		});
 	}
 
 	/**
@@ -50,7 +60,7 @@ public class DrawingController {
 	 * @param e
 	 */
 	public void sendEventToServer(Event e) {
-		this.reactTo(e);
+		this.network.sendToServer(e);
 	}
 
 	/**

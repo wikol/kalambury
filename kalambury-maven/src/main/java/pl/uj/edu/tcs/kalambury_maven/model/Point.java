@@ -1,6 +1,7 @@
 package pl.uj.edu.tcs.kalambury_maven.model;
 
 import java.awt.Color;
+import java.io.Serializable;
 
 /**
  * 
@@ -10,7 +11,11 @@ import java.awt.Color;
  *
  */
 
-public class Point {
+public class Point implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4536188845841575846L;
 	public float centreX;
 	public float centreY;
 	public float paintRadius;
