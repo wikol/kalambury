@@ -19,6 +19,14 @@ public class DrawingModel {
 	private final Brush brush = new Brush(Brush.MEDIUM, Color.BLACK);
 	private DrawingPanel drawingPanel;
 
+	// piekasie, wybaczie że się wam mieszam do tej klasy, ale serwer nie będzie
+	// działał bez tego jednego małego ifa
+	private void updateView() {
+		if (drawingPanel == null)
+			return;
+		drawingPanel.modelChanged();
+	}
+
 	/**
 	 * Ustawia DrawingPanel z którym komunikuje się ten model
 	 * 
@@ -37,7 +45,7 @@ public class DrawingModel {
 	public void actualiseDrawing(List<Point> newPoints) {
 		synchronized (drawing) {
 			drawing.addAll(newPoints);
-			drawingPanel.modelChanged();
+			updateView();
 		}
 	}
 
@@ -82,7 +90,7 @@ public class DrawingModel {
 	public void clearScreen() {
 		synchronized (drawing) {
 			drawing.clear();
-			drawingPanel.modelChanged();
+			updateView();
 		}
 	}
 

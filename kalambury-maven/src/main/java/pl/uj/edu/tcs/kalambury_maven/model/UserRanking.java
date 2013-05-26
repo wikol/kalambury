@@ -73,7 +73,10 @@ public class UserRanking {
 	 *            - ile ekstra punktów dostał zawodnik
 	 */
 	public void addPointsToUser(String name, int points) {
-		points += users.get(name);
+		Integer prevPoints = users.get(name);
+		if (prevPoints != null) {
+			points += prevPoints;
+		}
 		users.put(name, points);
 		updateView();
 	}

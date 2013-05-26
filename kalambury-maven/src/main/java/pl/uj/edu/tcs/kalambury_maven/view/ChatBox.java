@@ -3,6 +3,7 @@ package pl.uj.edu.tcs.kalambury_maven.view;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -44,7 +45,7 @@ public class ChatBox extends JPanel {
 	private AppController controller;
 	private int addedMsgs = 0;
 
-	//public methods
+	// public methods
 	public ChatBox() {
 		super();
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
@@ -81,28 +82,35 @@ public class ChatBox extends JPanel {
 		add(sendingArea);
 
 	}
-	
+
 	public void updateChatBox() {
-		int c = 0;
-		for (ChatMessage message : model.getMessagesList()) {
-			if(c >= addedMsgs) {
-				addNewMessage(new ChatMessageView(message));
-				addedMsgs++;
+		EventQueue.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+
+				int c = 0;
+				for (ChatMessage message : model.getMessagesList()) {
+					if (c >= addedMsgs) {
+						addNewMessage(new ChatMessageView(message));
+						addedMsgs++;
+					}
+					c++;
+				}
 			}
-			c++;
-		}
+		});
 	}
-	
+
 	public void setModel(ChatMessagesList cml) {
 		this.model = cml;
 	}
-	
+
 	public void setController(AppController contr) {
 		this.controller = contr;
 	}
-			
 
-	//private methods
+	// private methods
 	private class SendAction implements ActionListener {
 
 		@Override
@@ -138,7 +146,6 @@ public class ChatBox extends JPanel {
 
 	private static class ChatMessageView extends JLabel {
 		private static final long serialVersionUID = -2110608566518190188L;
-
 
 		static Color colors[] = { Color.BLACK, Color.DARK_GRAY, Color.GRAY,
 				Color.BLUE, Color.RED };
