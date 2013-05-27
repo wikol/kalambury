@@ -91,7 +91,9 @@ public class LoginWindow extends JFrame implements EventHandler {
 		contentPane.add(serverLabel, "2, 2, left, center");
 		portLabel = new JLabel("Port:");
 		portField = new JTextField();
+		portField.setText("8888");
 		serverField = new JTextField();
+		serverField.setText("localhost");
 		contentPane.add(serverField, "4, 2, fill, fill");
 		contentPane.add(portLabel, "6, 2, left, center");
 		contentPane.add(portField, "8, 2, fill, fill");
@@ -99,6 +101,7 @@ public class LoginWindow extends JFrame implements EventHandler {
 		loginLabel = new JLabel("Login:");
 		contentPane.add(loginLabel, "2, 4, left, center");
 		loginField = new JTextField();
+		loginField.setText("test");
 		contentPane.add(loginField, "4, 4, fill, fill");
 
 		loginButton = new JButton("Login");

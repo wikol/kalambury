@@ -1,10 +1,22 @@
 package pl.uj.edu.tcs.kalambury_maven.view;
 
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Shape;
+import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.JPanel;
 
@@ -13,18 +25,6 @@ import pl.uj.edu.tcs.kalambury_maven.event.NewPointsDrawnEvent;
 import pl.uj.edu.tcs.kalambury_maven.model.Brush;
 import pl.uj.edu.tcs.kalambury_maven.model.DrawingModel;
 import pl.uj.edu.tcs.kalambury_maven.model.Point;
-
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Shape;
-import java.awt.Toolkit;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.awt.Dimension;
 
 /**
  * Panel wyświetlający rysunek i pozwalający graczowi przedtawiającemu hasło na
@@ -110,7 +110,7 @@ public class DrawingPanel extends JPanel {
 						}
 					}
 				}
-				prevPoint = new Point(tempX,tempY,brush.radius,brush.color);
+				prevPoint = new Point(tempX, tempY, brush.radius, brush.color);
 			}
 			synchronized (pointsToCommit) {
 				pointsToCommit.add(new Point(x, y, brush.radius, brush.color));
@@ -146,7 +146,8 @@ public class DrawingPanel extends JPanel {
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			if (prevPoint==null) return;
+			if (prevPoint == null)
+				return;
 			synchronized (prevPoint) {
 				prevPoint = null;
 			}
@@ -278,9 +279,12 @@ public class DrawingPanel extends JPanel {
 		int centerY = (dim.height - 1) / 2;
 		g.dispose();
 
-		Cursor cursor = toolkit.createCustomCursor(image, new java.awt.Point(
+		final Cursor cursor = toolkit.createCustomCursor(image, new java.awt.Point(
 				centerX, centerY), "myCursor");
-		setCursor(cursor);
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				setCursor(cursor);
+			}
+		});
 	}
-
 }
