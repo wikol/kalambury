@@ -196,22 +196,6 @@ public class DrawingPanel extends JPanel {
 		/*
 		 * rysunek przykładowy - zgodnie z żądaniem
 		 */
-		g.setColor(Color.YELLOW);
-		g.fillOval(10, 10, 200, 200);
-		g.setColor(Color.BLACK);
-		g.fillOval(50, 50, 40, 40);
-		g.fillOval(120, 50, 40, 40);
-		g.fillOval(40, 120, 30, 30);
-		g.fillOval(50, 130, 30, 30);
-		g.fillOval(60, 138, 30, 30);
-		g.fillOval(70, 145, 30, 30);
-		g.fillOval(80, 150, 30, 30);
-		g.fillOval(90, 151, 30, 30);
-		g.fillOval(100, 150, 30, 30);
-		g.fillOval(110, 145, 30, 30);
-		g.fillOval(120, 138, 30, 30);
-		g.fillOval(130, 130, 30, 30);
-		g.fillOval(140, 120, 30, 30);
 		if (model == null)
 			return;
 		List<Point> points = model.getDrawing();
