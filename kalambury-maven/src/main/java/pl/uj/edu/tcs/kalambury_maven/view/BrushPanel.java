@@ -189,7 +189,7 @@ public class BrushPanel extends JPanel {
 	private void brushChanged() {
 		BrushChangedEvent event = new BrushChangedEvent(
 				(color == Color.WHITE) ? (int) (radius * 1.5) : radius, color);
-		controller.sendEventToServer(event);
+		controller.reactTo(event);
 	}
 
 	/**

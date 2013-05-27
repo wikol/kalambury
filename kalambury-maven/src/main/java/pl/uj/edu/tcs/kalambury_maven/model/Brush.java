@@ -10,12 +10,8 @@ import java.io.Serializable;
  * 
  */
 
-public class Brush implements Serializable{
+public class Brush{
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1103157615025275312L;
 	public Brush(int radius2, Color color2) {
 		this.radius = radius2;
 		this.color = color2;
