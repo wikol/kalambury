@@ -1,6 +1,7 @@
 package pl.uj.edu.tcs.kalambury_maven.model;
 
 import java.awt.Color;
+import java.io.Serializable;
 
 /**
  * Klasa odpowiadająca za pędzel
@@ -9,8 +10,12 @@ import java.awt.Color;
  * 
  */
 
-public class Brush {
+public class Brush implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1103157615025275312L;
 	public Brush(int radius2, Color color2) {
 		this.radius = radius2;
 		this.color = color2;

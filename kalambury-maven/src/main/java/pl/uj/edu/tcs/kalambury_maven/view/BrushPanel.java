@@ -1,17 +1,24 @@
 package pl.uj.edu.tcs.kalambury_maven.view;
 
+import javax.swing.ImageIcon;
+import javax.swing.JColorChooser;
 import javax.swing.JPanel;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Ellipse2D;
+import java.awt.image.BufferedImage;
 
 import javax.swing.JButton;
 
 import pl.uj.edu.tcs.kalambury_maven.controller.DrawingController;
 import pl.uj.edu.tcs.kalambury_maven.event.BrushChangedEvent;
 import pl.uj.edu.tcs.kalambury_maven.model.Brush;
+import java.awt.Label;
 
 /**
  * 
@@ -36,7 +43,7 @@ public class BrushPanel extends JPanel {
 	 */
 	public BrushPanel() {
 
-		setLayout(new GridLayout(6, 2, 0, 0));
+		setLayout(new GridLayout(7, 2, 0, 0));
 
 		JButton btnBlack = new JButton("");
 		btnBlack.setBackground(Color.BLACK);
@@ -49,15 +56,9 @@ public class BrushPanel extends JPanel {
 			}
 		});
 
-		JButton btnTiny = new JButton("XS");
-		add(btnTiny);
-		btnTiny.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				radius = Brush.TINY;
-				brushChanged();
-			}
-		});
+		Label label = new Label("Rozmiar pędzla:");
+		label.setAlignment(Label.CENTER);
+		add(label);
 
 		JButton btnBlue = new JButton();
 		btnBlue.setBackground(Color.BLUE);
@@ -70,12 +71,13 @@ public class BrushPanel extends JPanel {
 			}
 		});
 
-		JButton btnSmall = new JButton("S");
-		add(btnSmall);
-		btnSmall.addActionListener(new ActionListener() {
+		JButton btnTiny = new JButton();
+		add(btnTiny);
+		setImageForButton(btnTiny, Brush.TINY);
+		btnTiny.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				radius = Brush.SMALL;
+				radius = Brush.TINY;
 				brushChanged();
 			}
 		});
@@ -91,12 +93,13 @@ public class BrushPanel extends JPanel {
 		btnGreen.setBackground(Color.GREEN);
 		add(btnGreen);
 
-		JButton btnMedium = new JButton("M");
-		add(btnMedium);
-		btnMedium.addActionListener(new ActionListener() {
+		JButton btnSmall = new JButton();
+		add(btnSmall);
+		setImageForButton(btnSmall, Brush.SMALL);
+		btnSmall.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				radius = Brush.MEDIUM;
+				radius = Brush.SMALL;
 				brushChanged();
 			}
 		});
@@ -112,12 +115,13 @@ public class BrushPanel extends JPanel {
 			}
 		});
 
-		JButton btnLarge = new JButton("L");
-		add(btnLarge);
-		btnLarge.addActionListener(new ActionListener() {
+		JButton btnMedium = new JButton();
+		add(btnMedium);
+		setImageForButton(btnMedium, Brush.MEDIUM);
+		btnMedium.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				radius = Brush.LARGE;
+				radius = Brush.MEDIUM;
 				brushChanged();
 			}
 		});
@@ -133,12 +137,13 @@ public class BrushPanel extends JPanel {
 			}
 		});
 
-		JButton btnXL = new JButton("XL");
-		add(btnXL);
-		btnXL.addActionListener(new ActionListener() {
+		JButton btnLarge = new JButton();
+		add(btnLarge);
+		setImageForButton(btnLarge, Brush.LARGE);
+		btnLarge.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				radius = Brush.EXTRA_LARGE;
+				radius = Brush.LARGE;
 				brushChanged();
 			}
 		});
@@ -153,6 +158,28 @@ public class BrushPanel extends JPanel {
 				brushChanged();
 			}
 		});
+		
+		JButton btnXL = new JButton();
+		add(btnXL);
+		setImageForButton(btnXL, Brush.EXTRA_LARGE);
+		btnXL.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				radius = Brush.EXTRA_LARGE;
+				brushChanged();
+			}
+		});
+		
+		JButton btnPalette = new JButton("Paleta kolorów");
+		btnPalette.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				color = JColorChooser.showDialog(BrushPanel.this,"Wybierz kolor",color);
+				if (color!=null)
+					brushChanged();
+			}
+		});
+		add(btnPalette);
+		
 
 	}
 
@@ -172,5 +199,16 @@ public class BrushPanel extends JPanel {
 	 */
 	public void setController(DrawingController controller) {
 		this.controller = controller;
+	}
+
+	private void setImageForButton(JButton button, int radius) {
+		BufferedImage image = new BufferedImage(radius, radius,
+				BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = image.createGraphics();
+		Shape circle = new Ellipse2D.Float(0, 0, radius, radius);
+		g.setColor(Color.BLACK);
+		g.fill(circle);
+		g.dispose();
+		button.setIcon(new ImageIcon(image));
 	}
 }
