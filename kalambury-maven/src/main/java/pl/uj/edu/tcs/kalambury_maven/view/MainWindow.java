@@ -16,6 +16,9 @@ import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 public class MainWindow extends JFrame {
 
@@ -24,6 +27,8 @@ public class MainWindow extends JFrame {
 	private Ranking ranking;
 	private DrawingPanel drawingPanel;
 	private BrushPanel brushPanel;
+	private JPanel panel;
+	private ClearButton clearButton;
 
 	/**
 	 * For test purposes only
@@ -40,7 +45,7 @@ public class MainWindow extends JFrame {
 			}
 		});
 	}
-
+	
 	public ChatBox getChatBox() {
 		return chatBox;
 	}
@@ -57,6 +62,10 @@ public class MainWindow extends JFrame {
 		return brushPanel;
 	}
 
+	public ClearButton getClearButton(){
+		return clearButton;
+	}
+	
 	public void setupChatBox(ChatMessagesList model, AppController controller) {
 		chatBox.setModel(model);
 		chatBox.setController(controller);
@@ -69,6 +78,10 @@ public class MainWindow extends JFrame {
 		brushPanel.setController(controller);
 	}
 
+	public void setupClearButton(DrawingController controller){
+		clearButton.setController(controller);
+	}
+	
 	/**
 	 * Create the frame.
 	 */
@@ -82,18 +95,40 @@ public class MainWindow extends JFrame {
 		contentPane.setLayout(new FormLayout(new ColumnSpec[] {
 				ColumnSpec.decode("500px"),
 				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-				ColumnSpec.decode("250px"), }, new RowSpec[] {
-				RowSpec.decode("131px"), FormFactory.LINE_GAP_ROWSPEC,
-				RowSpec.decode("300px"), FormFactory.LINE_GAP_ROWSPEC,
-				RowSpec.decode("131px"), }));
+				ColumnSpec.decode("250px:grow"),},
+			new RowSpec[] {
+				RowSpec.decode("131px"),
+				FormFactory.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("default:grow"),
+				FormFactory.LINE_GAP_ROWSPEC,
+				RowSpec.decode("300px"),
+				FormFactory.LINE_GAP_ROWSPEC,
+				RowSpec.decode("131px"),}));
 		brushPanel = new BrushPanel();
 		contentPane.add(brushPanel, "3, 1, fill, fill");
 		drawingPanel = new DrawingPanel();
-		contentPane.add(drawingPanel, "1, 1, 1, 3, fill, fill");
+		contentPane.add(drawingPanel, "1, 1, 1, 5, fill, fill");
+		
+		clearButton = new ClearButton();
+		contentPane.add(clearButton, "3, 3, 1, 2, fill, fill");
+
+		
 		ranking = new Ranking(new HashMap<String, Integer>());
-		contentPane.add(ranking, "3, 3, 1, 3, fill, fill");
+		GridBagLayout gridBagLayout = (GridBagLayout) ranking.getLayout();
+		gridBagLayout.rowWeights = new double[]{0.0, 1.0, 0.0, 0.0};
+		gridBagLayout.columnWeights = new double[]{0.0, 1.0};
+		contentPane.add(ranking, "3, 5, 1, 3, fill, fill");
+		
+		
+		panel = new JPanel();
+		GridBagConstraints gbc_panel = new GridBagConstraints();
+		gbc_panel.insets = new Insets(0, 0, 5, 5);
+		gbc_panel.fill = GridBagConstraints.BOTH;
+		gbc_panel.gridx = 1;
+		gbc_panel.gridy = 1;
+		ranking.add(panel, gbc_panel);
 		chatBox = new ChatBox();
-		contentPane.add(chatBox, "1, 5, fill, fill");
+		contentPane.add(chatBox, "1, 7, fill, fill");
 		pack();
 
 	} 

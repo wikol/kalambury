@@ -114,7 +114,7 @@ public class BrushPanel extends JPanel {
 						btnBlue.addActionListener(new ActionListener() {
 							@Override
 							public void actionPerformed(ActionEvent e) {
-								color = new Color(30,144,255);
+								color = new Color(51, 102, 204);
 								brushChanged();
 							}
 						});
@@ -208,6 +208,8 @@ public class BrushPanel extends JPanel {
 					public void run() {
 						curColorLabel.setBackground(color);
 						curColorLabel.setForeground(new Color(255-color.getRed(),255-color.getGreen(),255-color.getBlue()));
+						if(color.getGreen()>130 )curColorLabel.setForeground(new Color(color.getRed()/2,color.getGreen()/2,color.getBlue()/2));
+						else if(color.getBlue()>130)curColorLabel.setForeground(new Color(color.getRed()/2,color.getGreen()/2,color.getBlue()/2));
 					}
 				}
 				);
