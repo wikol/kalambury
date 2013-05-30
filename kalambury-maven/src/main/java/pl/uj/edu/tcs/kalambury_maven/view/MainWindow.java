@@ -29,6 +29,7 @@ public class MainWindow extends JFrame {
 	private BrushPanel brushPanel;
 	private JPanel panel;
 	private ClearButton clearButton;
+	private RiddleAndTime riddleAndTime;
 
 	/**
 	 * For test purposes only
@@ -99,6 +100,10 @@ public class MainWindow extends JFrame {
 			new RowSpec[] {
 				RowSpec.decode("131px"),
 				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("default:grow"),
+				FormFactory.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("default:grow"),
 				FormFactory.LINE_GAP_ROWSPEC,
 				RowSpec.decode("300px"),
@@ -107,17 +112,20 @@ public class MainWindow extends JFrame {
 		brushPanel = new BrushPanel();
 		contentPane.add(brushPanel, "3, 1, fill, fill");
 		drawingPanel = new DrawingPanel();
-		contentPane.add(drawingPanel, "1, 1, 1, 5, fill, fill");
+		contentPane.add(drawingPanel, "1, 1, 1, 9, fill, fill");
 		
 		clearButton = new ClearButton();
-		contentPane.add(clearButton, "3, 3, 1, 2, fill, fill");
+		contentPane.add(clearButton, "3, 3, fill, fill");
+		
+		riddleAndTime = new RiddleAndTime();
+		contentPane.add(riddleAndTime, "3, 5, fill, fill");
 
 		
 		ranking = new Ranking(new HashMap<String, Integer>());
 		GridBagLayout gridBagLayout = (GridBagLayout) ranking.getLayout();
 		gridBagLayout.rowWeights = new double[]{0.0, 1.0, 0.0, 0.0};
 		gridBagLayout.columnWeights = new double[]{0.0, 1.0};
-		contentPane.add(ranking, "3, 5, 1, 3, fill, fill");
+		contentPane.add(ranking, "3, 9, 1, 2, fill, fill");
 		
 		
 		panel = new JPanel();
@@ -128,7 +136,7 @@ public class MainWindow extends JFrame {
 		gbc_panel.gridy = 1;
 		ranking.add(panel, gbc_panel);
 		chatBox = new ChatBox();
-		contentPane.add(chatBox, "1, 7, fill, fill");
+		contentPane.add(chatBox, "1, 11, fill, fill");
 		pack();
 
 	} 

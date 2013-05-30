@@ -172,6 +172,11 @@ public class RiddleAndTime extends JPanel {
 		this.roundTimeInSeconds = roundTimeInSeconds;
 	}
 
+	public void setRiddleVisible(boolean b){
+		riddleTextField.setVisible(b);
+	}
+	
+	
 	private String timeFormat(long arg) {
 		String res = new String("");
 		if (arg / 60 < 10)
