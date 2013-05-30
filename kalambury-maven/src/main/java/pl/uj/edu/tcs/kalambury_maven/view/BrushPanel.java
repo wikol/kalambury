@@ -46,7 +46,7 @@ public class BrushPanel extends JPanel {
 		setLayout(new GridLayout(7, 2, 0, 0));
 
 		JButton btnBlack = new JButton("");
-		btnBlack.setBackground(Color.BLACK);
+		btnBlack.setBackground(new Color(15,15,29));
 		add(btnBlack);
 		btnBlack.addActionListener(new ActionListener() {
 			@Override
@@ -56,20 +56,20 @@ public class BrushPanel extends JPanel {
 			}
 		});
 
-		Label label = new Label("Rozmiar pędzla:");
+		Label label = new Label("Brush size:");
 		label.setAlignment(Label.CENTER);
 		add(label);
-
-		JButton btnBlue = new JButton();
-		btnBlue.setBackground(Color.BLUE);
-		add(btnBlue);
-		btnBlue.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				color = Color.BLUE;
-				brushChanged();
-			}
-		});
+		
+				JButton btnRed = new JButton();
+				btnRed.setBackground(new Color(240, 3, 3));
+				add(btnRed);
+				btnRed.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						color = new Color(240, 3, 3);
+						brushChanged();
+					}
+				});
 
 		JButton btnTiny = new JButton();
 		add(btnTiny);
@@ -81,17 +81,17 @@ public class BrushPanel extends JPanel {
 				brushChanged();
 			}
 		});
-
-		JButton btnGreen = new JButton("");
-		btnGreen.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				color = Color.GREEN;
-				brushChanged();
-			}
-		});
-		btnGreen.setBackground(Color.GREEN);
-		add(btnGreen);
+		
+				JButton btnYellow = new JButton();
+				btnYellow.setBackground(new Color(255, 255, 51));
+				add(btnYellow);
+				btnYellow.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						color = new Color(255, 255, 51);
+						brushChanged();
+					}
+				});
 
 		JButton btnSmall = new JButton();
 		add(btnSmall);
@@ -103,17 +103,17 @@ public class BrushPanel extends JPanel {
 				brushChanged();
 			}
 		});
-
-		JButton btnYellow = new JButton();
-		btnYellow.setBackground(Color.YELLOW);
-		add(btnYellow);
-		btnYellow.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				color = Color.YELLOW;
-				brushChanged();
-			}
-		});
+				
+						JButton btnBlue = new JButton();
+						btnBlue.setBackground(new Color(51, 102, 204));
+						add(btnBlue);
+						btnBlue.addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								color = new Color(30,144,255);
+								brushChanged();
+							}
+						});
 
 		JButton btnMedium = new JButton();
 		add(btnMedium);
@@ -125,17 +125,17 @@ public class BrushPanel extends JPanel {
 				brushChanged();
 			}
 		});
-
-		JButton btnRed = new JButton();
-		btnRed.setBackground(Color.RED);
-		add(btnRed);
-		btnRed.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				color = Color.RED;
-				brushChanged();
-			}
-		});
+		
+				JButton btnGreen = new JButton("");
+				btnGreen.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						color = new Color(51, 153, 0);
+						brushChanged();
+					}
+				});
+				btnGreen.setBackground(new Color(51, 153, 0));
+				add(btnGreen);
 
 		JButton btnLarge = new JButton();
 		add(btnLarge);
@@ -170,7 +170,7 @@ public class BrushPanel extends JPanel {
 			}
 		});
 		
-		JButton btnPalette = new JButton("Paleta kolorów");
+		JButton btnPalette = new JButton("Choose color...");
 		btnPalette.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				color = JColorChooser.showDialog(BrushPanel.this,"Wybierz kolor",color);
@@ -205,7 +205,7 @@ public class BrushPanel extends JPanel {
 		BufferedImage image = new BufferedImage(radius, radius,
 				BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = image.createGraphics();
-		Shape circle = new Ellipse2D.Float(0, 0, radius, radius);
+		Shape circle = new Ellipse2D.Float(radius/4, radius/4, radius/2, radius/2);
 		g.setColor(Color.BLACK);
 		g.fill(circle);
 		g.dispose();

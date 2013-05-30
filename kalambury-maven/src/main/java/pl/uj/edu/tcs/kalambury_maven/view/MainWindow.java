@@ -96,6 +96,6 @@ public class MainWindow extends JFrame {
 		contentPane.add(chatBox, "1, 5, fill, fill");
 		pack();
 
-	}
+	} 
 
 }
