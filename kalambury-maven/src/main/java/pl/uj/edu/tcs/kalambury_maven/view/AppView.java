@@ -62,6 +62,7 @@ public class AppView {
 					mainWindow.setupDrawingPanel(
 							controller.getDrawingController(),
 							model.getDrawingModel());
+					mainWindow.setupClearButton(controller.getDrawingController());
 					model.registerChatBox(AppView.this);
 					model.registerRanking(AppView.this);
 					model.registerDrawingPanel(AppView.this);
