@@ -204,7 +204,7 @@ public class GameLogic {
 	 * że runda właśnie się skończyła.
 	 */
 	public synchronized void roundTimeIsOver() {
-		System.out.println();
+		
 	}
 
 	public void setServer(Server s) {
