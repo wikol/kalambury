@@ -25,6 +25,7 @@ public class GameLogic {
 	private Server server;
 	private Queue<String> drawingQueue = new LinkedBlockingDeque<>();
 	private SimpleModel localModel = new SimpleModel();
+	private RoundTimer roundTimer = new RoundTimer(this);
 
 	private String nowBeingDrawnWord = ""; // aktualne hasło
 
@@ -50,7 +51,6 @@ public class GameLogic {
 			// jeśli hasło wysłał nam nie ten kto teraz ma rysować to ignorujemy
 			if (!username.equals(drawingQueue.peek()))
 				return;
-			loguj("no dobra, od ciebie nas ono interesuje");
 
 			nowBeingDrawnWord = ((NewWordForGuessingEvent) event).getWord();
 			someoneIsDrawing = true;
@@ -198,6 +198,13 @@ public class GameLogic {
 			loguj("Wychodzimy z NewPointsDrawnEvent");
 			return;
 		}
+	}
+
+	/**
+	 * Funkcja do wołania przez timer odliczający czas rundy, informująca o tym
+	 * że runda właśnie się skończyła.
+	 */
+	public synchronized void roundIsOver() {
 	}
 
 	public void setServer(Server s) {
