@@ -157,8 +157,17 @@ public class GameLogic {
 				server.broadcastEvent(new WordGuessedEvent(nowBeingDrawnWord,
 						username, getPointsForGuessing(), drawingUser, getPointsForDrawing()));
 				startNextRound();
+				return;
 			}
 			// później - sprawdź, czy to nie koniec gry
+			
+			/*
+			 * sprawdzanie czy słowa są podobne
+			 */
+			if (areSimilar(newMessage,currentWord)){
+				server.sendEvent(username, new MessageSendEvent(CHAT_SERVER_NAME,"You nearly guessed!"));
+			}
+			
 			return;
 		}
 
@@ -235,6 +244,28 @@ public class GameLogic {
 	// do wypisywania logów
 	private void loguj(String str) {
 		System.out.println("GameLogic: " + str);
+	}
+	
+	private boolean areSimilar(String guess, String toGuess){
+		guess = guess.trim().toLowerCase();
+		toGuess = toGuess.trim().toLowerCase();
+		char[] before = {'ą','ć','ę','ł','ń','ó','ś','ż','ź'};
+		char[] after = {'a','c','e','l','n','o','s','z','z'};
+		for (int i=0; i<before.length; i++){
+			guess = guess.replace(before[i], after[i]);
+			toGuess = toGuess.replace(before[i], after[i]);
+		}
+		int[][] common = new int[guess.length()+1][toGuess.length()+1];
+		for (int i=1; i<=guess.length(); i++)
+			for (int j=1; j<=toGuess.length(); j++){
+				if (guess.charAt(i-1)==toGuess.charAt(j-1)){
+					common[i][j] = common[i-1][j-1]+1;
+				} else {
+					common[i][j] = Math.max(common[i-1][j], common[i][j-1]);
+				}
+			}
+		int result = common[guess.length()][toGuess.length()];
+		return result>=toGuess.length()/2;
 	}
 
 }

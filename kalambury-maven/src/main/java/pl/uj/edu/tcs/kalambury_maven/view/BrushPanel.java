@@ -56,7 +56,7 @@ public class BrushPanel extends JPanel {
 			}
 		});
 
-		Label label = new Label("Rozmiar pędzla:");
+		Label label = new Label("Brush size:");
 		label.setAlignment(Label.CENTER);
 		add(label);
 
@@ -170,7 +170,7 @@ public class BrushPanel extends JPanel {
 			}
 		});
 		
-		JButton btnPalette = new JButton("Paleta kolorów");
+		JButton btnPalette = new JButton("Color palette");
 		btnPalette.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				color = JColorChooser.showDialog(BrushPanel.this,"Wybierz kolor",color);
