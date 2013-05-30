@@ -34,7 +34,7 @@ public class ClearButton extends JPanel {
 		btnClear.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				controller.reactTo(new ClearScreenEvent());
+				controller.sendEventToServer(new ClearScreenEvent());
 			}
 		});
 		add(btnClear);
