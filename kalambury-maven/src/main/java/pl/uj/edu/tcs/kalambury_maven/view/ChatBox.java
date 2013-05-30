@@ -84,22 +84,14 @@ public class ChatBox extends JPanel {
 	}
 
 	public void updateChatBox() {
-		EventQueue.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-
-				int c = 0;
-				for (ChatMessage message : model.getMessagesList()) {
-					if (c >= addedMsgs) {
-						addNewMessage(new ChatMessageView(message));
-						addedMsgs++;
-					}
-					c++;
-				}
+		int c = 0;
+		for (ChatMessage message : model.getMessagesList()) {
+			if (c >= addedMsgs) {
+				addNewMessage(new ChatMessageView(message));
+				addedMsgs++;
 			}
-		});
+			c++;
+		}
 	}
 
 	public void setModel(ChatMessagesList cml) {
@@ -136,12 +128,21 @@ public class ChatBox extends JPanel {
 		}
 	}
 
-	private void addNewMessage(ChatMessageView chMes) {
-		messagesPanel.add(chMes);
-		validate();
-		repaint();
-		JScrollBar verticalBar = scrollPane.getVerticalScrollBar();
-		verticalBar.setValue(verticalBar.getMaximum());
+	private void addNewMessage(final ChatMessageView chMes) {
+		EventQueue.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+
+				messagesPanel.add(chMes);
+				validate();
+				repaint();
+				JScrollBar verticalBar = scrollPane.getVerticalScrollBar();
+				verticalBar.setValue(verticalBar.getMaximum());
+			}
+
+		});
 	}
 
 	private static class ChatMessageView extends JLabel {
