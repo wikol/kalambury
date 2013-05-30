@@ -141,7 +141,7 @@ public class RiddleAndTime extends JPanel {
 	private JTextField timeTextField;
 	private JTextField riddleTextField;
 	private String riddle = "";
-	private long startTime;
+	private long timeLeft;
 	private long roundTimeInSeconds = 100;
 	/**
 	 * @wbp.nonvisual location=39,77
@@ -172,10 +172,27 @@ public class RiddleAndTime extends JPanel {
 		this.roundTimeInSeconds = roundTimeInSeconds;
 	}
 
+	/**
+	 * 
+	 * Decyduje o tym, czy pole z zagadką jest widoczne dla gracza.
+	 * 
+	 * @param b - boolean niosący powyższą informację 
+	 */
+	
 	public void setRiddleVisible(boolean b){
 		riddleTextField.setVisible(b);
 	}
 	
+	/**
+	 * 
+	 * Metoda Ani - pobiera od serwera, ile czasu w sekundach mamy do końca rundy.
+	 * 
+	 */
+	
+	private long getTimeLeft(){
+		return 0;
+		//TODO pobieranie czasu, który zostałdo końca rundy
+	}
 	
 	private String timeFormat(long arg) {
 		String res = new String("");
@@ -196,7 +213,6 @@ public class RiddleAndTime extends JPanel {
 		setMinimumSize(new Dimension(250, 90));
 		setPreferredSize(new Dimension(300, 90));
 		setLayout(new GridLayout(3, 1, 0, 0));
-		startTime = System.currentTimeMillis();
 		riddleTextField = new JTextField();
 		riddleTextField.setHorizontalAlignment(SwingConstants.CENTER);
 		add(riddleTextField);
@@ -215,14 +231,12 @@ public class RiddleAndTime extends JPanel {
 
 		riddleTextField.setText(riddle);
 
-		startTime = startTime / 1000;
-
 		riddlaAndTimeTimer.schedule(new TimerTask() {
 			@Override
 			public void run() {
 				synchronized (this) {
 					long curTime = System.currentTimeMillis() / 1000;
-					long res = roundTimeInSeconds - (curTime - startTime);
+					long res = getTimeLeft();
 					if (res < 0)
 						return;
 					timeTextField.setText(timeFormat(res));
