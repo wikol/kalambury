@@ -16,7 +16,7 @@ public class RiddleAndTime extends JPanel {
 	private JTextField timeTextField;
 	private JTextField riddleTextField;
 	private String riddle = "";
-	private long timeLeft;
+	private long timeLeft,startTime;
 	private long roundTimeInSeconds = 100;
 	/**
 	 * @wbp.nonvisual location=39,77
@@ -65,9 +65,10 @@ public class RiddleAndTime extends JPanel {
 	 */
 	
 	private long getTimeLeft(){
-		return 0;
+		return 30;
 		//TODO pobieranie czasu, który zostałdo końca rundy
 	}
+
 	
 	private String timeFormat(long arg) {
 		String res = new String("");
@@ -106,12 +107,15 @@ public class RiddleAndTime extends JPanel {
 
 		riddleTextField.setText(riddle);
 
+		startTime = System.currentTimeMillis()/1000;
+		startTime = startTime - (roundTimeInSeconds - timeLeft);
+		
 		riddlaAndTimeTimer.schedule(new TimerTask() {
 			@Override
 			public void run() {
 				synchronized (this) {
 					long curTime = System.currentTimeMillis() / 1000;
-					long res = getTimeLeft();
+					long res = roundTimeInSeconds - (curTime - startTime);
 					if (res < 0)
 						return;
 					timeTextField.setText(timeFormat(res));
