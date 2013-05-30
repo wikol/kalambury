@@ -282,8 +282,8 @@ public class GameLogic {
 				}
 			}
 		int result = common[guess.length()][toGuess.length()];
-		return guess.substring(0, Math.max(3, guess.length())).equals(
-				toGuess.substring(0, Math.max(toGuess.length(), 3)))
+		return guess.substring(0, Math.min(3, guess.length())).equals(
+				toGuess.substring(0, Math.min(toGuess.length(), 3)))
 				&& result >= (toGuess.length() + 1) / 2;
 	}
 
