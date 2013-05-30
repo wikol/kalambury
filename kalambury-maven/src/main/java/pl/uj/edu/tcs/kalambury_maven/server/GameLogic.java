@@ -287,4 +287,5 @@ public class GameLogic {
 				&& result >= (toGuess.length() + 1) / 2;
 	}
 
+
 }
