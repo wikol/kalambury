@@ -186,6 +186,7 @@ public class BrushPanel extends JPanel {
 		
 		curColorLabel = new JLabel("Current Color");
 		curColorLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		curColorLabel.setOpaque(true);
 		curColorLabel.setBackground(color);
 		add(curColorLabel);
 		
