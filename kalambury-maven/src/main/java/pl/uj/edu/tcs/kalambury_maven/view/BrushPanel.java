@@ -5,6 +5,7 @@ import javax.swing.JColorChooser;
 import javax.swing.JPanel;
 
 import java.awt.Color;
+import java.awt.EventQueue;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Shape;
@@ -19,6 +20,8 @@ import pl.uj.edu.tcs.kalambury_maven.controller.DrawingController;
 import pl.uj.edu.tcs.kalambury_maven.event.BrushChangedEvent;
 import pl.uj.edu.tcs.kalambury_maven.model.Brush;
 import java.awt.Label;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 
 /**
  * 
@@ -37,7 +40,8 @@ public class BrushPanel extends JPanel {
 	private DrawingController controller;
 	private int radius = Brush.MEDIUM;
 	private Color color = Color.BLACK;
-
+	private JLabel curColorLabel;
+	
 	/**
 	 * Konstuktor
 	 */
@@ -55,10 +59,10 @@ public class BrushPanel extends JPanel {
 				brushChanged();
 			}
 		});
-
-		Label label = new Label("Brush size:");
-		label.setAlignment(Label.CENTER);
-		add(label);
+				
+				JLabel label = new JLabel("Brush size:");
+				label.setHorizontalAlignment(SwingConstants.CENTER);
+				add(label);
 		
 				JButton btnRed = new JButton();
 				btnRed.setBackground(new Color(240, 3, 3));
@@ -180,6 +184,11 @@ public class BrushPanel extends JPanel {
 		});
 		add(btnPalette);
 		
+		curColorLabel = new JLabel("Current Color");
+		curColorLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		curColorLabel.setBackground(color);
+		add(curColorLabel);
+		
 
 	}
 
@@ -190,6 +199,16 @@ public class BrushPanel extends JPanel {
 		BrushChangedEvent event = new BrushChangedEvent(
 				(color == Color.WHITE) ? (int) (radius * 1.5) : radius, color);
 		controller.reactTo(event);
+		EventQueue.invokeLater(
+				new Runnable() {
+					
+					@Override
+					public void run() {
+						curColorLabel.setBackground(color);
+						curColorLabel.setForeground(new Color(255-color.getRed(),255-color.getGreen(),255-color.getBlue()));
+					}
+				}
+				);
 	}
 
 	/**
