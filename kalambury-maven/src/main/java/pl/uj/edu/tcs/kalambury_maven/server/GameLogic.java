@@ -36,11 +36,8 @@ public class GameLogic {
 	public synchronized void reactTo(String username, Event event) {
 
 		loguj("Otrzymano " + event.toString());
+		
 		if (event instanceof NewGameEvent) {
-			// myślę, że oni będą po prostu dorzucani do kolejki od razu jak się
-			// zonlineują
-			// for (String name : localModel.getUserRanking().getUsersOnline())
-			// drawingQueue.add(name);
 			startNextRound();
 			gameStared = true;
 			return;
@@ -165,10 +162,12 @@ public class GameLogic {
 			/*
 			 * sprawdzanie czy słowa są podobne
 			 */
+			loguj("Sprawdzanie czy są podobne");
 			if (areSimilar(newMessage, currentWord)) {
 				server.sendEvent(username, new MessageSendEvent(
 						CHAT_SERVER_NAME, "You nearly guessed!"));
 			}
+			loguj("koniec sprawdzania");
 
 			return;
 		}
@@ -204,7 +203,8 @@ public class GameLogic {
 	 * Funkcja do wołania przez timer odliczający czas rundy, informująca o tym
 	 * że runda właśnie się skończyła.
 	 */
-	public synchronized void roundIsOver() {
+	public synchronized void roundTimeIsOver() {
+		System.out.println();
 	}
 
 	public void setServer(Server s) {
@@ -248,6 +248,9 @@ public class GameLogic {
 		// wysyła użytkownikowi pytanie o hasło do rysowania
 		server.sendEvent(drawingQueue.peek(), new NewWordIsNeededEvent());
 		someoneIsDrawing = false;
+		
+		//rozpoczyna odliczanie czasu
+		roundTimer.startRound();
 	}
 
 	// do wypisywania logów
