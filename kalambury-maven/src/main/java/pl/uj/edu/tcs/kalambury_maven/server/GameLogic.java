@@ -198,6 +198,16 @@ public class GameLogic {
 			loguj("Wychodzimy z NewPointsDrawnEvent");
 			return;
 		}
+		
+		if (event instanceof ClearScreenEvent){
+			
+			if (!username.equals(drawingQueue.peek())) {
+				loguj("bo osoba była zła, a zupa za słona");
+				return;
+			}
+			
+			server.broadcastEvent(event);
+		}
 	}
 
 	public void setServer(Server s) {
