@@ -62,7 +62,8 @@ public class AppView {
 					mainWindow.setupDrawingPanel(
 							controller.getDrawingController(),
 							model.getDrawingModel());
-					mainWindow.setupClearButton(controller.getDrawingController());
+					mainWindow.setupClearButton(controller
+							.getDrawingController());
 					model.registerChatBox(AppView.this);
 					model.registerRanking(AppView.this);
 					model.registerDrawingPanel(AppView.this);
@@ -76,7 +77,7 @@ public class AppView {
 		// for testing purposes only
 		controller.testMainWindow();
 	}
-	
+
 	public void displayWordInput() {
 		try {
 			EventQueue.invokeAndWait(new Runnable() {
@@ -92,9 +93,11 @@ public class AppView {
 			e.getCause().printStackTrace();
 		}
 	}
-	
+
 	public void closeWordInput() {
-		wordInputWindow.dispose();
+		if (wordInputWindow != null) {
+			wordInputWindow.dispose();
+		}
 	}
 
 	public MainWindow getMainWindow() {

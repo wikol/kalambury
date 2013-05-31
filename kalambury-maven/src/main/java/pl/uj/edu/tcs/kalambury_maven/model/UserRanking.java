@@ -78,6 +78,30 @@ public class UserRanking {
 	}
 
 	/**
+	 * Ustawianie liczby punktów zawodnikowi
+	 * 
+	 * @param name
+	 *            - imię zawodnika
+	 * @param points
+	 *            - ile w sumie punktów ma zawodnik
+	 */
+	public void setPointsForUser(String name, int points) {
+		users.put(name, points);
+		updateView();
+	}
+
+	/**
+	 * Zwraca ilość punktów zawodnika
+	 * 
+	 * @param name
+	 *            - imię zawodnika
+	 * @return ilość punktów zawodnika name
+	 */
+	public int getPointsForUser(String name) {
+		return users.get(name);
+	}
+
+	/**
 	 * Usuwanie zawodnika
 	 * 
 	 * @param name

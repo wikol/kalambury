@@ -29,7 +29,7 @@ public class MainWindow extends JFrame {
 	private BrushPanel brushPanel;
 	private JPanel panel;
 	private ClearButton clearButton;
-	private RiddleAndTime riddleAndTime;
+	private TimerAndProgressBar riddleAndTime;
 
 	/**
 	 * For test purposes only
@@ -61,6 +61,10 @@ public class MainWindow extends JFrame {
 
 	public BrushPanel getBrushPanel() {
 		return brushPanel;
+	}
+	
+	public TimerAndProgressBar getTimer() {
+		return riddleAndTime;
 	}
 
 	public ClearButton getClearButton(){
@@ -117,7 +121,7 @@ public class MainWindow extends JFrame {
 		clearButton = new ClearButton();
 		contentPane.add(clearButton, "3, 3, fill, fill");
 		
-		riddleAndTime = new RiddleAndTime();
+		riddleAndTime = new TimerAndProgressBar();
 		contentPane.add(riddleAndTime, "3, 5, fill, fill");
 
 		
@@ -125,7 +129,7 @@ public class MainWindow extends JFrame {
 		GridBagLayout gridBagLayout = (GridBagLayout) ranking.getLayout();
 		gridBagLayout.rowWeights = new double[]{0.0, 1.0, 0.0, 0.0};
 		gridBagLayout.columnWeights = new double[]{0.0, 1.0};
-		contentPane.add(ranking, "3, 9, 1, 2, fill, fill");
+		contentPane.add(ranking, "3, 9, 1, 3, fill, fill");
 		
 		
 		panel = new JPanel();

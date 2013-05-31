@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 public class RoundTimer {
 
-	private long roundTime = 180;
+	private long roundTime = 180000;
 	private GameLogic gameLogic;
 	private ScheduledExecutorService timer;
 	private ScheduledFuture<Object> future = null;
@@ -21,17 +21,22 @@ public class RoundTimer {
 
 	public void startRound() {
 		if (future != null && !future.isCancelled()) {
-			future.cancel(true);
+			stopTimer();
 		}
 
 		future = timer.schedule(new Callable<Object>() {
 			@Override
 			public Object call() throws Exception {
+				System.out.println("Czas się skończył");
 				gameLogic.roundTimeIsOver();
 				return null;
 			}
 		}, roundTime, TimeUnit.MILLISECONDS);
 		lastRoundStart = System.currentTimeMillis();
+	}
+	
+	public void stopTimer() {
+		future.cancel(true);
 	}
 
 	public long getTimeLeft() {
@@ -48,20 +53,4 @@ public class RoundTimer {
 	public long getRoundTime() {
 		return roundTime;
 	}
-
-	private class RoundIsOver implements Callable<Object> {
-		private GameLogic gameLogic;
-
-		public RoundIsOver(GameLogic gL) {
-			this.gameLogic = gL;
-		}
-
-		@Override
-		public RoundIsOver call() throws Exception {
-			gameLogic.roundTimeIsOver();
-			return null;
-		}
-
-	}
-
 }

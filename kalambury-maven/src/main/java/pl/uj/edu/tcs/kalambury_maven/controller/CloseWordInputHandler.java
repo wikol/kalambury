@@ -2,12 +2,12 @@ package pl.uj.edu.tcs.kalambury_maven.controller;
 
 import pl.uj.edu.tcs.kalambury_maven.event.Event;
 import pl.uj.edu.tcs.kalambury_maven.event.EventHandler;
-import pl.uj.edu.tcs.kalambury_maven.event.StartDrawingEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.CloseWordInputEvent;
 
-public class StartDrawingHandler implements EventHandler {
+public class CloseWordInputHandler implements EventHandler {
 	AppController controller;
 	
-	public StartDrawingHandler(AppController controller) {
+	public CloseWordInputHandler(AppController controller) {
 		this.controller = controller;
 	}
 

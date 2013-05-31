@@ -12,8 +12,9 @@ import pl.uj.edu.tcs.kalambury_maven.event.NewPointsDrawnEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.NewWordForGuessingEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.NewWordIsNeededEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.NextRoundStartsEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.PointsChangedEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.ResetUserRankingEvent;
-import pl.uj.edu.tcs.kalambury_maven.event.StartDrawingEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.CloseWordInputEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOfflineEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOnlineEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.WordGuessedEvent;
@@ -36,7 +37,7 @@ public class GameLogic {
 	public synchronized void reactTo(String username, Event event) {
 
 		loguj("Otrzymano " + event.toString());
-		
+
 		if (event instanceof NewGameEvent) {
 			startNextRound();
 			gameStared = true;
@@ -51,7 +52,7 @@ public class GameLogic {
 
 			nowBeingDrawnWord = ((NewWordForGuessingEvent) event).getWord();
 			someoneIsDrawing = true;
-			server.sendEvent(drawingQueue.peek(), new StartDrawingEvent(
+			server.sendEvent(drawingQueue.peek(), new CloseWordInputEvent(
 					drawingQueue.peek()));
 			return;
 		}
@@ -74,16 +75,21 @@ public class GameLogic {
 					.getDrawingModel().getDrawing());
 			server.sendEvent(username, wholeDrawingEvent);
 
-			// wysyłanie mu informacji o aktualnej rundzie
-			server.sendEvent(username,
-					new NextRoundStartsEvent(drawingQueue.peek()));
-
 			server.broadcastEvent(event);
 
 			// TODO usunąć jak dodamy jakiś start!
 			if (!gameStared && drawingQueue.size() > 1) {
+				loguj("Startujemy grę, bo mamy dwóch użytkowników");
 				reactTo("", new NewGameEvent());
 			}
+
+			// wysyłanie mu informacji o aktualnej rundzie
+			server.sendEvent(
+					username,
+					new NextRoundStartsEvent(gameStared ? drawingQueue.peek()
+							: "none", roundTimer.getTimeLeft(), roundTimer
+							.getRoundTime()));
+
 			return;
 			// rzucenie wyjątku, jeśli użytkownik już jest zalogowany? - być
 			// może, jeśli chcecie, to nawet może być assert
@@ -94,14 +100,16 @@ public class GameLogic {
 			// jeśli zniknął użytkownik właśnie rysujacy
 			if (username.equals(drawingQueue.peek())) {
 				drawingQueue.poll();
+				roundTimer.stopTimer();
 				server.broadcastEvent(new MessageSendEvent(CHAT_SERVER_NAME,
 						"Current drawing user left game, skiping to next round."));
-				
-/*TODO FROM TESTS: w obecnym kształcie mamy drobną sprzeczność:
-	NIE zaczynamy gry, dopóki nie pojawi się drugi zawodnik
-		ale
-	ZACZYNAMY nową rundę, gdy wszyscy prócz jednego zawodnika przejdą w stan offline
-*/				
+
+				/*
+				 * TODO FROM TESTS: w obecnym kształcie mamy drobną sprzeczność:
+				 * NIE zaczynamy gry, dopóki nie pojawi się drugi zawodnik ale
+				 * ZACZYNAMY nową rundę, gdy wszyscy prócz jednego zawodnika
+				 * przejdą w stan offline
+				 */
 
 				if (!drawingQueue.isEmpty()) {
 					startNextRound();
@@ -151,12 +159,12 @@ public class GameLogic {
 			String newMessage = castedEvent.getMessage().trim().toLowerCase();
 			String currentWord = nowBeingDrawnWord.trim().toLowerCase();
 			if (someoneIsDrawing && newMessage.equals(currentWord)) {
+				roundTimer.stopTimer();
 				localModel.getUserRanking().addPointsToUser(username,
 						getPointsForGuessing());
-				String drawingUser = drawingQueue.poll();
+				String drawingUser = switchUserFromTop();
 				localModel.getUserRanking().addPointsToUser(drawingUser,
 						getPointsForDrawing());
-				drawingQueue.add(drawingUser);
 				server.broadcastEvent(new WordGuessedEvent(nowBeingDrawnWord,
 						username, getPointsForGuessing(), drawingUser,
 						getPointsForDrawing()));
@@ -168,18 +176,15 @@ public class GameLogic {
 			/*
 			 * sprawdzanie czy słowa są podobne
 			 */
-			loguj("Sprawdzanie czy są podobne");
 			if (areSimilar(newMessage, currentWord)) {
 				server.sendEvent(username, new MessageSendEvent(
 						CHAT_SERVER_NAME, "You nearly guessed!"));
 			}
-			loguj("koniec sprawdzania");
 
 			return;
 		}
 
 		if (event instanceof NewPointsDrawnEvent) {
-			loguj("Wchodzimy do NewPointsDrawnEvent: " + username);
 			/*
 			 * nowe punkty - jeśli przyszły od właściwej osoby, update'uj nasz
 			 * model i wyślij info do wszystkich SEEMS DONE X
@@ -200,17 +205,16 @@ public class GameLogic {
 			localModel.getDrawingModel().actualiseDrawing(
 					((NewPointsDrawnEvent) event).getPoints());
 			server.broadcastEvent(event);
-			loguj("Wychodzimy z NewPointsDrawnEvent");
 			return;
 		}
-		
-		if (event instanceof ClearScreenEvent){
-			
+
+		if (event instanceof ClearScreenEvent) {
+
 			if (!username.equals(drawingQueue.peek())) {
 				loguj("bo osoba była zła, a zupa za słona");
 				return;
 			}
-			
+
 			server.broadcastEvent(event);
 		}
 	}
@@ -220,7 +224,29 @@ public class GameLogic {
 	 * że runda właśnie się skończyła.
 	 */
 	public synchronized void roundTimeIsOver() {
-		
+		// znaczy, że ktoś jednak zgadł, tylko źle się nam zsynchronizowało
+		if (roundTimer.getTimeLeft() > 1000)
+			return;
+
+		// coś się rozsynchronizowało
+		if (!gameStared)
+			return;
+
+		String drawingUser = switchUserFromTop();
+		if (!someoneIsDrawing) {
+			server.sendEvent(drawingUser, new CloseWordInputEvent(drawingUser));
+		}
+
+		localModel.getUserRanking().addPointsToUser(drawingUser,
+				getPointsForBadDrawing());
+		server.broadcastEvent(new PointsChangedEvent(drawingUser, localModel
+				.getUserRanking().getPointsForUser(drawingUser)));
+
+		server.sendEvent(drawingUser, new MessageSendEvent(CHAT_SERVER_NAME,
+				"Your picture was bad, your points decreased"));
+		server.broadcastEvent(new MessageSendEvent(CHAT_SERVER_NAME,
+				"No one guessed, skiping to next round."));
+		startNextRound();
 	}
 
 	public void setServer(Server s) {
@@ -249,24 +275,42 @@ public class GameLogic {
 	}
 
 	/**
-	 * Funkcja pomocnicza, do startowania następnej rundy. Czyści planszę, prosi
-	 * o hasło do rysowania.
+	 * Funkcja zwracająca liczbę punktów przysługującą graczowi za narysowanie
+	 * gdy nikt nie odgadł, a czas dobiegł końca. Aktualnie czeka na
+	 * rozszerzenie.
+	 * 
+	 * @return
+	 */
+	private int getPointsForBadDrawing() {
+		return -5;
+	}
+
+	/**
+	 * Funkcja pomocnicza, do startowania następnej rundy, z graczem aktualnie u
+	 * góry kolejki jako rysującym. Czyści planszę, prosi o hasło do rysowania.
 	 */
 	private void startNextRound() {
 		// wyczyszczenie planszy
 		localModel.getDrawingModel().clearScreen();
 		server.broadcastEvent(new ClearScreenEvent());
 
+		// rozpoczyna odliczanie czasu
+		roundTimer.startRound();
+
 		// rozpoczęcie nowej rundy w rankingu
 		localModel.getUserRanking().nextRound(drawingQueue.peek());
-		server.broadcastEvent(new NextRoundStartsEvent(drawingQueue.peek()));
+		server.broadcastEvent(new NextRoundStartsEvent(drawingQueue.peek(),
+				roundTimer.getRoundTime(), roundTimer.getRoundTime()));
 
 		// wysyła użytkownikowi pytanie o hasło do rysowania
 		server.sendEvent(drawingQueue.peek(), new NewWordIsNeededEvent());
 		someoneIsDrawing = false;
-		
-		//rozpoczyna odliczanie czasu
-		roundTimer.startRound();
+	}
+
+	private String switchUserFromTop() {
+		String user = drawingQueue.poll();
+		drawingQueue.add(user);
+		return user;
 	}
 
 	// do testów
@@ -306,6 +350,5 @@ public class GameLogic {
 				toGuess.substring(0, Math.min(toGuess.length(), 3)))
 				&& result >= (toGuess.length() + 1) / 2;
 	}
-
 
 }

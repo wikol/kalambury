@@ -12,6 +12,8 @@ public class NextRoundStartsEvent implements Event {
 	private static final long serialVersionUID = 3952628287399438137L;
 	
 	private String drawingUser;
+	private long timeLeft;
+	private long roundTime;
 
 	/**
 	 * Konstruktor, przyjmuje nick użytkownika który rysuje w rundzie właśnie
@@ -19,12 +21,22 @@ public class NextRoundStartsEvent implements Event {
 	 * 
 	 * @param drawingUser
 	 */
-	public NextRoundStartsEvent(String drawingUser) {
+	public NextRoundStartsEvent(String drawingUser, long timeLeft, long roundTime) {
 		this.drawingUser = drawingUser;
+		this.timeLeft = timeLeft;
+		this.roundTime = roundTime;
 	}
 
 	public String getDrawingUser() {
 		return drawingUser;
+	}
+	
+	public long getTimeLeft() {
+		return timeLeft;
+	}
+	
+	public long getRoundTime() {
+		return roundTime;
 	}
 
 }

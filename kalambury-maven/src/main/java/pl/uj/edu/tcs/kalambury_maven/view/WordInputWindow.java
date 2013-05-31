@@ -20,7 +20,7 @@ import pl.uj.edu.tcs.kalambury_maven.controller.AppController;
 import pl.uj.edu.tcs.kalambury_maven.event.Event;
 import pl.uj.edu.tcs.kalambury_maven.event.EventHandler;
 import pl.uj.edu.tcs.kalambury_maven.event.NewWordForGuessingEvent;
-import pl.uj.edu.tcs.kalambury_maven.event.StartDrawingEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.CloseWordInputEvent;
 
 public class WordInputWindow extends JFrame implements EventHandler{
 	private AppController controller;
@@ -137,7 +137,7 @@ public class WordInputWindow extends JFrame implements EventHandler{
 	@Override
 	public void handle(Event e) {
 		sendingInProgress = false;
-		if (e instanceof StartDrawingEvent) {
+		if (e instanceof CloseWordInputEvent) {
 			dispose();
 		} 
 		/*
