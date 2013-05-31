@@ -20,7 +20,7 @@ import pl.uj.edu.tcs.kalambury_maven.event.WordGuessedEvent;
 import pl.uj.edu.tcs.kalambury_maven.model.SimpleModel;
 
 public class GameLogic {
-	private static final String CHAT_SERVER_NAME = "!!!_SERVER";
+	private static final String CHAT_SERVER_NAME = "SERVER INFO:";
 
 	private Server server;
 	private Queue<String> drawingQueue = new LinkedBlockingDeque<>();
