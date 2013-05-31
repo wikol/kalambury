@@ -34,9 +34,11 @@ public class RoundTimer {
 		}, roundTime, TimeUnit.MILLISECONDS);
 		lastRoundStart = System.currentTimeMillis();
 	}
-	
+
 	public void stopTimer() {
-		future.cancel(true);
+		if (future != null) {
+			future.cancel(true);
+		}
 	}
 
 	public long getTimeLeft() {

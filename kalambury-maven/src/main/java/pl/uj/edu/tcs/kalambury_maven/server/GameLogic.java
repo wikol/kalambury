@@ -75,6 +75,15 @@ public class GameLogic {
 					.getDrawingModel().getDrawing());
 			server.sendEvent(username, wholeDrawingEvent);
 
+			// wysyłanie mu informacji o aktualnej rundzie
+			//TODO dorzucić none zanim gra się zacznie, na razie nie zgadza się z testami
+//			server.sendEvent(
+//					username,
+//					new NextRoundStartsEvent(gameStared ? drawingQueue.peek()
+//							: "none", roundTimer.getTimeLeft(), roundTimer
+//							.getRoundTime()));
+			server.sendEvent(username, new NextRoundStartsEvent(drawingQueue.peek(), roundTimer.getTimeLeft(), roundTimer.getTimeLeft()));
+			
 			server.broadcastEvent(event);
 
 			// TODO usunąć jak dodamy jakiś start!
@@ -83,12 +92,6 @@ public class GameLogic {
 				reactTo("", new NewGameEvent());
 			}
 
-			// wysyłanie mu informacji o aktualnej rundzie
-			server.sendEvent(
-					username,
-					new NextRoundStartsEvent(gameStared ? drawingQueue.peek()
-							: "none", roundTimer.getTimeLeft(), roundTimer
-							.getRoundTime()));
 
 			return;
 			// rzucenie wyjątku, jeśli użytkownik już jest zalogowany? - być
