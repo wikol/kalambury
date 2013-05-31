@@ -3,7 +3,11 @@ package pl.uj.edu.tcs.kalambury_maven;
 import java.util.ArrayList;
 import java.util.List;
 
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 import pl.uj.edu.tcs.kalambury_maven.event.ClearScreenEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.CloseWordInputEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.Event;
 import pl.uj.edu.tcs.kalambury_maven.event.MessageSendEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.NewMessageWrittenEvent;
@@ -12,16 +16,12 @@ import pl.uj.edu.tcs.kalambury_maven.event.NewWordForGuessingEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.NewWordIsNeededEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.NextRoundStartsEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.ResetUserRankingEvent;
-import pl.uj.edu.tcs.kalambury_maven.event.StartDrawingEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOfflineEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOnlineEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.WordGuessedEvent;
 import pl.uj.edu.tcs.kalambury_maven.model.Point;
 import pl.uj.edu.tcs.kalambury_maven.server.GameLogic;
 import pl.uj.edu.tcs.kalambury_maven.server.Server;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 public class GameLogicTest extends TestCase {
 
@@ -142,7 +142,7 @@ public class GameLogicTest extends TestCase {
 			assertTrue(packOfLogs.size() == packOfNames.size()
 					&& packOfLogs.size() == 1);
 
-			assertEquals(StartDrawingEvent.class, packOfLogs.get(0).getClass());
+			assertEquals(CloseWordInputEvent.class, packOfLogs.get(0).getClass());
 			assertEquals(testname, packOfNames.get(0));
 		}
 		packOfLogs.clear();
