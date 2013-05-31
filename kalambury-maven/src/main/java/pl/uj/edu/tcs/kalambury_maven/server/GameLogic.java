@@ -99,6 +99,12 @@ public class GameLogic {
 				drawingQueue.poll();
 				server.broadcastEvent(new MessageSendEvent(CHAT_SERVER_NAME,
 						"Current drawing user left game, skiping to next round."));
+				
+/*TODO FROM TESTS: w obecnym kształcie mamy drobną sprzeczność:
+	NIE zaczynamy gry, dopóki nie pojawi się drugi zawodnik
+		ale
+	ZACZYNAMY nową rundę, gdy wszyscy prócz jednego zawodnika przejdą w stan offline
+*/				
 
 				if (!drawingQueue.isEmpty()) {
 					startNextRound();
@@ -253,6 +259,15 @@ public class GameLogic {
 		someoneIsDrawing = false;
 	}
 
+	// do testów
+	public SimpleModel getModel() {
+		return this.localModel;
+	}
+
+	public Queue<String> getQueue() {
+		return this.drawingQueue;
+	}
+
 	// do wypisywania logów
 	private void loguj(String str) {
 		System.out.println("GameLogic: " + str);
@@ -281,5 +296,6 @@ public class GameLogic {
 				toGuess.substring(0, Math.min(toGuess.length(), 3)))
 				&& result >= (toGuess.length() + 1) / 2;
 	}
+
 
 }
