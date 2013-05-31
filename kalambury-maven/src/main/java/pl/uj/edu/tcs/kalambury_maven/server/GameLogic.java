@@ -21,7 +21,7 @@ import pl.uj.edu.tcs.kalambury_maven.event.WordGuessedEvent;
 import pl.uj.edu.tcs.kalambury_maven.model.SimpleModel;
 
 public class GameLogic {
-	private static final String CHAT_SERVER_NAME = "!!!_SERVER";
+	private static final String CHAT_SERVER_NAME = "SERVER INFO";
 
 	private Server server;
 	private Queue<String> drawingQueue = new LinkedBlockingDeque<>();
@@ -135,7 +135,7 @@ public class GameLogic {
 			 * nie przyjmujemy wiadomości od użytkownika, który rysuje - jeśli
 			 * on chciał coś napisać, informacja, że mu nie wolno.
 			 */
-			if (drawingQueue != null && username.equals(drawingQueue.peek())) {
+			if (!drawingQueue.isEmpty() && username.equals(drawingQueue.peek())) {
 				server.sendEvent(username, new MessageSendEvent(
 						CHAT_SERVER_NAME,
 						"You CAN'T write on chat while drawin'!"));
@@ -320,6 +320,12 @@ public class GameLogic {
 
 	public Queue<String> getQueue() {
 		return this.drawingQueue;
+	}
+	public boolean isSomeoneDrawing() {
+		return this.someoneIsDrawing;
+	}
+	public String getNowBeingDrawnWord() {
+		return this.nowBeingDrawnWord;
 	}
 
 	// do wypisywania logów
