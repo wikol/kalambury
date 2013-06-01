@@ -3,7 +3,9 @@ package pl.uj.edu.tcs.kalambury_maven.helpers;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.RandomAccessFile;
+import java.io.StringWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DateFormat;
@@ -385,7 +387,9 @@ public class Log {
 				result += " " + message;
 			}
 			if (throwable != null) {
-				result += " " + throwable.getStackTrace();
+				StringWriter errors = new StringWriter();
+				throwable.printStackTrace(new PrintWriter(errors));
+				result += " " + errors.toString();
 			}
 			return result;
 		}
