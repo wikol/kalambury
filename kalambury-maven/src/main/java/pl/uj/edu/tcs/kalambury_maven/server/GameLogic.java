@@ -4,6 +4,7 @@ import java.util.Queue;
 import java.util.concurrent.LinkedBlockingDeque;
 
 import pl.uj.edu.tcs.kalambury_maven.event.ClearScreenEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.CloseWordInputEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.Event;
 import pl.uj.edu.tcs.kalambury_maven.event.MessageSendEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.NewGameEvent;
@@ -14,7 +15,6 @@ import pl.uj.edu.tcs.kalambury_maven.event.NewWordIsNeededEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.NextRoundStartsEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.PointsChangedEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.ResetUserRankingEvent;
-import pl.uj.edu.tcs.kalambury_maven.event.CloseWordInputEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOfflineEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOnlineEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.WordGuessedEvent;
@@ -46,7 +46,7 @@ public class GameLogic {
 		}
 
 		if (event instanceof NewWordForGuessingEvent) {
-			Log.i(username+" wysłał nowe hasło");
+			Log.i(username+" wyslal nowe haslo");
 			// jeśli hasło wysłał nam nie ten kto teraz ma rysować to ignorujemy
 			if (!username.equals(drawingQueue.peek()))
 				return;
@@ -66,7 +66,7 @@ public class GameLogic {
 			// dorzucenie użytkownika do rankingu z 0 pkt
 			localModel.getUserRanking().addNewUser(username);
 			// wysłanie mu całego rankingu
-			Log.i("wysyłamy do " + username + " taki ranking: "
+			Log.i("wysylamy do " + username + " taki ranking: "
 					+ localModel.getUserRanking().getUsersOnline());
 			server.sendEvent(username, new ResetUserRankingEvent(localModel
 					.getUserRanking().getFullRanking()));
@@ -89,7 +89,7 @@ public class GameLogic {
 
 			// TODO usunąć jak dodamy jakiś start!
 			if (!gameStared && drawingQueue.size() > 1) {
-				Log.i("Startujemy grę, bo mamy dwóch użytkowników");
+				Log.i("Startujemy gre, bo mamy dwoch uzytkownikow");
 				reactTo("", new NewGameEvent());
 			}
 
@@ -100,7 +100,7 @@ public class GameLogic {
 		}
 
 		if (event instanceof UsersOfflineEvent) {
-			Log.i(username + " stał się offline");
+			Log.i(username + " stal sie offline");
 			// jeśli zniknął użytkownik właśnie rysujacy
 			if (username.equals(drawingQueue.peek())) {
 				drawingQueue.poll();
@@ -118,9 +118,9 @@ public class GameLogic {
 				if (!drawingQueue.isEmpty()) {
 					startNextRound();
 				} else {
-					Log.i("Zero użytkowników na serwerze");
+					Log.i("Zero uzytkownikow na serwerze");
 				}
-
+				
 			} else {
 				// usunięcie z kolejki rysujących
 				drawingQueue.remove(username);
@@ -143,7 +143,7 @@ public class GameLogic {
 				server.sendEvent(username, new MessageSendEvent(
 						CHAT_SERVER_NAME,
 						"You CAN'T write on chat while drawin'!"));
-				Log.i(username + " próbował napisać, choć aktualnie rysuje");
+				Log.i(username + " probowal napisac, choc aktualnie rysuje");
 				return;
 			}
 			/*

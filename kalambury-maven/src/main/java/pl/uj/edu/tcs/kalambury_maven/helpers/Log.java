@@ -15,8 +15,8 @@ import java.util.Date;
 /**
  * Klasa do logowania, inspirowana Androidowym Log. Klasa wypisuje wiadomości na
  * standartowym wyjściu (errory na err), oraz zapisuje je do pliku. Zapis do
- * pliku można wyłączyć. Wypisywanie na standartowe wyjście też. Plik znajduje się w folderze "./logi", format nazwy
- * pliku to "yyyy-MM-dd_HH-mm-ss".
+ * pliku można wyłączyć. Wypisywanie na standartowe wyjście też. Plik znajduje
+ * się w folderze "./logi", format nazwy pliku to "yyyy-MM-dd_HH-mm-ss".
  * 
  * @author Anna Szybalska
  * 
@@ -34,10 +34,10 @@ public class Log {
 	public static void setSaveToFile(boolean saveToFile) {
 		Log.saveToFile = saveToFile;
 	}
-	
+
 	/**
-	 * Ustawia czy klasa powinna wypisywać logi na System.out. Domyślne ustawienie to
-	 * true.
+	 * Ustawia czy klasa powinna wypisywać logi na System.out. Domyślne
+	 * ustawienie to true.
 	 * 
 	 * @param saveToFile
 	 *            true jeśli logi mają być wypisywane, false jeśli nie
@@ -45,6 +45,7 @@ public class Log {
 	public static void setWriteToOut(boolean write) {
 		Log.writeToOut = write;
 	}
+
 	/**
 	 * Służy do logowania debugu.
 	 * 
