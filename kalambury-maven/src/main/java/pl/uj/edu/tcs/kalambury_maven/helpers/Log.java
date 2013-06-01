@@ -8,15 +8,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
- * Klasa do logowania, inspirowana Androidowym Log.
- * Klasa wypisuje wiadomości na standartowym wyjściu (errory na err), oraz zapisuje je do pliku.
- * Zapis do pliku można wyłączyć.
- * Plik znajduje się w folderze "./logi", format nazwy pliku to "yyyy-MM-dd_HH-mm-ss".
+ * Klasa do logowania, inspirowana Androidowym Log. Klasa wypisuje wiadomości na
+ * standartowym wyjściu (errory na err), oraz zapisuje je do pliku. Zapis do
+ * pliku można wyłączyć. Wypisywanie na standartowe wyjście też. Plik znajduje się w folderze "./logi", format nazwy
+ * pliku to "yyyy-MM-dd_HH-mm-ss".
  * 
  * @author Anna Szybalska
  * 
@@ -34,7 +32,17 @@ public class Log {
 	public static void setSaveToFile(boolean saveToFile) {
 		Log.saveToFile = saveToFile;
 	}
-
+	
+	/**
+	 * Ustawia czy klasa powinna wypisywać logi na System.out. Domyślne ustawienie to
+	 * true.
+	 * 
+	 * @param saveToFile
+	 *            true jeśli logi mają być wypisywane, false jeśli nie
+	 */
+	public static void setWriteToOut(boolean write) {
+		Log.writeToOut = write;
+	}
 	/**
 	 * Służy do logowania debugu.
 	 * 
@@ -74,8 +82,8 @@ public class Log {
 	}
 
 	/**
-	 * Służy do logowania debugu.
-	 * Jako tag ustawiana jest automatycznie nazwa klasy która wysłała log.
+	 * Służy do logowania debugu. Jako tag ustawiana jest automatycznie nazwa
+	 * klasy która wysłała log.
 	 * 
 	 * @param message
 	 *            Wiadomość do zalogowania.
@@ -85,8 +93,8 @@ public class Log {
 	}
 
 	/**
-	 * Służy do logowania debugu.
-	 * Jako tag ustawiana jest automatycznie nazwa klasy która wysłała log.
+	 * Służy do logowania debugu. Jako tag ustawiana jest automatycznie nazwa
+	 * klasy która wysłała log.
 	 * 
 	 * @param throwable
 	 *            Wyjątek do zalogowania.
@@ -138,8 +146,8 @@ public class Log {
 
 	/**
 	 * Służy do logowania wiadomości INFO. (np. "Logowanie udane",
-	 * "User przeszedł w stan online").
-	 * Jako tag ustawiana jest automatycznie nazwa klasy która wysłała log.
+	 * "User przeszedł w stan online"). Jako tag ustawiana jest automatycznie
+	 * nazwa klasy która wysłała log.
 	 * 
 	 * @param message
 	 *            Wiadomość do zalogowania.
@@ -150,8 +158,8 @@ public class Log {
 
 	/**
 	 * Służy do logowania wiadomości INFO. (np. "Logowanie udane",
-	 * "User przeszedł w stan online").
-	 * Jako tag ustawiana jest automatycznie nazwa klasy która wysłała log.
+	 * "User przeszedł w stan online"). Jako tag ustawiana jest automatycznie
+	 * nazwa klasy która wysłała log.
 	 * 
 	 * @param throwable
 	 *            Wyjątek do zalogowania.
@@ -203,8 +211,8 @@ public class Log {
 
 	/**
 	 * Służy do logowania ostrzeżeń. (np. "Nie udało się wysłać eventu",
-	 * "Nie udało się odserializować otrzymanych eventów").
-	 * Jako tag ustawiana jest automatycznie nazwa klasy która wysłała log.
+	 * "Nie udało się odserializować otrzymanych eventów"). Jako tag ustawiana
+	 * jest automatycznie nazwa klasy która wysłała log.
 	 * 
 	 * @param message
 	 *            Wiadomość do zalogowania.
@@ -216,8 +224,8 @@ public class Log {
 	/**
 	 * Służy do logowania ostrzeżeń. (np. "Nie udało się wysłać eventu",
 	 * "Nie można obsłużyć eventu",
-	 * "Nie udało się odserializować otrzymanych eventów").
-	 * Jako tag ustawiana jest automatycznie nazwa klasy która wysłała log.
+	 * "Nie udało się odserializować otrzymanych eventów"). Jako tag ustawiana
+	 * jest automatycznie nazwa klasy która wysłała log.
 	 * 
 	 * @param throwable
 	 *            Wyjątek do zalogowania.
@@ -265,8 +273,8 @@ public class Log {
 	}
 
 	/**
-	 * Służy do logowania errorów. (np. "Null pointer", "Cast exception").
-	 * Jako tag ustawiana jest automatycznie nazwa klasy która wysłała log.
+	 * Służy do logowania errorów. (np. "Null pointer", "Cast exception"). Jako
+	 * tag ustawiana jest automatycznie nazwa klasy która wysłała log.
 	 * 
 	 * @param message
 	 *            Wiadomość do zalogowania.
@@ -276,8 +284,8 @@ public class Log {
 	}
 
 	/**
-	 * Służy do logowania errorów. (np. "Null pointer", "Cast exception").
-	 * Jako tag ustawiana jest automatycznie nazwa klasy która wysłała log.
+	 * Służy do logowania errorów. (np. "Null pointer", "Cast exception"). Jako
+	 * tag ustawiana jest automatycznie nazwa klasy która wysłała log.
 	 * 
 	 * @param throwable
 	 *            Wyjątek do zalogowania.
@@ -289,6 +297,7 @@ public class Log {
 	// ------ private --------
 
 	private static boolean saveToFile = true;
+	private static boolean writeToOut = true;
 	private static Path pathToFile = null;
 
 	private static StackTraceElement whoCalledMe() {
@@ -309,16 +318,15 @@ public class Log {
 			Throwable throwable) {
 		LogElement logElement = new LogElement(type, stackTraceElement, tag,
 				message, throwable);
-		
-		//na standartowe wyjście
+
+		// na standartowe wyjście
 		if (type == TYPE.ERROR) {
 			System.err.println(logElement);
-		} else {
+		} else if (writeToOut) {
 			System.out.println(logElement);
 		}
-		
-		
-		//do pliku
+
+		// do pliku
 		if (saveToFile) {
 			File f = new File("logs");
 			if (!f.isDirectory()) {
@@ -328,11 +336,12 @@ public class Log {
 				pathToFile = Paths.get("./logs/" + getFileName());
 			}
 			try {
-				RandomAccessFile raf = new RandomAccessFile(pathToFile.toString(), "rw");
+				RandomAccessFile raf = new RandomAccessFile(
+						pathToFile.toString(), "rw");
 				raf.seek(raf.length());
-				raf.writeChars(logElement.toString()+"\n");
+				raf.writeChars(logElement.toString() + "\n");
 				raf.close();
-				
+
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
