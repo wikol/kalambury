@@ -18,6 +18,7 @@ import pl.uj.edu.tcs.kalambury_maven.event.CloseWordInputEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOfflineEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOnlineEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.WordGuessedEvent;
+import pl.uj.edu.tcs.kalambury_maven.helpers.Log;
 import pl.uj.edu.tcs.kalambury_maven.model.SimpleModel;
 
 public class GameLogic {
@@ -36,7 +37,7 @@ public class GameLogic {
 
 	public synchronized void reactTo(String username, Event event) {
 
-		loguj("Otrzymano " + event.toString());
+		Log.i("Otrzymano " + event.toString());
 
 		if (event instanceof NewGameEvent) {
 			startNextRound();
