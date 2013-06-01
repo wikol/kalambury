@@ -46,7 +46,7 @@ public class GameLogic {
 		}
 
 		if (event instanceof NewWordForGuessingEvent) {
-			loguj("nowe hasełko otrzymano od " + username);
+			Log.i(username+" wysłał nowe hasło");
 			// jeśli hasło wysłał nam nie ten kto teraz ma rysować to ignorujemy
 			if (!username.equals(drawingQueue.peek()))
 				return;
@@ -59,14 +59,14 @@ public class GameLogic {
 		}
 
 		if (event instanceof UsersOnlineEvent) {
-			loguj("Nowy user online: " + username);
+			Log.i("Nowy user online: " + username);
 			// dodanie do kolejki rysujących
 			drawingQueue.add(username);
 
 			// dorzucenie użytkownika do rankingu z 0 pkt
 			localModel.getUserRanking().addNewUser(username);
 			// wysłanie mu całego rankingu
-			loguj("wysyłamy do " + username + " taki ranking: "
+			Log.i("wysyłamy do " + username + " taki ranking: "
 					+ localModel.getUserRanking().getUsersOnline());
 			server.sendEvent(username, new ResetUserRankingEvent(localModel
 					.getUserRanking().getFullRanking()));
@@ -89,7 +89,7 @@ public class GameLogic {
 
 			// TODO usunąć jak dodamy jakiś start!
 			if (!gameStared && drawingQueue.size() > 1) {
-				loguj("Startujemy grę, bo mamy dwóch użytkowników");
+				Log.i("Startujemy grę, bo mamy dwóch użytkowników");
 				reactTo("", new NewGameEvent());
 			}
 
@@ -100,7 +100,7 @@ public class GameLogic {
 		}
 
 		if (event instanceof UsersOfflineEvent) {
-			loguj(username + " stał się offline");
+			Log.i(username + " stał się offline");
 			// jeśli zniknął użytkownik właśnie rysujacy
 			if (username.equals(drawingQueue.peek())) {
 				drawingQueue.poll();
@@ -118,7 +118,7 @@ public class GameLogic {
 				if (!drawingQueue.isEmpty()) {
 					startNextRound();
 				} else {
-					loguj("Brak nam użyszkodników :(");
+					Log.i("Zero użytkowników na serwerze");
 				}
 
 			} else {
@@ -143,7 +143,7 @@ public class GameLogic {
 				server.sendEvent(username, new MessageSendEvent(
 						CHAT_SERVER_NAME,
 						"You CAN'T write on chat while drawin'!"));
-				loguj(username + " próbował napisać, choć aktualnie rysuje");
+				Log.i(username + " próbował napisać, choć aktualnie rysuje");
 				return;
 			}
 			/*
@@ -196,13 +196,11 @@ public class GameLogic {
 
 			// nie jesteśmy w trakcie sesji rysowania
 			if (!someoneIsDrawing || drawingQueue.isEmpty()) {
-				loguj("nie jesteśmy w trakcie sesji rysowania");
 				return;
 			}
 
 			// bo osoba była zła, a zupa za słona
 			if (!username.equals(drawingQueue.peek())) {
-				loguj("bo osoba była zła, a zupa za słona");
 				return;
 			}
 
@@ -215,7 +213,6 @@ public class GameLogic {
 		if (event instanceof ClearScreenEvent) {
 
 			if (!username.equals(drawingQueue.peek())) {
-				loguj("bo osoba była zła, a zupa za słona");
 				return;
 			}
 
@@ -330,11 +327,6 @@ public class GameLogic {
 	}
 	public String getNowBeingDrawnWord() {
 		return this.nowBeingDrawnWord;
-	}
-
-	// do wypisywania logów
-	private void loguj(String str) {
-		System.out.println("GameLogic: " + str);
 	}
 
 	private boolean areSimilar(String guess, String toGuess) {

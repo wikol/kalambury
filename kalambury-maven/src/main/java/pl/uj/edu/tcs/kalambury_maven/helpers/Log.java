@@ -14,6 +14,9 @@ import java.util.List;
 
 /**
  * Klasa do logowania, inspirowana Androidowym Log.
+ * Klasa wypisuje wiadomości na standartowym wyjściu (errory na err), oraz zapisuje je do pliku.
+ * Zapis do pliku można wyłączyć.
+ * Plik znajduje się w folderze "./logi", format nazwy pliku to "yyyy-MM-dd_HH-mm-ss".
  * 
  * @author Anna Szybalska
  * 
@@ -72,6 +75,7 @@ public class Log {
 
 	/**
 	 * Służy do logowania debugu.
+	 * Jako tag ustawiana jest automatycznie nazwa klasy która wysłała log.
 	 * 
 	 * @param message
 	 *            Wiadomość do zalogowania.
@@ -82,6 +86,7 @@ public class Log {
 
 	/**
 	 * Służy do logowania debugu.
+	 * Jako tag ustawiana jest automatycznie nazwa klasy która wysłała log.
 	 * 
 	 * @param throwable
 	 *            Wyjątek do zalogowania.
@@ -134,6 +139,7 @@ public class Log {
 	/**
 	 * Służy do logowania wiadomości INFO. (np. "Logowanie udane",
 	 * "User przeszedł w stan online").
+	 * Jako tag ustawiana jest automatycznie nazwa klasy która wysłała log.
 	 * 
 	 * @param message
 	 *            Wiadomość do zalogowania.
@@ -145,6 +151,7 @@ public class Log {
 	/**
 	 * Służy do logowania wiadomości INFO. (np. "Logowanie udane",
 	 * "User przeszedł w stan online").
+	 * Jako tag ustawiana jest automatycznie nazwa klasy która wysłała log.
 	 * 
 	 * @param throwable
 	 *            Wyjątek do zalogowania.
@@ -197,6 +204,7 @@ public class Log {
 	/**
 	 * Służy do logowania ostrzeżeń. (np. "Nie udało się wysłać eventu",
 	 * "Nie udało się odserializować otrzymanych eventów").
+	 * Jako tag ustawiana jest automatycznie nazwa klasy która wysłała log.
 	 * 
 	 * @param message
 	 *            Wiadomość do zalogowania.
@@ -209,6 +217,7 @@ public class Log {
 	 * Służy do logowania ostrzeżeń. (np. "Nie udało się wysłać eventu",
 	 * "Nie można obsłużyć eventu",
 	 * "Nie udało się odserializować otrzymanych eventów").
+	 * Jako tag ustawiana jest automatycznie nazwa klasy która wysłała log.
 	 * 
 	 * @param throwable
 	 *            Wyjątek do zalogowania.
@@ -257,6 +266,7 @@ public class Log {
 
 	/**
 	 * Służy do logowania errorów. (np. "Null pointer", "Cast exception").
+	 * Jako tag ustawiana jest automatycznie nazwa klasy która wysłała log.
 	 * 
 	 * @param message
 	 *            Wiadomość do zalogowania.
@@ -267,6 +277,7 @@ public class Log {
 
 	/**
 	 * Służy do logowania errorów. (np. "Null pointer", "Cast exception").
+	 * Jako tag ustawiana jest automatycznie nazwa klasy która wysłała log.
 	 * 
 	 * @param throwable
 	 *            Wyjątek do zalogowania.
@@ -289,8 +300,6 @@ public class Log {
 	private Log() {
 	}
 
-	private static List<LogElement> logList = new ArrayList<>();
-
 	private static enum TYPE {
 		DEBUG, INFO, WARN, ERROR;
 	}
@@ -300,8 +309,16 @@ public class Log {
 			Throwable throwable) {
 		LogElement logElement = new LogElement(type, stackTraceElement, tag,
 				message, throwable);
-		System.out.println(logElement);
-		logList.add(logElement);
+		
+		//na standartowe wyjście
+		if (type == TYPE.ERROR) {
+			System.err.println(logElement);
+		} else {
+			System.out.println(logElement);
+		}
+		
+		
+		//do pliku
 		if (saveToFile) {
 			File f = new File("logs");
 			if (!f.isDirectory()) {
