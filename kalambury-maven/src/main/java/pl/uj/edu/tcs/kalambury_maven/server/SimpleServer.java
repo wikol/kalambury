@@ -1,6 +1,8 @@
 package pl.uj.edu.tcs.kalambury_maven.server;
 
+import java.awt.EventQueue;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Arrays;
@@ -14,6 +16,9 @@ import pl.uj.edu.tcs.kalambury_maven.event.Event;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOfflineEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOnlineEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.WordGuessedEvent;
+import pl.uj.edu.tcs.kalambury_maven.view.AppView;
+import pl.uj.edu.tcs.kalambury_maven.view.LoginWindow;
+import pl.uj.edu.tcs.kalambury_maven.view.SimpleServerGui;
 
 public class SimpleServer implements Server {
 
@@ -23,6 +28,7 @@ public class SimpleServer implements Server {
 	private ExecutorService threads;
 	private Map<String, ConnectionHandler> nicks;
 	private GameLogic logic;
+	private SimpleServerGui simpleGui;
 
 	public SimpleServer(int port) throws IOException {
 		socket = new ServerSocket(port);
@@ -32,6 +38,22 @@ public class SimpleServer implements Server {
 		nicks = new ConcurrentHashMap<>();
 		
 		logic.setServer(this);
+		displayGui();
+	}
+	
+	private void displayGui() {
+		try {
+			EventQueue.invokeAndWait(new Runnable() {
+				public void run() {
+					simpleGui = new SimpleServerGui(getGameLogic());
+					simpleGui.setVisible(true);
+				}
+			});
+		} catch (InvocationTargetException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+			
 	}
 
 	ServerSocket getSocket() {

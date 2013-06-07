@@ -16,6 +16,7 @@ import pl.uj.edu.tcs.kalambury_maven.event.NextRoundStartsEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.PointsChangedEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.ResetUserRankingEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.CloseWordInputEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.RiddleEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOfflineEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOnlineEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.WordGuessedEvent;
@@ -53,6 +54,7 @@ public class AppController {
 		reactor.setHandler(NextRoundStartsEvent.class, new NextRoundStartsHandler(this));
 		reactor.setHandler(ResetUserRankingEvent.class, new ResetUserRankingHandler(this));
 		reactor.setHandler(PointsChangedEvent.class, new PointsChangedHandler(this));
+		reactor.setHandler(RiddleEvent.class, new RiddleHandler(this));	
 		view.displayLogin();
 		drawingController = new DrawingController();
 		drawingController.setModel(model.getDrawingModel());

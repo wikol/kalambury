@@ -39,6 +39,7 @@ public class GameLogic {
 	public synchronized void reactTo(String username, Event event) {
 
 		Log.i("Otrzymano " + event.toString());
+		try {
 
 		if (event instanceof NewGameEvent) {
 			newGame(username, (NewGameEvent) event);
@@ -62,6 +63,9 @@ public class GameLogic {
 
 		if (event instanceof ClearScreenEvent) {
 			clearScreen(username, (ClearScreenEvent) event);
+		}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 

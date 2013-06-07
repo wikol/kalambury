@@ -35,6 +35,7 @@ public class TimerAndProgressBar extends JPanel {
 
 	public void setRiddle(String riddle) {
 		this.riddle = riddle;
+		riddleTextField.setText(riddle);
 	}
 
 	/**
