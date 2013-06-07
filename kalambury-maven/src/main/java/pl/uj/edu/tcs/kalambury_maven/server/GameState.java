@@ -1,17 +1,20 @@
 package pl.uj.edu.tcs.kalambury_maven.server;
 
 public class GameState {
+	
 	private int round;
-	private long currentRoundTime;
+	private long currentRoundTimeLeft;
 	private int numberOfPlayers;
 	private String drawingUser;
 	
-	public GameState(int round, long currentRoundTime, int numberOfPlayers,
+	/**
+	 * Aktualnie przyjmuje tylko aktualnie rysującego usera, ale można to będzie rozszerzyć.
+	 * 
+	 * @param drawingUser
+	 */
+	public GameState(
 			String drawingUser) {
 		super();
-		this.round = round;
-		this.currentRoundTime = currentRoundTime;
-		this.numberOfPlayers = numberOfPlayers;
 		this.drawingUser = drawingUser;
 	}
 
@@ -19,8 +22,8 @@ public class GameState {
 		return round;
 	}
 
-	public long getCurrentRoundTime() {
-		return currentRoundTime;
+	public long getCurrentRoundTimeLeft() {
+		return currentRoundTimeLeft;
 	}
 
 	public int getNumberOfPlayers() {

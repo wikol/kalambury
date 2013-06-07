@@ -1,9 +1,15 @@
 package pl.uj.edu.tcs.kalambury_maven.server;
 
 public class RiddlesGenerator {
+	private String currentRiddle;
+	
+	public String getCurrentRiddle() {
+		return currentRiddle;
+	}
 	
 	public String nextRiddle() {
-		return "następna zagadka";
+		currentRiddle = "następna zagadka";
+		return currentRiddle;
 	}
 
 }

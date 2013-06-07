@@ -14,6 +14,7 @@ public class NextRoundStartsEvent implements Event {
 	private String drawingUser;
 	private long timeLeft;
 	private long roundTime;
+	private String riddle;
 
 	/**
 	 * Konstruktor, przyjmuje nick użytkownika który rysuje w rundzie właśnie

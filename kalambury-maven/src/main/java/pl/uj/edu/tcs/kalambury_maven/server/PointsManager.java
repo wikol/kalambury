@@ -4,6 +4,10 @@ import pl.uj.edu.tcs.kalambury_maven.model.UserRanking;
 
 public class PointsManager {
 	private UserRanking userRanking;
+	
+	public PointsManager(UserRanking ranking) {
+		this.userRanking = ranking;
+	}
 
 	public void updateRankingAfterGuessing(String guesser, GameState gs) {
 		Options options = Options.getInstance();
@@ -16,8 +20,4 @@ public class PointsManager {
 		userRanking.addPointsToUser(gs.getDrawingUser(), options.getPointsForUnguessedDrawing());
 	}
 	
-	
-	public void setUserRanking(UserRanking userRanking) {
-		this.userRanking = userRanking;
-	}
 }

@@ -14,6 +14,8 @@ import javax.swing.SwingConstants;
 public class TimerAndProgressBar extends JPanel {
 
 	private JTextField timeTextField;
+	private JTextField riddleTextField;
+	private String riddle = "";
 	private long startTime;
 	private long roundTimeInSeconds = 180;
 	private Timer riddlaAndTimeTimer;
@@ -22,6 +24,18 @@ public class TimerAndProgressBar extends JPanel {
 	 * @wbp.nonvisual location=39,77
 	 */
 	private final JProgressBar progressBar;
+	
+	/**
+	 * 
+	 * Służy do ustawienia hasła.
+	 * 
+	 * @param riddle
+	 *            - hasło jako String
+	 */
+
+	public void setRiddle(String riddle) {
+		this.riddle = riddle;
+	}
 
 	/**
 	 * 
@@ -85,7 +99,13 @@ public class TimerAndProgressBar extends JPanel {
 	public TimerAndProgressBar() {
 		setMinimumSize(new Dimension(250, 90));
 		setPreferredSize(new Dimension(300, 90));
-		setLayout(new GridLayout(2, 1, 0, 0));
+		setLayout(new GridLayout(3, 1, 0, 0));
+		
+		riddleTextField = new JTextField();
+		riddleTextField.setHorizontalAlignment(SwingConstants.CENTER);
+		add(riddleTextField);
+		riddleTextField.setColumns(2);
+		riddleTextField.setEditable(false);
 
 		timeTextField = new JTextField();
 		timeTextField.setHorizontalAlignment(SwingConstants.CENTER);
@@ -93,6 +113,8 @@ public class TimerAndProgressBar extends JPanel {
 		timeTextField.setColumns(2);
 		timeTextField.setEditable(false);
 		riddlaAndTimeTimer = new Timer();
+		
+		riddleTextField.setText(riddle);
 
 		progressBar = new JProgressBar(0, (int) roundTimeInSeconds);
 		add(progressBar);
