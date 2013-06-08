@@ -55,7 +55,7 @@ public class AppController {
 		reactor.setHandler(ResetUserRankingEvent.class, new ResetUserRankingHandler(this));
 		reactor.setHandler(PointsChangedEvent.class, new PointsChangedHandler(this));
 		reactor.setHandler(RiddleEvent.class, new RiddleHandler(this));	
-		view.displayLogin();
+		view.displayChoice();
 		drawingController = new DrawingController();
 		drawingController.setModel(model.getDrawingModel());
 	}

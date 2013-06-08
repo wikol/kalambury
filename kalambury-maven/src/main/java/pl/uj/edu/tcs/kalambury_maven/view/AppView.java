@@ -20,6 +20,7 @@ public class AppView {
 	private AppController controller;
 	private SimpleModel model;
 	private LoginWindow loginWindow;
+	private ChoiceWindow choiceWindow;
 	private MainWindow mainWindow;
 	private WordInputWindow wordInputWindow;
 
@@ -34,20 +35,32 @@ public class AppView {
 
 		});
 	}
-
-	public void displayLogin() {
+	public void displayChoice() {
 		try {
 			EventQueue.invokeAndWait(new Runnable() {
 				public void run() {
-					loginWindow = new LoginWindow(AppView.this);
-					loginWindow.setVisible(true);
+					choiceWindow = new ChoiceWindow(AppView.this);
+					choiceWindow.setVisible(true);
 				}
 			});
 		} catch (InvocationTargetException | InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		reactor.setHandler(LoginUnsuccessfulEvent.class, loginWindow);
+	}
+	public void displayLogin() {
+		try {
+			EventQueue.invokeAndWait(new Runnable() {
+				public void run() {
+					loginWindow = new LoginWindow(AppView.this);
+					loginWindow.setVisible(true);
+					reactor.setHandler(LoginUnsuccessfulEvent.class, loginWindow);
+				}
+			});
+		} catch (InvocationTargetException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void displayMain(String myNick) {

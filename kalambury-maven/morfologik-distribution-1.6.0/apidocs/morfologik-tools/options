@@ -1,0 +1,28 @@
+-classpath
+'C:/Work/morfologik-stemming/morfologik-tools/target/classes;C:/Work/morfologik-stemming/morfologik-fsa/target/morfologik-fsa-1.6.0.jar;C:/Users/dweiss/.m2/repository/commons-lang/commons-lang/2.6/commons-lang-2.6.jar;C:/Users/dweiss/.m2/repository/commons-cli/commons-cli/1.2/commons-cli-1.2.jar;C:/Users/dweiss/.m2/repository/com/carrotsearch/hppc/0.4.3/hppc-0.4.3.jar;C:/Work/morfologik-stemming/morfologik-stemming/target/morfologik-stemming-1.6.0.jar;C:/Work/morfologik-stemming/morfologik-polish/target/morfologik-polish-1.6.0.jar'
+-encoding
+'UTF-8'
+-protected
+-sourcepath
+'C:/Work/morfologik-stemming/morfologik-tools/src/main/java'
+-author
+-bottom
+'Copyright &#169; 2013. All Rights Reserved.'
+-charset
+'UTF-8'
+-d
+'C:/Work/morfologik-stemming/morfologik-tools/target/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'Morfologik Command Line Tools v1.6.0 API Documentation'
+-linkoffline
+'http://morfologik.blogspot.com/morfologik-fsa/apidocs' 'C:/Work/morfologik-stemming/morfologik-fsa/target/apidocs'
+-linkoffline
+'http://morfologik.blogspot.com/morfologik-stemming/apidocs' 'C:/Work/morfologik-stemming/morfologik-stemming/target/apidocs'
+-linkoffline
+'http://morfologik.blogspot.com/morfologik-polish/apidocs' 'C:/Work/morfologik-stemming/morfologik-polish/target/apidocs'
+-use
+-version
+-windowtitle
+'Morfologik Command Line Tools v1.6.0 API Documentation'

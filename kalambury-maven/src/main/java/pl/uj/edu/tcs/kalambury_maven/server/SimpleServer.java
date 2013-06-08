@@ -134,6 +134,33 @@ public class SimpleServer implements Server {
 		broadcastEvent(new UsersOfflineEvent(pakosz));
 
 	}
+	
+	public static void start(int port)
+	{
+		SimpleServer serv = null;
+		try {
+			serv = new SimpleServer(port);
+			System.out.println("Server started!");
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		}
+		serv.listen();
+		try {
+			System.in.read();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		serv.testConnection();
+		try {
+			System.in.read();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		serv.close();
+	}
 
 	public static void main(String[] args) {
 		SimpleServer serv = null;

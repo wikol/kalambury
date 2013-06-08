@@ -1,0 +1,22 @@
+-classpath
+'C:/Work/morfologik-stemming/morfologik-fsa/target/classes;C:/Users/dweiss/.m2/repository/com/carrotsearch/hppc/0.4.3/hppc-0.4.3.jar'
+-encoding
+'UTF-8'
+-protected
+-sourcepath
+'C:/Work/morfologik-stemming/morfologik-fsa/src/main/java'
+-author
+-bottom
+'Copyright &#169; 2013. All Rights Reserved.'
+-charset
+'UTF-8'
+-d
+'C:/Work/morfologik-stemming/morfologik-fsa/target/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'Morfologik FSA v1.6.0 API Documentation'
+-use
+-version
+-windowtitle
+'Morfologik FSA v1.6.0 API Documentation'
