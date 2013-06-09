@@ -2,8 +2,6 @@ package pl.uj.edu.tcs.kalambury_maven.view;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,7 +13,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.event.CellEditorListener;
@@ -29,19 +26,8 @@ import javax.swing.table.TableCellEditor;
 
 public class Ranking extends JPanel {
 	private static final long serialVersionUID = 2317946112772863729L;
+	//private JScrollPane scrollPane;
 	private JTable table;
-	private JLabel whoIsDrawing, whoIsDrawingInfo;
-	private GridBagConstraints tableConstraints = new GridBagConstraints(0, 1,
-			2, 3, CENTER_ALIGNMENT, 4, GridBagConstraints.CENTER,
-			UNDEFINED_CONDITION, getInsets(), 0, 0),
-			whoIsDrawingConstraints = new GridBagConstraints(0, 0, 1, 1,
-					GridBagConstraints.HORIZONTAL, 1,
-					GridBagConstraints.CENTER, UNDEFINED_CONDITION,
-					getInsets(), 0, 0),
-			whoIsDrawingInfoConstraints = new GridBagConstraints(1, 0, 1, 1,
-					GridBagConstraints.HORIZONTAL, 1,
-					GridBagConstraints.CENTER, UNDEFINED_CONDITION,
-					getInsets(), 0, 0);
 
 	/**
 	 * Pomocnicza funkcja przerabiająca mapę na posotrowaną listę
@@ -141,19 +127,6 @@ public class Ranking extends JPanel {
 	}
 
 	/**
-	 * Wyświetlanie, kto aktualnie rysuje
-	 * 
-	 * @param nowDrawingName
-	 *            - nazwa aktualnie rysującego użytkownika
-	 * @return - miejsce z informacją kto aktualnie rysuje
-	 */
-	private JLabel setWhoIsDrawingInfo(String nowDrawingName) {
-		String formattedName = String.format("<html><a><b>%s</b></a></html>",
-				nowDrawingName);
-		return new JLabel(formattedName);
-	}
-
-	/**
 	 * Wyświetla ładnie posortowany ranking
 	 * 
 	 * @param users
@@ -169,24 +142,9 @@ public class Ranking extends JPanel {
 				c.setVisible(false);
 			this.removeAll();
 		}
-		this.setLayout(new GridBagLayout());
-
 		table = createTable(list);
-		whoIsDrawing = new JLabel("Now drawing: ");
-		whoIsDrawingInfo = setWhoIsDrawingInfo(nowDrawingName);
-
-		tableConstraints = new GridBagConstraints(0, 1, 2, 3, CENTER_ALIGNMENT,
-				4, GridBagConstraints.CENTER, UNDEFINED_CONDITION, getInsets(),
-				0, 0);
-		whoIsDrawingConstraints = new GridBagConstraints(0, 0, 1, 1,
-				GridBagConstraints.HORIZONTAL, 1, GridBagConstraints.CENTER,
-				UNDEFINED_CONDITION, getInsets(), 0, 0);
-		whoIsDrawingInfoConstraints = new GridBagConstraints(1, 0, 1, 1,
-				GridBagConstraints.HORIZONTAL, 1, GridBagConstraints.CENTER,
-				UNDEFINED_CONDITION, getInsets(), 0, 0);
-		this.add(table, tableConstraints);
-		this.add(whoIsDrawing, whoIsDrawingConstraints);
-		this.add(whoIsDrawingInfo, whoIsDrawingInfoConstraints);
+		//scrollPane = new JScrollPane();
+		this.add(table);
 		this.revalidate();
 	}
 
@@ -208,8 +166,11 @@ public class Ranking extends JPanel {
 		users.put("Michał", 1000);
 		users.put("Anna", 4);
 		users.put("Kasia", 1000);
-		users.put("Cziter", 100000);
-
+		users.put("Cziter1", 100000);
+		users.put("C1ziter", 100000);
+		users.put("Cz1iter", 100000);
+		
+		
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(250, 200);

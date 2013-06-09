@@ -32,6 +32,7 @@ public class MainWindow extends JFrame {
 	private JPanel panel;
 	private ClearButton clearButton;
 	private TimerAndProgressBar riddleAndTime;
+	private WhoIsDrawingInfo whoIsDrawingInfo;
 
 	/**
 	 * For test purposes only
@@ -104,9 +105,11 @@ public class MainWindow extends JFrame {
 				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
 				ColumnSpec.decode("600px:grow"),
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("100dlu"),},
+				ColumnSpec.decode("100dlu:grow"),},
 			new RowSpec[] {
 				RowSpec.decode("131px"),
+				FormFactory.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("default:grow"),
 				FormFactory.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("100dlu"),
 				FormFactory.RELATED_GAP_ROWSPEC,
@@ -116,19 +119,22 @@ public class MainWindow extends JFrame {
 				FormFactory.LINE_GAP_ROWSPEC,
 				RowSpec.decode("150px"),}));
 		drawingPanel = new DrawingPanel();
-		contentPane.add(drawingPanel, "2, 1, 2, 8, fill, fill");
+		contentPane.add(drawingPanel, "2, 1, 2, 10, fill, fill");
 				
 				riddleAndTime = new TimerAndProgressBar();
 				contentPane.add(riddleAndTime, "5, 1, fill, fill");
 				brushPanel = new BrushPanel();
-				contentPane.add(brushPanel, "1, 1, 1, 3, fill, fill");
+				contentPane.add(brushPanel, "1, 1, 1, 5, fill, fill");
+						
+						whoIsDrawingInfo = new WhoIsDrawingInfo((String) null);
+						contentPane.add(whoIsDrawingInfo, "5, 3, fill, fill");
 				
 						
 						ranking = new Ranking(new HashMap<String, Integer>());
 						GridBagLayout gridBagLayout = (GridBagLayout) ranking.getLayout();
 						gridBagLayout.rowWeights = new double[]{0.0, 1.0, 0.0, 0.0};
 						gridBagLayout.columnWeights = new double[]{0.0, 1.0};
-						contentPane.add(ranking, "5, 3, 1, 5, fill, fill");
+						contentPane.add(ranking, "5, 5, 1, 5, fill, top");
 						
 						
 						panel = new JPanel();
@@ -140,9 +146,9 @@ public class MainWindow extends JFrame {
 						ranking.add(panel, gbc_panel);
 		
 		clearButton = new ClearButton();
-		contentPane.add(clearButton, "1, 5, fill, fill");
+		contentPane.add(clearButton, "1, 7, fill, fill");
 		chatBox = new ChatBox();
-		contentPane.add(chatBox, "3, 9, fill, fill");
+		contentPane.add(chatBox, "3, 11, fill, fill");
 		pack();
 
 	} 
