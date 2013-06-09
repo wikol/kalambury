@@ -72,9 +72,9 @@ public class DrawingPanel extends JPanel {
 			else {
 				synchronized (prevPoint) {
 					if (prevPoint.centreX == tempX) {
-						int difference = 5;
+						int difference = (brush.radius+1)/2;
 						if (prevPoint.centreY > tempY)
-							difference = -5;
+							difference = -(brush.radius+1)/2;
 						float temp = prevPoint.centreY + difference;
 						while ((temp > prevPoint.centreY && temp < tempY)
 								|| (temp < prevPoint.centreY && temp > tempY)) {
@@ -92,9 +92,9 @@ public class DrawingPanel extends JPanel {
 						float a = prevPoint.centreY - tempY;
 						a /= (prevPoint.centreX - tempX);
 						float b = tempY - a * tempX;
-						int difference = 5;
+						int difference = (brush.radius+1)/2;
 						if (prevPoint.centreX > tempX)
-							difference = -5;
+							difference = -(brush.radius+1)/2;
 						float temp = prevPoint.centreX + difference;
 						while ((temp > prevPoint.centreX && temp < tempX)
 								|| (temp < prevPoint.centreX && temp > tempX)) {
