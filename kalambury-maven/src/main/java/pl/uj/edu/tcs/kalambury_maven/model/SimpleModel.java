@@ -49,6 +49,7 @@ public class SimpleModel {
 
 	public void registerRanking(AppView v) {
 		userRanking.setView(v.getMainWindow().getRanking());
+		userRanking.setDrawingInfo(v.getMainWindow().getWhoIsDrawingInfo());
 	}
 	
 	public void registerDrawingPanel(AppView v) {

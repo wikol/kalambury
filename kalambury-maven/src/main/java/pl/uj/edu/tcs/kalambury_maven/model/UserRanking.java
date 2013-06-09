@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import pl.uj.edu.tcs.kalambury_maven.view.Ranking;
+import pl.uj.edu.tcs.kalambury_maven.view.WhoIsDrawingInfo;
 
 /**
  * Klasa odpowiadająca za przechowywanie informacji o użytkownikach online - ich
@@ -17,16 +18,21 @@ import pl.uj.edu.tcs.kalambury_maven.view.Ranking;
 public class UserRanking {
 	private Ranking myView;
 	private String nowDrawing = "?";
+	private WhoIsDrawingInfo whoIsDrawingInfo;
 	private static Map<String, Integer> users = new HashMap<String, Integer>();
 
 	private void updateView() {
 		if (myView == null)
 			return;
 		myView.displayRanking(users, nowDrawing);
+		whoIsDrawingInfo.updateInfo(nowDrawing);
 	}
-
+	
 	public void setView(Ranking myView) {
 		this.myView = myView;
+	}
+	public void setDrawingInfo(WhoIsDrawingInfo info) {
+		this.whoIsDrawingInfo = info;
 	}
 
 	/**

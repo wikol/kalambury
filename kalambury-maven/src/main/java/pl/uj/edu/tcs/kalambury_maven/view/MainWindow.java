@@ -74,6 +74,10 @@ public class MainWindow extends JFrame {
 		return clearButton;
 	}
 	
+	public WhoIsDrawingInfo getWhoIsDrawingInfo() {
+		return whoIsDrawingInfo;
+	}
+	
 	public void setupChatBox(ChatMessagesList model, AppController controller) {
 		chatBox.setModel(model);
 		chatBox.setController(controller);
@@ -131,9 +135,6 @@ public class MainWindow extends JFrame {
 				
 						
 						ranking = new Ranking(new HashMap<String, Integer>());
-						GridBagLayout gridBagLayout = (GridBagLayout) ranking.getLayout();
-						gridBagLayout.rowWeights = new double[]{0.0, 1.0, 0.0, 0.0};
-						gridBagLayout.columnWeights = new double[]{0.0, 1.0};
 						contentPane.add(ranking, "5, 5, 1, 5, fill, top");
 						
 						

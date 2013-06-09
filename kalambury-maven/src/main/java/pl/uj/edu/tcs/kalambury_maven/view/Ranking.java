@@ -143,7 +143,6 @@ public class Ranking extends JPanel {
 			this.removeAll();
 		}
 		table = createTable(list);
-		//scrollPane = new JScrollPane();
 		this.add(table);
 		this.revalidate();
 	}
