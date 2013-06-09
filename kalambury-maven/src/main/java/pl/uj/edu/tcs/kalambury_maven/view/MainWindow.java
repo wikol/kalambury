@@ -98,49 +98,49 @@ public class MainWindow extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(new FormLayout(new ColumnSpec[] {
-				ColumnSpec.decode("500px"),
+				ColumnSpec.decode("250px"),
 				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-				ColumnSpec.decode("250px:grow"),},
+				ColumnSpec.decode("600px:grow"),
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("100dlu"),},
 			new RowSpec[] {
 				RowSpec.decode("131px"),
 				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
+				RowSpec.decode("100dlu"),
 				FormFactory.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("default:grow"),
 				FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("default:grow"),
+				RowSpec.decode("100dlu:grow"),
 				FormFactory.LINE_GAP_ROWSPEC,
-				RowSpec.decode("300px"),
-				FormFactory.LINE_GAP_ROWSPEC,
-				RowSpec.decode("131px"),}));
-		brushPanel = new BrushPanel();
-		contentPane.add(brushPanel, "3, 1, fill, fill");
+				RowSpec.decode("150px"),}));
 		drawingPanel = new DrawingPanel();
-		contentPane.add(drawingPanel, "1, 1, 1, 9, fill, fill");
+		contentPane.add(drawingPanel, "2, 1, 2, 8, fill, fill");
+				
+				riddleAndTime = new TimerAndProgressBar();
+				contentPane.add(riddleAndTime, "5, 1, fill, fill");
+				brushPanel = new BrushPanel();
+				contentPane.add(brushPanel, "1, 1, 1, 3, fill, fill");
+				
+						
+						ranking = new Ranking(new HashMap<String, Integer>());
+						GridBagLayout gridBagLayout = (GridBagLayout) ranking.getLayout();
+						gridBagLayout.rowWeights = new double[]{0.0, 1.0, 0.0, 0.0};
+						gridBagLayout.columnWeights = new double[]{0.0, 1.0};
+						contentPane.add(ranking, "5, 3, 1, 5, fill, fill");
+						
+						
+						panel = new JPanel();
+						GridBagConstraints gbc_panel = new GridBagConstraints();
+						gbc_panel.insets = new Insets(0, 0, 5, 5);
+						gbc_panel.fill = GridBagConstraints.BOTH;
+						gbc_panel.gridx = 1;
+						gbc_panel.gridy = 1;
+						ranking.add(panel, gbc_panel);
 		
 		clearButton = new ClearButton();
-		contentPane.add(clearButton, "3, 3, fill, fill");
-		
-		riddleAndTime = new TimerAndProgressBar();
-		contentPane.add(riddleAndTime, "3, 5, fill, fill");
-
-		
-		ranking = new Ranking(new HashMap<String, Integer>());
-		GridBagLayout gridBagLayout = (GridBagLayout) ranking.getLayout();
-		gridBagLayout.rowWeights = new double[]{0.0, 1.0, 0.0, 0.0};
-		gridBagLayout.columnWeights = new double[]{0.0, 1.0};
-		contentPane.add(ranking, "3, 9, 1, 3, fill, fill");
-		
-		
-		panel = new JPanel();
-		GridBagConstraints gbc_panel = new GridBagConstraints();
-		gbc_panel.insets = new Insets(0, 0, 5, 5);
-		gbc_panel.fill = GridBagConstraints.BOTH;
-		gbc_panel.gridx = 1;
-		gbc_panel.gridy = 1;
-		ranking.add(panel, gbc_panel);
+		contentPane.add(clearButton, "1, 5, fill, fill");
 		chatBox = new ChatBox();
-		contentPane.add(chatBox, "1, 11, fill, fill");
+		contentPane.add(chatBox, "3, 9, fill, fill");
 		pack();
 
 	} 
