@@ -37,38 +37,38 @@ public class GameLogic {
 		Log.i("Otrzymano " + event.toString());
 		try {
 
-		if (event instanceof NewGameEvent) {
-			newGame(username, (NewGameEvent) event);
-		}
+			if (event instanceof NewGameEvent) {
+				newGame(username, (NewGameEvent) event);
+			}
 
-		if (event instanceof UsersOnlineEvent) {
-			usersOnline(username, (UsersOnlineEvent) event);
-		}
+			if (event instanceof UsersOnlineEvent) {
+				usersOnline(username, (UsersOnlineEvent) event);
+			}
 
-		if (event instanceof UsersOfflineEvent) {
-			usersOffline(username, (UsersOfflineEvent) event);
-		}
+			if (event instanceof UsersOfflineEvent) {
+				usersOffline(username, (UsersOfflineEvent) event);
+			}
 
-		if (event instanceof NewMessageWrittenEvent) {
-			newMessage(username, (NewMessageWrittenEvent) event);
-		}
+			if (event instanceof NewMessageWrittenEvent) {
+				newMessage(username, (NewMessageWrittenEvent) event);
+			}
 
-		if (event instanceof NewPointsDrawnEvent) {
-			newPoints(username, (NewPointsDrawnEvent) event);
-		}
+			if (event instanceof NewPointsDrawnEvent) {
+				newPoints(username, (NewPointsDrawnEvent) event);
+			}
 
-		if (event instanceof ClearScreenEvent) {
-			clearScreen(username, (ClearScreenEvent) event);
-		}
+			if (event instanceof ClearScreenEvent) {
+				clearScreen(username, (ClearScreenEvent) event);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void setRiddlesGenerator(RiddlesGenerator gen) {
 		riddlesGenerator = gen;
 	}
-	
+
 	public void setPointsManager(PointsManager man) {
 		pointsManager = man;
 		pointsManager.setRanking(localModel.getUserRanking());
@@ -165,6 +165,8 @@ public class GameLogic {
 					drawingUser));
 			server.broadcastEvent(new WordGuessedEvent(riddlesGenerator
 					.getCurrentRiddle(), username, drawingUser));
+			server.broadcastEvent(new ResetUserRankingEvent(localModel
+					.getUserRanking().getFullRanking()));
 			startNextRound();
 			return;
 		}
@@ -248,7 +250,8 @@ public class GameLogic {
 		server.broadcastEvent(new NextRoundStartsEvent(drawingQueue.peek(),
 				roundTimer.getRoundTime(), roundTimer.getRoundTime()));
 
-		server.sendEvent(drawingQueue.peek(), new RiddleEvent(riddlesGenerator.nextRiddle()));
+		server.sendEvent(drawingQueue.peek(),
+				new RiddleEvent(riddlesGenerator.nextRiddle()));
 
 	}
 
