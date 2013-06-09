@@ -14,6 +14,7 @@ public class DictionaryAdapter {
 
 	public DictionaryAdapter(String wordGroup) {
 		PolishStemmer stemmer = new PolishStemmer();
+		@SuppressWarnings("unchecked")
 		Iterator<WordData> stemmerIterator = stemmer.iterator();
 		while (stemmerIterator.hasNext()) {
 			WordData word = stemmerIterator.next();

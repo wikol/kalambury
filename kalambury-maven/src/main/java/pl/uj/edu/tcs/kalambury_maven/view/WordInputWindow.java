@@ -22,19 +22,21 @@ import pl.uj.edu.tcs.kalambury_maven.event.EventHandler;
 import pl.uj.edu.tcs.kalambury_maven.event.NewWordForGuessingEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.CloseWordInputEvent;
 
-public class WordInputWindow extends JFrame implements EventHandler{
+public class WordInputWindow extends JFrame implements EventHandler {
+
+	private static final long serialVersionUID = -2416791690369189983L;
 	private AppController controller;
 	private JPanel contentPane;
 	private JLabel lblEnterWord;
 	private JLabel lblSending;
-	private JLabel lblSendingFailed;
+//	private JLabel lblSendingFailed;
 	private JTextField txtInputWord;
 	private JButton btnOk;
-	
+
 	private boolean sendingInProgress;
-	
+
 	private String strSending = "Sending...";
-	private String strSendingFailed = "Sending failed, please try once again";
+//	private String strSendingFailed = "Sending failed, please try once again";
 
 	/**
 	 * Launch the application.
@@ -51,24 +53,25 @@ public class WordInputWindow extends JFrame implements EventHandler{
 			}
 		});
 	}
-	
+
 	private class WordToSendListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (sendingInProgress) return;
+			if (sendingInProgress)
+				return;
 			String word = WordInputWindow.this.txtInputWord.getText().trim();
-			if (word.equals("")) return;
+			if (word.equals(""))
+				return;
 			NewWordForGuessingEvent event = new NewWordForGuessingEvent(word);
 			lblSending.setText(strSending);
 			lblSending.setVisible(true);
 			sendingInProgress = true;
 			controller.reactTo(event);
 		}
-		
+
 	}
-	
-	
+
 	/**
 	 * Create the frame.
 	 */
@@ -76,13 +79,13 @@ public class WordInputWindow extends JFrame implements EventHandler{
 		super("Kalambury - word to draw");
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setLocationRelativeTo(null);
-		
+
 		GridBagLayout gbl_contentPane = new GridBagLayout();
 		contentPane = new JPanel(gbl_contentPane);
 		contentPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
 		contentPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		setContentPane(contentPane);
-		
+
 		lblEnterWord = new JLabel("Please, enter word you want to draw:");
 		GridBagConstraints gbc_lblEnterWord = new GridBagConstraints();
 		gbc_lblEnterWord.gridwidth = 3;
@@ -91,7 +94,7 @@ public class WordInputWindow extends JFrame implements EventHandler{
 		gbc_lblEnterWord.gridx = 0;
 		gbc_lblEnterWord.gridy = 0;
 		contentPane.add(lblEnterWord, gbc_lblEnterWord);
-		
+
 		txtInputWord = new JTextField();
 		GridBagConstraints gbc_textField = new GridBagConstraints();
 		gbc_textField.gridwidth = 3;
@@ -102,7 +105,7 @@ public class WordInputWindow extends JFrame implements EventHandler{
 		txtInputWord.setColumns(10);
 		txtInputWord.addActionListener(new WordToSendListener());
 		contentPane.add(txtInputWord, gbc_textField);
-		
+
 		btnOk = new JButton("OK");
 		GridBagConstraints gbc_btnOk = new GridBagConstraints();
 		gbc_btnOk.anchor = GridBagConstraints.EAST;
@@ -110,7 +113,7 @@ public class WordInputWindow extends JFrame implements EventHandler{
 		gbc_btnOk.gridy = 3;
 		btnOk.addActionListener(new WordToSendListener());
 		contentPane.add(btnOk, gbc_btnOk);
-		
+
 		lblSending = new JLabel(strSending);
 		GridBagConstraints gbc_lblSending = new GridBagConstraints();
 		gbc_lblSending.gridx = 2;
@@ -123,10 +126,10 @@ public class WordInputWindow extends JFrame implements EventHandler{
 		lblSending.setFont(font);
 		lblSending.setVisible(false);
 		contentPane.add(lblSending, gbc_lblSending);
-		
+
 		pack();
 		setResizable(false);
-		
+
 		sendingInProgress = false;
 	}
 
@@ -139,11 +142,9 @@ public class WordInputWindow extends JFrame implements EventHandler{
 		sendingInProgress = false;
 		if (e instanceof CloseWordInputEvent) {
 			dispose();
-		} 
+		}
 		/*
-		 * if (serwer timeout) {
-		 * 	lblSending.setText(strSendingFailed);
-		 * }
+		 * if (serwer timeout) { lblSending.setText(strSendingFailed); }
 		 */
 	}
 }

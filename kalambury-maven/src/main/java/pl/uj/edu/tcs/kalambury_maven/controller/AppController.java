@@ -75,7 +75,7 @@ public class AppController {
 
 	public void setModel(SimpleModel m) {
 		this.model = m;
-		m.setController(this);
+		//m.setController(this);
 	}
 
 	public void setNetwork(Network network) {
@@ -117,6 +117,6 @@ public class AppController {
 	 */
 	public static void main(String[] args) {
 		//RepaintManager.setCurrentManager(new CheckThreadViolationRepaintManager());
-		AppController program = new AppController();
+		new AppController();
 	}
 }

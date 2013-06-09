@@ -1,7 +1,6 @@
 package pl.uj.edu.tcs.kalambury_maven.view;
 
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -15,7 +14,6 @@ import javax.swing.border.EmptyBorder;
 
 import pl.uj.edu.tcs.kalambury_maven.event.Event;
 import pl.uj.edu.tcs.kalambury_maven.event.EventHandler;
-import pl.uj.edu.tcs.kalambury_maven.event.EventNotHandledException;
 import pl.uj.edu.tcs.kalambury_maven.event.LoginAttemptEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.LoginUnsuccessfulEvent;
 

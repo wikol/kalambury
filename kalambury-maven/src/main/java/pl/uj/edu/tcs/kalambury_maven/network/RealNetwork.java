@@ -1,5 +1,6 @@
 package pl.uj.edu.tcs.kalambury_maven.network;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -7,6 +8,7 @@ import java.net.Socket;
 
 import pl.uj.edu.tcs.kalambury_maven.controller.AppController;
 import pl.uj.edu.tcs.kalambury_maven.event.Event;
+import pl.uj.edu.tcs.kalambury_maven.event.MessageSendEvent;
 
 public class RealNetwork implements Network {
 
@@ -16,17 +18,21 @@ public class RealNetwork implements Network {
 	private ObjectOutputStream output;
 	private InputListener listener;
 	private Thread listenerThread;
-	
+
 	private class InputListener implements Runnable {
 
 		@Override
 		public void run() {
-			while(true) {
-				Object ev;
+			while (true) {
+				Object ev = null;
 				try {
 					ev = input.readObject();
 					System.out.println("I actually read something!");
-				} catch(ClassNotFoundException | IOException e) {
+				} catch (EOFException e) {
+					controller.reactTo(new MessageSendEvent("ERROR",
+							"You have been disconnected from the sever"));
+					break;
+				} catch (ClassNotFoundException | IOException e) {
 					e.printStackTrace();
 					continue;
 				}
@@ -34,7 +40,7 @@ public class RealNetwork implements Network {
 				controller.reactTo(event);
 			}
 		}
-		
+
 	}
 
 	public RealNetwork(String server, String port, AppController c)
@@ -70,5 +76,5 @@ public class RealNetwork implements Network {
 			ex.printStackTrace();
 		}
 	}
-	
+
 }

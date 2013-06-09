@@ -2,7 +2,6 @@ package pl.uj.edu.tcs.kalambury_maven.controller;
 
 import pl.uj.edu.tcs.kalambury_maven.event.Event;
 import pl.uj.edu.tcs.kalambury_maven.event.EventHandler;
-import pl.uj.edu.tcs.kalambury_maven.event.CloseWordInputEvent;
 
 public class CloseWordInputHandler implements EventHandler {
 	AppController controller;

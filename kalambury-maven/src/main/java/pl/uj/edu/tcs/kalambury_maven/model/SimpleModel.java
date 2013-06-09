@@ -1,6 +1,5 @@
 package pl.uj.edu.tcs.kalambury_maven.model;
 
-import pl.uj.edu.tcs.kalambury_maven.controller.AppController;
 import pl.uj.edu.tcs.kalambury_maven.event.Event;
 import pl.uj.edu.tcs.kalambury_maven.event.EventNotHandledException;
 import pl.uj.edu.tcs.kalambury_maven.event.EventReactor;
@@ -9,7 +8,7 @@ import pl.uj.edu.tcs.kalambury_maven.view.AppView;
 
 public class SimpleModel {
 	private EventReactor reactor = new EventReactor();
-	private AppController controller;
+//	private AppController controller;
 	private ChatMessagesList chatMessagesList;
 	private UserRanking userRanking;
 	private DrawingModel drawingModel;
@@ -40,9 +39,9 @@ public class SimpleModel {
 		chatMessagesList.reactTo(ev);
 	}
 
-	public void setController(AppController c) {
+/*	public void setController(AppController c) {
 		this.controller = c;
-	}
+	}*/
 
 	public void registerChatBox(AppView v) {
 		chatMessagesList.setView(v.getMainWindow().getChatBox());

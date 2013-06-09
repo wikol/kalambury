@@ -15,9 +15,6 @@ import java.util.concurrent.Executors;
 import pl.uj.edu.tcs.kalambury_maven.event.Event;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOfflineEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOnlineEvent;
-import pl.uj.edu.tcs.kalambury_maven.event.WordGuessedEvent;
-import pl.uj.edu.tcs.kalambury_maven.view.AppView;
-import pl.uj.edu.tcs.kalambury_maven.view.LoginWindow;
 import pl.uj.edu.tcs.kalambury_maven.view.SimpleServerGui;
 
 public class SimpleServer implements Server {
@@ -98,6 +95,8 @@ public class SimpleServer implements Server {
 			nicks.get(name).getOutputStream().writeObject(event);
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch(NullPointerException e) {
+			System.out.println("trying to send to " + name + " who is not logged in!");
 		}
 	}
 

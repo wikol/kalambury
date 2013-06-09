@@ -13,6 +13,7 @@ import javax.swing.SwingConstants;
 
 public class TimerAndProgressBar extends JPanel {
 
+	private static final long serialVersionUID = -3140789636763339158L;
 	private JTextField timeTextField;
 	private JTextField riddleTextField;
 	private String riddle = "";

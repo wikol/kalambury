@@ -1,9 +1,5 @@
 package pl.uj.edu.tcs.kalambury_maven.view;
 
-import javax.swing.ImageIcon;
-import javax.swing.JColorChooser;
-import javax.swing.JPanel;
-
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Graphics2D;
@@ -14,14 +10,16 @@ import java.awt.event.ActionListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JColorChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import pl.uj.edu.tcs.kalambury_maven.controller.DrawingController;
 import pl.uj.edu.tcs.kalambury_maven.event.BrushChangedEvent;
 import pl.uj.edu.tcs.kalambury_maven.model.Brush;
-import java.awt.Label;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
 
 /**
  * 

@@ -4,15 +4,11 @@ import java.util.Queue;
 import java.util.concurrent.LinkedBlockingDeque;
 
 import pl.uj.edu.tcs.kalambury_maven.event.ClearScreenEvent;
-import pl.uj.edu.tcs.kalambury_maven.event.CloseWordInputEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.Event;
-import pl.uj.edu.tcs.kalambury_maven.event.EventReactor;
 import pl.uj.edu.tcs.kalambury_maven.event.MessageSendEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.NewGameEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.NewMessageWrittenEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.NewPointsDrawnEvent;
-import pl.uj.edu.tcs.kalambury_maven.event.NewWordForGuessingEvent;
-import pl.uj.edu.tcs.kalambury_maven.event.NewWordIsNeededEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.NextRoundStartsEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.PointsChangedEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.ResetUserRankingEvent;
@@ -31,8 +27,8 @@ public class GameLogic {
 	private SimpleModel localModel = new SimpleModel();
 	private RoundTimer roundTimer = new RoundTimer(this);
 
-	private RiddlesGenerator riddlesGenerator = new RiddlesGenerator();
-	private PointsManager pointsManager = new PointsManager(localModel.getUserRanking());
+	private RiddlesGenerator riddlesGenerator;
+	private PointsManager pointsManager;
 
 	private boolean gameStarted = false;
 
@@ -67,6 +63,15 @@ public class GameLogic {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void setRiddlesGenerator(RiddlesGenerator gen) {
+		riddlesGenerator = gen;
+	}
+	
+	public void setPointsManager(PointsManager man) {
+		pointsManager = man;
+		pointsManager.setRanking(localModel.getUserRanking());
 	}
 
 	private void newGame(String username, NewGameEvent event) {

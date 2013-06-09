@@ -1,6 +1,9 @@
 package pl.uj.edu.tcs.kalambury_maven.view;
 
 import java.awt.EventQueue;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.util.HashMap;
 
 import javax.swing.JFrame;
@@ -16,12 +19,11 @@ import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 
 public class MainWindow extends JFrame {
 
+
+	private static final long serialVersionUID = -5853323500541154221L;
 	private JPanel contentPane;
 	private ChatBox chatBox;
 	private Ranking ranking;

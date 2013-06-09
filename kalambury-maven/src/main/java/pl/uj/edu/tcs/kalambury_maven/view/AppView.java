@@ -4,15 +4,12 @@ import java.awt.EventQueue;
 import java.lang.reflect.InvocationTargetException;
 
 import pl.uj.edu.tcs.kalambury_maven.controller.AppController;
-import pl.uj.edu.tcs.kalambury_maven.controller.Controller;
 import pl.uj.edu.tcs.kalambury_maven.event.DisplayLoginEvent;
-import pl.uj.edu.tcs.kalambury_maven.event.DisplayMainWindowEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.Event;
 import pl.uj.edu.tcs.kalambury_maven.event.EventHandler;
 import pl.uj.edu.tcs.kalambury_maven.event.EventNotHandledException;
 import pl.uj.edu.tcs.kalambury_maven.event.EventReactor;
 import pl.uj.edu.tcs.kalambury_maven.event.LoginUnsuccessfulEvent;
-import pl.uj.edu.tcs.kalambury_maven.model.Model;
 import pl.uj.edu.tcs.kalambury_maven.model.SimpleModel;
 
 public class AppView {
