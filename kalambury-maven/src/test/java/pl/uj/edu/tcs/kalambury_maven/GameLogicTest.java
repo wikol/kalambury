@@ -25,7 +25,7 @@ import pl.uj.edu.tcs.kalambury_maven.server.Server;
 
 public class GameLogicTest extends TestCase {
 
-	private List<Event> packOfLogs = new ArrayList<>();
+	/*private List<Event> packOfLogs = new ArrayList<>();
 	private List<String> packOfNames = new ArrayList<>();
 
 	private GameLogic testGameLogic = new GameLogic();
@@ -232,7 +232,7 @@ public class GameLogicTest extends TestCase {
 	/**
 	 * simple one in - one out test.
 	 */
-	public void test00_one_in_one_out() {
+	/*public void test00_one_in_one_out() {
 		testGameLogic.setServer(testServer);
 		String u1 = "test1";
 
@@ -246,7 +246,7 @@ public class GameLogicTest extends TestCase {
 	/**
 	 * some in - some out test.
 	 */
-	public void test01_some_in_some_out() {
+/*	public void test01_some_in_some_out() {
 		testGameLogic.setServer(testServer);
 		String u1 = "test1", u2 = "test2", u3 = "test3", u4 = "test4";
 
@@ -280,7 +280,7 @@ public class GameLogicTest extends TestCase {
 	 * some in - some drawing - some in - some drawing - some out - some drawing
 	 * - everybody out test.
 	 */
-	public void test02_simple_drawing() {
+	/*public void test02_simple_drawing() {
 		testGameLogic.setServer(testServer);
 		String u1 = "test1", u2 = "test2", u3 = "test3";
 
@@ -330,7 +330,7 @@ public class GameLogicTest extends TestCase {
 	 * some in - some drawing - some guessing test. with a few failed actions
 	 * (i.e. attempts of drawing while cannot)
 	 */
-	public void test03_drawing_and_writting() {
+	/*public void test03_drawing_and_writting() {
 		testGameLogic.setServer(testServer);
 		String u1 = "test1", u2 = "test2", u3 = "test3";
 		// some users in
@@ -374,5 +374,5 @@ public class GameLogicTest extends TestCase {
 		testGameLogic.reactTo(u2, new NewMessageWrittenEvent(u2, "żarówka"));
 		NewMessageWrittenEventTest(u2);
 
-	}
+	}*/
 }
