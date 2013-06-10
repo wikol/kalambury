@@ -89,7 +89,6 @@ public class GL_and_Model_Test extends TestCase {
 		GameLogic gl = new GameLogic();
 		gl.setServer(new TestServer());
 
-		SimpleModel sm = new SimpleModel();
 		List<String> users = new ArrayList<>();
 
 		gl.reactTo("a", new UsersOnlineEvent("a"));
@@ -180,10 +179,29 @@ public class GL_and_Model_Test extends TestCase {
 		l.add(new Point(0.1f, 0.1f, 1.0f, Color.BLACK));
 		l.add(new Point(0.5f, 0.4f, 5.0f, Color.DARK_GRAY));
 		
-		gl.reactTo("b", new NewPointsDrawnEvent(l));
-		for(int i=0; i<gl.getModel().getDrawingModel().getDrawing().size(); i++)
-			assertTrue(gl.getModel().getDrawingModel().getDrawing().get(i).equals(l.get(i)));
+		List<Point> f = new LinkedList<>();
+		f.add(new Point(0.2f, 0.2f, 1.0f, Color.BLUE));
 		
+		String current = gl.getQueue().peek();
 		
+		gl.reactTo(current, new NewPointsDrawnEvent(l));
+		gl.reactTo(((current.equals("a"))?("b"):("a")), new NewPointsDrawnEvent(f));
+		
+		assertTrue(gl.getModel().getDrawingModel().getDrawing().equals(l));
+		
+		gl.reactTo(current, new UsersOfflineEvent(current));
+		current = gl.getQueue().peek();
+		
+		l.clear();
+		l.add(new Point(0.0f, 0.0f, 0.0f, Color.RED));
+		gl.reactTo(current, new NewPointsDrawnEvent(l));
+		
+		assertTrue(gl.getModel().getDrawingModel().getDrawing().equals(l));
+		gl.reactTo(current, new UsersOfflineEvent(current));
+		current = gl.getQueue().peek();
+		gl.reactTo(current, new UsersOfflineEvent(current));
+		
+		assertTrue(gl.getModel().getUserRanking().getUsersOnline().isEmpty());
 	}
+
 }
