@@ -5,13 +5,18 @@ import java.util.LinkedList;
 import java.util.List;
 
 import pl.uj.edu.tcs.kalambury_maven.GL_and_Model_Test.TestServer;
+import pl.uj.edu.tcs.kalambury_maven.event.ClearScreenEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.Event;
 import pl.uj.edu.tcs.kalambury_maven.event.MessageSendEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.NewGameEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.NewMessageWrittenEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.NewPointsDrawnEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.NextRoundStartsEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.ResetUserRankingEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.RiddleEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOfflineEvent;
 import pl.uj.edu.tcs.kalambury_maven.event.UsersOnlineEvent;
+import pl.uj.edu.tcs.kalambury_maven.event.WordGuessedEvent;
 import pl.uj.edu.tcs.kalambury_maven.model.SimpleModel;
 import pl.uj.edu.tcs.kalambury_maven.model.UserRanking;
 import pl.uj.edu.tcs.kalambury_maven.server.GameLogic;
@@ -111,6 +116,120 @@ public class GL_and_Server_Test extends TestCase {
 		events.add(UsersOfflineEvent.class.toString());
 		assertTrue(TS.Events.equals(events));
 	}
-
 	
+	/**
+	 * three in; some failed writting and some good writting - simple, nearly guessed; and some guessing
+	 */
+	public void test02() {
+		GameLogic gl = new GameLogic();
+		TestServer TS = new TestServer(); 
+		gl.setServer(TS);
+		gl.setRiddlesGenerator(new TestRiddlesGenerator());
+		gl.setPointsManager(new TestPointsManager());
+		
+		List<String> events = new LinkedList<>();
+		String bdcs = "broadcasted";
+		
+		gl.reactTo("a", new UsersOnlineEvent("a"));
+		events.add("a");
+		events.add(ResetUserRankingEvent.class.toString());
+		events.add("a");
+		events.add(NewPointsDrawnEvent.class.toString());
+		events.add("a");
+		events.add(NextRoundStartsEvent.class.toString());
+		events.add(bdcs);
+		events.add(UsersOnlineEvent.class.toString());
+		assertTrue(TS.Events.equals(events));
+		
+		gl.reactTo("b", new UsersOnlineEvent("b"));
+		events.add("b");
+		events.add(ResetUserRankingEvent.class.toString());
+		events.add("b");
+		events.add(NewPointsDrawnEvent.class.toString());
+		events.add("b");
+		events.add(NextRoundStartsEvent.class.toString());
+		events.add(bdcs);
+		events.add(UsersOnlineEvent.class.toString());
+		assertTrue(TS.Events.equals(events));
+		
+		gl.reactTo(null, new NewGameEvent());		
+		events.add(bdcs);
+		events.add(ClearScreenEvent.class.toString());
+		events.add(bdcs);
+		events.add(NextRoundStartsEvent.class.toString());
+		events.add(gl.getQueue().peek());
+		events.add(RiddleEvent.class.toString());
+		assertTrue(TS.Events.equals(events));
+		
+		gl.reactTo("c", new UsersOnlineEvent("c"));
+		events.add("c");
+		events.add(ResetUserRankingEvent.class.toString());
+		events.add("c");
+		events.add(NewPointsDrawnEvent.class.toString());
+		events.add("c");
+		events.add(NextRoundStartsEvent.class.toString());
+		events.add(bdcs);
+		events.add(UsersOnlineEvent.class.toString());
+		assertTrue(TS.Events.equals(events));
+		
+		gl.reactTo(gl.getQueue().peek(), new NewMessageWrittenEvent(gl.getQueue().peek(), "cokolwiek"));
+		events.add(gl.getQueue().peek());
+		events.add(MessageSendEvent.class.toString());
+		assertTrue(TS.Events.equals(events));
+		
+		String different = (gl.getQueue().peek().equals("a"))?("b"):("a");
+		gl.reactTo(different, new NewMessageWrittenEvent(different, "cos innego"));
+		events.add(bdcs);
+		events.add(MessageSendEvent.class.toString());
+		assertTrue(TS.Events.equals(events));
+		
+		gl.reactTo(different, new NewMessageWrittenEvent(different, "marchewka"));
+		events.add(bdcs);
+		events.add(MessageSendEvent.class.toString());
+		events.add(different);
+		events.add(MessageSendEvent.class.toString());
+		assertTrue(TS.Events.equals(events));
+		
+		gl.reactTo(different, new NewMessageWrittenEvent(different, "marchew"));
+		events.add(bdcs);
+		events.add(MessageSendEvent.class.toString());
+		events.add(bdcs);
+		events.add(WordGuessedEvent.class.toString());
+		events.add(bdcs);
+		events.add(ResetUserRankingEvent.class.toString());
+		events.add(bdcs);
+		events.add(ClearScreenEvent.class.toString());
+		events.add(bdcs);
+		events.add(NextRoundStartsEvent.class.toString());
+		events.add(gl.getQueue().peek());
+		events.add(RiddleEvent.class.toString());
+		assertTrue(TS.Events.equals(events));
+		
+		different = (gl.getQueue().peek().equals("a"))?("b"):("a");
+		gl.reactTo(different, new UsersOfflineEvent(different));
+		events.add(bdcs);
+		events.add(UsersOfflineEvent.class.toString());
+		assertTrue(TS.Events.equals(events));
+		
+		gl.reactTo(gl.getQueue().peek(), new UsersOfflineEvent(gl.getQueue().peek()));
+		events.add(bdcs);
+		events.add(MessageSendEvent.class.toString());
+		events.add(bdcs);
+		events.add(ClearScreenEvent.class.toString());
+		events.add(bdcs);
+		events.add(NextRoundStartsEvent.class.toString());
+		events.add(gl.getQueue().peek());
+		events.add(RiddleEvent.class.toString());
+		events.add(bdcs);
+		events.add(UsersOfflineEvent.class.toString());
+		assertTrue(TS.Events.equals(events));
+		
+		gl.reactTo(gl.getQueue().peek(), new UsersOfflineEvent(gl.getQueue().peek()));
+		events.add(bdcs);
+		events.add(MessageSendEvent.class.toString());
+		events.add(bdcs);
+		events.add(UsersOfflineEvent.class.toString());
+		assertTrue(TS.Events.equals(events));
+		
+	}
 }
